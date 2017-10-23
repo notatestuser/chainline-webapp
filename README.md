@@ -1,2 +1,2 @@
 # chainline-webapp
-The MVC web app for Chain Line
+The MVP web app for Chain Line
