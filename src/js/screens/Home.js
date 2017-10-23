@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { getBalance } from 'chainline-js';
 
 import { Box, Button, Grid, Heading } from 'grommet';
 
 export default class Home extends Component {
   state = {}
+
+  componentDidMount() {
+    getBalance('TestNet', 'AenDCN3Xw3zXC5S5BNbEgT4UmDh6WPg8a1')
+      .then((balance) => {
+        this.setState({ balance: balance.GAS.balance });
+      });
+  }
 
   render() {
     return (
@@ -42,9 +50,9 @@ export default class Home extends Component {
             ]}
           >
             <Heading level={2} margin={{ top: 'none' }}>
-              <strong>Page Content</strong>
+              <strong>Account Balance</strong>
             </Heading>
-            <div>Hello!</div>
+            <div>AenDCN3Xw3zXC5S5BNbEgT4UmDh6WPg8a1: {this.state.balance} GAS</div>
           </Box>
         </Box>
       </Grid>
