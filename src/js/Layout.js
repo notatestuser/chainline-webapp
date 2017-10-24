@@ -10,7 +10,7 @@ const LOGO_SRC = '/img/chainline-logo.svg';
 const LogoImage = styled.img`
   line-height: 0;
   max-width: ${({ responsiveState }) =>
-    responsiveState === 'wide' ? '250px' : 'auto'};
+    responsiveState === 'wide' ? '256px' : 'auto'};
   margin: 16px 0px;
   width: 100%;
 `;
