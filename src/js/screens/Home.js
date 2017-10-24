@@ -25,10 +25,6 @@ export default class Home extends Component {
           justify='center'
           responsive={true}
           pad='large'
-          animation={[
-            { type: 'zoomIn', duration: 500, delay: 100 },
-            { type: 'fadeIn', duration: 500, delay: 0 },
-          ]}
         >
           <WidthCappedContainer size='xlarge'>
             <Heading level={2} margin={{ top: 'none' }}>

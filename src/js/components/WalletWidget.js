@@ -3,7 +3,7 @@ import React from 'react';
 import { Menu } from 'grommet';
 import { Money, Alert } from 'grommet-icons';
 
-const WalletWidget = ({ accountWif }) => {
+const WalletWidget = ({ accountWif, onOpenWalletClick }) => {
   if (accountWif) {
     // logged in
     return (<Menu
@@ -27,7 +27,7 @@ const WalletWidget = ({ accountWif }) => {
     dropAlign={{ right: 'right', top: 'top' }}
     items={[
       { label: 'Create a new wallet' },
-      { label: 'Load a wallet' }]}
+      { label: 'Load a wallet', onClick: () => onOpenWalletClick() }]}
   />);
 };
 

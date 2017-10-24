@@ -8,7 +8,12 @@ import { Grommet, Responsive } from 'grommet';
 import chainline from './themes/chainline';
 import Layout from './Layout';
 import Home from './screens/Home';
-import { NotificationsWidget, WalletWidget } from './components';
+import {
+  NotificationsWidget,
+  WalletWidget,
+  LoadWalletLayer,
+  LoggedInMsgLayer,
+} from './components';
 
 const history = createBrowserHistory();
 
@@ -21,6 +26,8 @@ export default class App extends Component {
   state = {
     responsiveState: 'wide',
     accountWif: null,
+    isLoadWalletLayerOpen: false,
+    isLoggedInLayerOpen: false,
   }
 
   componentDidMount() {
@@ -37,14 +44,33 @@ export default class App extends Component {
     return (
       <Router history={history}>
         <Grommet theme={THEMES.chainline} centered={true}>
+          {/* Responsive */}
           <Responsive onChange={this.onResponsiveChange}>
             {/* This must be here or it crashes :( */}
             <div />
           </Responsive>
+
+          {/* Layers (popups) */}
+          {this.state.isLoadWalletLayerOpen &&
+            <LoadWalletLayer
+              onClose={() => this.setState({ isLoadWalletLayerOpen: false })}
+              onLogin={(accountWif) => {
+                this.setState({ accountWif, isLoggedInLayerOpen: true });
+              }}
+            />}
+          {this.state.isLoggedInLayerOpen &&
+            <LoggedInMsgLayer
+              onClose={() => this.setState({ isLoggedInLayerOpen: false })}
+            />}
+
+          {/* Page layout and routes */}
           <Layout
             responsiveState={responsiveState}
             headerWidgets={[
-              <WalletWidget accountWif={this.state.accountWif} />,
+              <WalletWidget
+                accountWif={this.state.accountWif}
+                onOpenWalletClick={() => { this.setState({ isLoadWalletLayerOpen: true }); }}
+              />,
               <NotificationsWidget />,
             ]}
           >
