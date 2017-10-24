@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { Heading, Text, Menu, Anchor } from 'grommet';
-import { Money, Notification } from 'grommet-icons';
+import { Heading, Text, Anchor } from 'grommet';
 import styled from 'styled-components';
 
 import { Box, WidthCappedContainer } from './components';
@@ -16,7 +15,7 @@ const LogoImage = styled.img`
   width: 100%;
 `;
 
-const Layout = ({ responsiveState, children }) => [
+const Layout = ({ responsiveState, headerWidgets, children }) => [
   // The use of `image` below is a hack to force the darkBackgroundTextColor
   // See https://git.io/vdjYH
   <Box background={{ dark: true, image: '#69B8D6' }}>
@@ -28,25 +27,7 @@ const Layout = ({ responsiveState, children }) => [
       pad={{ vertical: 'none', horizontal: 'large' }}
     >
       <WidthCappedContainer size='xlarge' justify='flex-end' direction='row'>
-        <Menu
-          background='neutral-5'
-          full='grow'
-          label={<strong>Wallet Balance: 0 GAS</strong>}
-          icon={<Money />}
-          dropAlign={{ right: 'right', top: 'top' }}
-          items={[
-            { label: 'Reserved: 0 GAS' },
-            { label: 'Send Money' },
-            { label: 'Receive Money' }]}
-        />
-        <Menu
-          background='neutral-5'
-          full='grow'
-          icon={<Notification />}
-          dropAlign={{ right: 'right', top: 'top' }}
-          items={[{ label: 'No notifications yet' }]}
-        />
-
+        {headerWidgets}
       </WidthCappedContainer>
     </Box>
 
