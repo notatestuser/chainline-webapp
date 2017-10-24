@@ -19,6 +19,7 @@
     "chainline-js": "git+https://github.com/notatestuser/chainline-js.git",
     "grommet": ">= 2.0.0-alpha.0 < 3.0.0",
     "grommet-icons": "^0.10.1",
+    "numeral": "^2.0.6",
     "prop-types": "^15.5.10",
     "react": "^16.0.0",
     "react-desc": "^2.1.0",
