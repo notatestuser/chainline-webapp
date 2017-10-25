@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
-import { Layer, Box, Heading, Button, Paragraph, TextInput, CheckBox } from 'grommet';
-import { Close } from 'grommet-icons';
+import { Layer, Box, Heading, Button, Paragraph, Text, TextInput, Anchor, CheckBox } from 'grommet';
+import { Close, FormLock } from 'grommet-icons';
 import { Field } from './';
 
 class LoadWalletLayer extends Component {
@@ -55,8 +55,18 @@ class LoadWalletLayer extends Component {
                     />
                   </Box>
                 </Field>
-                <Box margin={{ top: 'large' }}>
+                <Box margin={{ top: 'medium' }}>
                   <Button primary={true} type='submit' label='Submit' />
+                </Box>
+                <Box direction='row' margin={{ top: 'medium' }}>
+                  <FormLock />
+                  <Text>
+                    Your private wallet key is never sent to us.
+                    All wallet operations happen in your browser. <br />
+                    <Anchor href='https://github.com/notatestuser/chainline-webapp' target='_blank'>
+                      Chain Line web app source code
+                    </Anchor>
+                  </Text>
                 </Box>
               </Box>
             </Box>

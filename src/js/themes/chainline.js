@@ -42,7 +42,7 @@ export default {
     },
   },
   anchor: {
-    color: 'inherit',
+    color: '#69b8d6',
   },
   breakpoints: {
     narrow: 699,
