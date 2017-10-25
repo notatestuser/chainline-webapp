@@ -68,6 +68,7 @@ export default class App extends Component {
             responsiveState={responsiveState}
             headerWidgets={[
               <WalletWidget
+                responsiveState={responsiveState}
                 accountWif={this.state.accountWif}
                 onOpenWalletClick={() => { this.setState({ isLoadWalletLayerOpen: true }); }}
               />,
