@@ -1,23 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Heading } from 'grommet';
+import { Box, Heading, Paragraph, Select } from 'grommet';
 
 import { WidthCappedContainer } from '../components';
 
 export default class Home extends Component {
-  state = {
-    balance: 'unknown',
-  }
-
-  componentDidMount() {
-    // getBalance('TestNet', 'AenDCN3Xw3zXC5S5BNbEgT4UmDh6WPg8a1')
-    //   .then((balance) => {
-    //     this.setState({ balance: balance.GAS.balance });
-    //   });
-  }
-
   render() {
-    return (
+    return ([
       <Box direction='column'>
         <Box
           background='white'
@@ -27,15 +16,44 @@ export default class Home extends Component {
           pad='large'
         >
           <WidthCappedContainer>
-            <Heading level={2} margin={{ top: 'none' }}>
-              <strong>Account Balance</strong>
+            <Heading level={3} margin={{ top: 'none' }}>
+              What would you like to do?
             </Heading>
 
-            <div>AenDCN3Xw3zXC5S5BNbEgT4UmDh6WPg8a1: {this.state.balance} GAS</div>
+            <Select
+              size='large'
+              options={[
+                'I would like an item to be delivered to me from overseas.',
+                'I am travelling and have extra space to carry items.',
+                'There is a Chain Line shipment I would like to track.',
+              ]}
+              value='Select one'
+            />
           </WidthCappedContainer>
         </Box>
-      </Box>
-    );
+      </Box>,
+      <Box background={{ dark: true, image: '#69B8D6' }}>
+        <Box
+          background={{ dark: true }}
+          direction='row'
+          align='center'
+          pad='large'
+        >
+          <WidthCappedContainer direction='column'>
+            <Heading level={3} margin={{ top: 'none' }}>
+              How does the Chain Line work?
+            </Heading>
+
+            <Paragraph>
+              Lorem ipsum whatever dorem lorem ipsum whatever dorem lorem ipsum whatever dorem lorem
+              ipsum whatever dorem lorem ipsum whatever dorem lorem ipsum whatever dorem lorem ipsum
+              whatever dorem lorem ipsum whatever dorem lorem ipsum whatever dorem lorem ipsum whatever
+              dorem lorem ipsum whatever dorem lorem
+            </Paragraph>
+          </WidthCappedContainer>
+        </Box>
+      </Box>,
+    ]);
   }
 }
 

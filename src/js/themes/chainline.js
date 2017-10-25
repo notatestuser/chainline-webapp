@@ -56,7 +56,7 @@ export default {
       accent: '#ff8d6d',
       secondary: 'rgba(51,51,51,0.6)',
     },
-    extend: 'letter-spacing: 0.04167em;',
+    extend: 'letter-spacing: 0.02em;',
   },
   heading: {
     // maxWidth chosen to be ~50 characters wide
