@@ -3,7 +3,7 @@ import React from 'react';
 import { Box, Heading, Text, Anchor } from 'grommet';
 import styled from 'styled-components';
 
-import { WidthCappedContainer } from './components';
+import { WidthCappedContainer, VideoPlayer } from './components';
 
 const LOGO_SRC = '/img/chainline-logo.svg';
 
@@ -26,7 +26,7 @@ const Layout = ({ responsiveState, headerWidgets, children }) => [
       align='center'
       pad={{ vertical: 'none', horizontal: 'large' }}
     >
-      <WidthCappedContainer size='xlarge' justify='flex-end' direction='row'>
+      <WidthCappedContainer justify='flex-end' direction='row'>
         {headerWidgets}
       </WidthCappedContainer>
     </Box>
@@ -35,7 +35,7 @@ const Layout = ({ responsiveState, headerWidgets, children }) => [
       background='white'
       pad={{ vertical: 'none', horizontal: 'large' }}
     >
-      <WidthCappedContainer size='xlarge'>
+      <WidthCappedContainer>
         <LogoImage src={LOGO_SRC} responsiveState={responsiveState} />
       </WidthCappedContainer>
     </Box>
@@ -49,6 +49,8 @@ const Layout = ({ responsiveState, headerWidgets, children }) => [
       >
         <strong>We move more than cargo.</strong>
       </Heading>
+
+      <VideoPlayer margin={{ bottom: 'medium' }} />
     </Box>
   </Box>,
 
@@ -65,7 +67,7 @@ const Layout = ({ responsiveState, headerWidgets, children }) => [
       pad='medium'
       justify='between'
     >
-      <WidthCappedContainer size='xlarge' direction='row' justify='space-between'>
+      <WidthCappedContainer direction='row' justify='space-between'>
         <Text margin='none'>
           © 2017 The Chain Line Author(s).&nbsp;
           MIT Licensed.

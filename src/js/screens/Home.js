@@ -26,7 +26,7 @@ export default class Home extends Component {
           responsive={true}
           pad='large'
         >
-          <WidthCappedContainer size='xlarge'>
+          <WidthCappedContainer>
             <Heading level={2} margin={{ top: 'none' }}>
               <strong>Account Balance</strong>
             </Heading>
