@@ -1,11 +1,9 @@
-import _Box from './Box';
 import _Field from './Field';
 import _LoadWalletLayer from './LoadWalletLayer';
 import _LoggedInMsgLayer from './LoggedInMsgLayer';
 import _NotificationsWidget from './NotificationsWidget';
 import _WalletWidget from './WalletWidget';
 
-export const Box = _Box;
 export const Field = _Field;
 export const LoadWalletLayer = _LoadWalletLayer;
 export const LoggedInMsgLayer = _LoggedInMsgLayer;

@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { Heading, Text, Anchor } from 'grommet';
+import { Box, Heading, Text, Anchor } from 'grommet';
 import styled from 'styled-components';
 
-import { Box, WidthCappedContainer } from './components';
+import { WidthCappedContainer } from './components';
 
 const LOGO_SRC = '/img/chainline-logo.svg';
 

@@ -8,7 +8,7 @@ export const WidthCappedContainer = styled.div`
   flex-direction: ${props => props.direction || 'column'};
   justify-content: ${props => props.justify || 'normal'};
   margin: auto;
-  max-width: ${props => chainline.global.size[props.size || 'medium']};
+  max-width: ${props => chainline.global.size[props.size || 'page']};
   width: 100%;
 `;
 

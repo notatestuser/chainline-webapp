@@ -38,6 +38,7 @@ export default {
       medium: `${baseSpacing * 16}px`, // 384
       large: `${baseSpacing * 32}px`, // 768
       xlarge: `${baseSpacing * 48}px`, // 1152
+      page: '1050px',
       full: '100%',
     },
   },

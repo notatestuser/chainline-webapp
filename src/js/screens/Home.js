@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Heading } from 'grommet';
+import { Box, Heading } from 'grommet';
 
-import { Box, WidthCappedContainer } from '../components';
+import { WidthCappedContainer } from '../components';
 
 export default class Home extends Component {
   state = {
