@@ -1325,7 +1325,7 @@ center-align@^0.1.1:
 
 "chainline-js@git+https://github.com/notatestuser/chainline-js.git":
   version "1.1.0"
-  resolved "git+https://github.com/notatestuser/chainline-js.git#fab3d28db471cb4ca75401c067d403a943f9ca6b"
+  resolved "git+https://github.com/notatestuser/chainline-js.git#8f86628b71378f7e8e23305205eaeac72fb1a97d"
   dependencies:
     axios "^0.16.2"
     base-x "^3.0.2"
