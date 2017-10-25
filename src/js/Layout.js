@@ -10,7 +10,7 @@ const LOGO_SRC = '/img/chainline-logo.svg';
 const LogoImage = styled.img`
   line-height: 0;
   max-width: ${({ responsiveState }) =>
-    responsiveState === 'wide' ? '256px' : 'auto'};
+    responsiveState === 'wide' ? '270px' : 'auto'};
   margin: 16px 0px;
   width: 100%;
 `;
@@ -67,12 +67,11 @@ const Layout = ({ responsiveState, headerWidgets, children }) => [
     >
       <WidthCappedContainer size='xlarge' direction='row' justify='space-between'>
         <Text margin='none'>
-          © 2017&nbsp;
-          <Anchor href='//github.com/notatestuser'>Luke Plaster</Anchor>.&nbsp;
-          Chain Line is MIT Licensed.
+          © 2017 The Chain Line Author(s).&nbsp;
+          MIT Licensed.
         </Text>
 
-        <Box direction='row' responsive={true}>
+        {responsiveState === 'wide' && <Box direction='row' responsive={true}>
           <Box pad={{ horizontal: 'medium' }}>
             <Anchor href='#'>
               User Guide
@@ -88,7 +87,7 @@ const Layout = ({ responsiveState, headerWidgets, children }) => [
               About the Neo Blockchain
             </Anchor>
           </Box>
-        </Box>
+        </Box>}
       </WidthCappedContainer>
     </Box>
   </Box>,

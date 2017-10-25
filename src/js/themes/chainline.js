@@ -42,7 +42,7 @@ export default {
     },
   },
   anchor: {
-    color: '#69b8d6',
+    color: '#379fc8',
   },
   breakpoints: {
     narrow: 699,

@@ -61,7 +61,7 @@ class LoadWalletLayer extends Component {
                 <Box direction='row' margin={{ top: 'medium' }}>
                   <FormLock />
                   <Text>
-                    Your private wallet key is never sent to us.
+                    Your private wallet key is never sent to us.<br />
                     All wallet operations happen in your browser. <br />
                     <Anchor href='https://github.com/notatestuser/chainline-webapp' target='_blank'>
                       Chain Line web app source code
