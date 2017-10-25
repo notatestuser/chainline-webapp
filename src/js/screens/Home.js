@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Heading, Paragraph, Select } from 'grommet';
+import { Box, Heading, Paragraph, Select, RoutedAnchor } from 'grommet';
 
 import { WidthCappedContainer } from '../components';
 
@@ -17,7 +17,7 @@ export default class Home extends Component {
         >
           <WidthCappedContainer>
             <Heading level={3} margin={{ top: 'none' }}>
-              What would you like to do?
+              <em>What can Chain Line do for you?</em>
             </Heading>
 
             <Select
@@ -50,6 +50,11 @@ export default class Home extends Component {
               whatever dorem lorem ipsum whatever dorem lorem ipsum whatever dorem lorem ipsum whatever
               dorem lorem ipsum whatever dorem lorem
             </Paragraph>
+
+            <Box margin={{ top: 'medium' }}>
+              <RoutedAnchor primary={true} path='/demand/create' label='Create a Demand' />
+            </Box>
+
           </WidthCappedContainer>
         </Box>
       </Box>,

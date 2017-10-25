@@ -28,8 +28,22 @@ export default {
       shadow: '0px 3px 8px rgba(100, 100, 100, 0.30)',
     },
     font: {
-      family: '-apple-system, BlinkMacSystemFont, San Francisco, Roboto, Segoe UI, Helvetica Neue, Lucida Grande, sans-serif',
-      face: '\n        @font-face {\n          font-family: "Metric";\n          src: url("https://hpefonts.s3.amazonaws.com/web/MetricHPE-Web-Regular.woff") format(\'woff\');\n        }\n\n        @font-face {\n          font-family: "Metric";\n          src: url("https://hpefonts.s3.amazonaws.com/web/MetricHPE-Web-Bold.woff") format(\'woff\');\n          font-weight: 700;\n        }\n\n        @font-face {\n          font-family: "Metric";\n          src: url("https://hpefonts.s3.amazonaws.com/web/MetricHPE-Web-Semibold.woff") format(\'woff\');\n          font-weight: 600;\n        }\n\n        @font-face {\n          font-family: "Metric";\n          src: url("https://hpefonts.s3.amazonaws.com/web/MetricHPE-Web-Light.woff") format(\'woff\');\n          font-weight: 100;\n        }\n      '
+      family: 'Rubik, -apple-system, BlinkMacSystemFont, San Francisco, Roboto, Segoe UI, Helvetica Neue, Lucida Grande, sans-serif',
+      face: `
+        @font-face {
+          font-family: 'Rubik';
+          font-style: normal;
+          font-weight: 400;
+          src: local('Rubik'), local('Rubik-Regular'), url(https://fonts.gstatic.com/s/rubik/v7/Vi2gYeiEKThJHNpaE3cq54DGDUGfDkXyfkzVDelzfFk.woff2) format('woff2');
+          unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+        }
+        @font-face {
+          font-family: 'Rubik';
+          font-style: normal;
+          font-weight: 400;
+          src: local('Rubik'), local('Rubik-Regular'), url(https://fonts.gstatic.com/s/rubik/v7/p_PvaTv0YzIEJlEVv30xK6CWcynf_cDxXwCLxiixG1c.woff2) format('woff2');
+          unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
+        }`,
     },
     size: {
       xxsmall: `${baseSpacing * 2}px`, // 48
@@ -68,14 +82,14 @@ export default {
         large: { size: '96px', height: 1.125, maxWidth: 'auto' },
       },
       2: {
-        medium: { size: '36px', height: 1.23, maxWidth: 'auto' },
+        medium: { size: '32px', height: 1.23, maxWidth: 'auto' },
         small: { size: '18px', height: 1.333, maxWidth: 'auto' },
-        large: { size: '48px', height: 1.125, maxWidth: 'auto' },
+        large: { size: '44px', height: 1.125, maxWidth: 'auto' },
       },
       3: {
-        medium: { size: '24px', height: 1.333 },
-        small: { size: '18px', height: 1.333 },
-        large: { size: '36px', height: 1.23 },
+        medium: { size: '24px', height: 1.333, maxWidth: 'auto' },
+        small: { size: '18px', height: 1.333, maxWidth: 'auto' },
+        large: { size: '36px', height: 1.23, maxWidth: 'auto' },
       },
       4: {
         medium: { size: '18px', height: 1.333 },

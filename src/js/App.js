@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
-
 import { createBrowserHistory } from 'history';
 
 import { Grommet, Responsive } from 'grommet';
 
 import chainline from './themes/chainline';
+
 import Layout from './Layout';
-import Home from './screens/Home';
+import HomePage from './screens/Home';
+import DemandPage from './screens/Demand';
+
 import {
   NotificationsWidget,
   WalletWidget,
@@ -80,9 +82,9 @@ export default class App extends Component {
                 exact={true}
                 path='/'
                 render={routeProps =>
-                  <Home {...routeProps} accountWif={this.state.accountWif} />}
+                  <HomePage {...routeProps} accountWif={this.state.accountWif} />}
               />
-              <Route exact={true} path='/new-demand' component={() => {}} />
+              <Route exact={true} path='/demand/create' component={DemandPage} />
               <Route exact={true} path='/new-travel' component={() => {}} />
               <Route exact={true} path='/track' component={() => {}} />
             </Switch>
