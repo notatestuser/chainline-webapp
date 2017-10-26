@@ -11,10 +11,10 @@ import HomePage from './screens/Home';
 import DemandPage from './screens/Demand';
 
 import {
+  NotifyLayer,
   NotificationsWidget,
   WalletWidget,
   LoadWalletLayer,
-  LoggedInMsgLayer,
 } from './components';
 
 const history = createBrowserHistory();
@@ -24,12 +24,16 @@ const THEMES = {
   chainline,
 };
 
+const MSG_LOGGED_IN = 'You are now logged in.';
+
 export default class App extends Component {
   state = {
     responsiveState: 'wide',
     accountWif: null,
+    notifyMessage: null,
+    notifySuccess: false,
+    notifyAutoClose: true,
     isLoadWalletLayerOpen: false,
-    isLoggedInLayerOpen: false,
   }
 
   componentDidMount() {
@@ -41,7 +45,12 @@ export default class App extends Component {
   }
 
   render() {
-    const { responsiveState } = this.state;
+    const {
+      responsiveState,
+      notifyMessage,
+      notifySuccess,
+      notifyAutoClose,
+    } = this.state;
 
     return (
       <Router history={history}>
@@ -52,17 +61,22 @@ export default class App extends Component {
             <div />
           </Responsive>
 
+          {/* Simple notifications */}
+          {notifyMessage ? <NotifyLayer
+            size='small'
+            message={notifyMessage}
+            isSuccess={notifySuccess}
+            autoClose={notifyAutoClose}
+            onClose={() => { this.setState({ notifyMessage: null }); }}
+          /> : null}
+
           {/* Layers (popups) */}
           {this.state.isLoadWalletLayerOpen &&
             <LoadWalletLayer
               onClose={() => this.setState({ isLoadWalletLayerOpen: false })}
               onLogin={(accountWif) => {
-                this.setState({ accountWif, isLoggedInLayerOpen: true });
+                this.setState({ accountWif, notifyMessage: MSG_LOGGED_IN, notifySuccess: true });
               }}
-            />}
-          {this.state.isLoggedInLayerOpen &&
-            <LoggedInMsgLayer
-              onClose={() => this.setState({ isLoggedInLayerOpen: false })}
             />}
 
           {/* Page layout and routes */}
@@ -84,7 +98,12 @@ export default class App extends Component {
                 render={routeProps =>
                   <HomePage {...routeProps} accountWif={this.state.accountWif} />}
               />
-              <Route exact={true} path='/demand/create' component={DemandPage} />
+              <Route
+                exact={true}
+                path='/demand/create'
+                component={() =>
+                  <DemandPage accountWif={this.state.accountWif} />}
+              />
               <Route exact={true} path='/new-travel' component={() => {}} />
               <Route exact={true} path='/track' component={() => {}} />
             </Switch>

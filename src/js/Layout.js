@@ -12,7 +12,7 @@ const LOGO_SRC = '/img/chainline-logo.svg';
 const LogoImage = styled.img`
   line-height: 0;
   max-width: ${({ responsiveState }) =>
-    responsiveState === 'wide' ? '270px' : 'auto'};
+    responsiveState === 'wide' ? '265px' : 'auto'};
   margin: 16px 0px;
   width: 100%;
 `;
@@ -65,8 +65,8 @@ class Layout extends Component {
           {[
             <Box
               animation={[
-                { type: 'zoomIn', duration: 15000, delay: 100 },
-                { type: 'fadeIn', duration: 500, delay: 400 },
+                { type: 'zoomIn', duration: 15000, delay: 300 },
+                { type: 'fadeIn', duration: 500, delay: 600 },
               ]}
             >
               <Heading

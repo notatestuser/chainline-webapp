@@ -22,6 +22,24 @@ export default class DemandPage extends Component {
   }
 
   render() {
+    const { accountWif } = this.props;
+
+    if (!accountWif) {
+      return (<Box direction='column'>
+        <Box
+          background='white'
+          direction='column'
+          pad='large'
+        >
+          <WidthCappedContainer>
+            <Heading level={2} margin={{ top: 'none' }}>
+              Please log in to create a demand!
+            </Heading>
+          </WidthCappedContainer>
+        </Box>
+      </Box>);
+    }
+
     return (
       <Box direction='column'>
         <Box
