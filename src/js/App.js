@@ -84,11 +84,12 @@ export default class App extends Component {
             responsiveState={responsiveState}
             headerWidgets={[
               <WalletWidget
+                key='wallet'
                 responsiveState={responsiveState}
                 accountWif={this.state.accountWif}
                 onOpenWalletClick={() => { this.setState({ isLoadWalletLayerOpen: true }); }}
               />,
-              <NotificationsWidget />,
+              <NotificationsWidget key='notifications' />,
             ]}
           >
             <Switch>

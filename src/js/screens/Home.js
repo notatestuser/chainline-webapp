@@ -7,7 +7,7 @@ import { WidthCappedContainer } from '../components';
 export default class Home extends Component {
   render() {
     return ([
-      <Box direction='column'>
+      <Box key='content-0' direction='column'>
         <Box
           background='white'
           direction='column'
@@ -32,7 +32,7 @@ export default class Home extends Component {
           </WidthCappedContainer>
         </Box>
       </Box>,
-      <Box background={{ dark: true, image: '#69B8D6' }}>
+      <Box key='content-1' background={{ dark: true, image: '#69B8D6' }}>
         <Box
           background={{ dark: true }}
           direction='row'

@@ -31,7 +31,7 @@ class WalletWidget extends Component {
     // logged in?
     if (accountWif) {
       const sendWidget = responsiveState === 'wide' ? (<Button
-        id='widget-send'
+        id='walletwidget-send'
         a11yTitle='Pay'
         onClick={() => {
           alert('Send clicked');
@@ -48,7 +48,7 @@ class WalletWidget extends Component {
       </Button>) : null;
 
       const receiveWidget = responsiveState === 'wide' ? (<Button
-        id='widget-receive'
+        id='walletwidget-receive'
         a11yTitle='Receive'
         onClick={() => {
           alert('Receive clicked');
@@ -65,7 +65,7 @@ class WalletWidget extends Component {
       </Button>) : null;
 
       const walletWidget = (<Menu
-        key='widget-wallet'
+        key='walletwidget-wallet'
         background='neutral-5'
         full='grow'
         label={<strong>

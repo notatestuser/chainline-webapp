@@ -25,6 +25,10 @@ const HeroBox = styled(Box)`
   min-height: 575px;
 `;
 
+const FlexRoutedAnchor = styled(RoutedAnchor)`
+  display: flex;
+`;
+
 class Layout extends Component {
   static contextTypes = {
     router: PropTypes.func,
@@ -38,7 +42,10 @@ class Layout extends Component {
     return [
       // The use of `image` below is a hack to force the darkBackgroundTextColor
       // See https://git.io/vdjYH
-      <Box background={{ dark: true, image: '#69B8D6' }}>
+      <Box
+        key='header'
+        background={{ dark: true, image: '#69B8D6' }}
+      >
         <Box
           direction='row'
           justify='end'
@@ -55,7 +62,9 @@ class Layout extends Component {
           pad={{ vertical: 'none', horizontal: 'large' }}
         >
           <WidthCappedContainer>
-            <LogoImage src={LOGO_SRC} responsiveState={responsiveState} />
+            <FlexRoutedAnchor path='/'>
+              <LogoImage src={LOGO_SRC} responsiveState={responsiveState} />
+            </FlexRoutedAnchor>
           </WidthCappedContainer>
         </Box>
 
@@ -64,6 +73,7 @@ class Layout extends Component {
         >
           {[
             <Box
+              key='hero-0'
               animation={[
                 { type: 'zoomIn', duration: 15000, delay: 300 },
                 { type: 'fadeIn', duration: 500, delay: 600 },
@@ -81,6 +91,7 @@ class Layout extends Component {
               </Heading>
             </Box>,
             <Box
+              key='hero-1'
               animation={[
                 { type: 'zoomIn', duration: 1000, delay: 2300 },
                 { type: 'fadeIn', duration: 1000, delay: 2200 },
@@ -108,6 +119,7 @@ class Layout extends Component {
       children,
 
       <Box
+        key='footer'
         background='#444444'
         direction='column'
         justify='between'

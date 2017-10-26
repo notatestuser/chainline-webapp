@@ -25,7 +25,7 @@ export default class DemandPage extends Component {
     const { accountWif } = this.props;
 
     if (!accountWif) {
-      return (<Box direction='column'>
+      return (<Box key='content' direction='column'>
         <Box
           background='white'
           direction='column'
@@ -41,7 +41,7 @@ export default class DemandPage extends Component {
     }
 
     return (
-      <Box direction='column'>
+      <Box key='content' direction='column'>
         <Box
           background='white'
           direction='column'
