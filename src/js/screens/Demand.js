@@ -1,28 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import styled from 'styled-components';
-import { Box, Heading, Button, TextInput, Select, CheckBox, RadioButton } from 'grommet';
+import { Box, Heading, Button, TextInput, RadioButton } from 'grommet';
 import { WidthCappedContainer, Field } from '../components';
 
-const BorderlessTextarea = styled.textarea`
-  border: 0;
-  font: inherit;
-  padding: 16px 12px;
-  min-height: 128px;
-  outline: 0;
-  &::placeholder {
-    color: #aaa;
-  }
-`;
+const cities = ['Shanghai', 'London', 'Geneva'];
 
 export default class DemandPage extends Component {
+  state = {
+    citySuggestions: [],
+  }
+
   componentDidMount() {
     window.scrollTo(0, 0);
   }
 
   render() {
     const { accountWif } = this.props;
+    const { citySuggestions } = this.state;
 
     if (!accountWif) {
       return (<Box key='content' direction='column'>
@@ -69,62 +64,57 @@ export default class DemandPage extends Component {
                   Create a new demand
                 </Heading>
                 <Box margin='none'>
-                  <Field label='Title'>
-                    <TextInput plain={true} placeholder='e.g. My blockchain haiku' />
+                  <Field label='What do you need?'>
+                    <TextInput plain={true} placeholder='Enter details about the product you want, e.g. iPhone X 256 GB (Japan model), or paste a pastebin link' />
                   </Field>
-                  <Field label='Content'>
-                    <BorderlessTextarea placeholder='Enter some text' />
+                  <Field label='Your contact information'>
+                    <TextInput plain={true} placeholder='Publicly visible. Not required if you have used a pastebin link above' />
                   </Field>
-                  <Field label='Expiry' direction='row'>
+                  <Field label='User reputation requirement'>
+                    <TextInput plain={true} placeholder='0-1000 (successful transactions)' type='number' />
+                  </Field>
+                  <Field label='Item value (in US Dollars)'>
+                    <TextInput plain={true} placeholder='Please research the market value of the item to make this as accurate as possible' type='number' />
+                  </Field>
+                  <Field label='Item size'>
                     <Box margin='small' direction='row'>
                       <RadioButton
-                        label=''
+                        label='Small items (jewellery, watches, souvenirs)'
                         checked={true}
-                        onChange={() => {
-                          if (this.state.expireSelect) return; // already selected
-                          this.setState({
-                            expireSelect: !this.state.expireSelect,
-                            expireNever: !this.state.expireNever,
-                          });
-                        }}
-                      />
-                      <Select
-                        size='medium'
-                        options={['a', 'b', 'c']}
-                        value={false}
-                        onChange={({ option }) => {
-                          this.setState({
-                            selectedExpiry: option,
-                            expireSelect: true,
-                            expireNever: false,
-                          });
-                        }}
                       />
                     </Box>
-                    <Box margin={{ horizontal: 'small', vertical: 'small', bottom: 'medium' }}>
+                    <Box margin='small' direction='row'>
                       <RadioButton
-                        label='Never expire, keep it forever'
+                        label='Medium items (phones, tablets, small electronics)'
                         checked={false}
-                        onChange={() => {
-                          if (this.state.expireNever) return; // already selected
-                          this.setState({
-                            expireNever: !this.state.expireNever,
-                            expireSelect: !this.state.expireSelect,
-                          });
-                        }}
+                      />
+                    </Box>
+                    <Box margin='small' direction='row'>
+                      <RadioButton
+                        label='Large items (gift boxes, fashion)'
+                        checked={false}
                       />
                     </Box>
                   </Field>
-                  <Field label='Privacy'>
-                    <Box pad='small' margin={{ bottom: 'small' }}>
-                      <CheckBox
-                        label='Do not list on Pastebin.com'
-                        checked={true}
-                        onChange={() => {
-                          this.setState({ private: !this.state.private });
-                        }}
-                      />
-                    </Box>
+                  <Field label='Collect from city'>
+                    <TextInput
+                      plain={true}
+                      placeholder='Must be a main city, or your demand may not be matched'
+                      suggestions={citySuggestions}
+                      onSelect={
+                        ({ suggestion }) => this.setState({ city: suggestion })
+                      }
+                      onInput={event => this.setState({
+                        city: event.target.value,
+                        citySuggestions: event.target.value.length < 3 ? ['Please enter more text'] : cities.filter(
+                          city => city.match(new RegExp(`^${event.target.value}`, 'i'))
+                        ),
+                      })}
+                      value={this.state.city}
+                    />
+                  </Field>
+                  <Field label='Expiry date'>
+                    <TextInput plain={true} placeholder='date' type='date' />
                   </Field>
                   <Box margin={{ top: 'large' }}>
                     <Button primary={true} type='submit' label='Submit' />

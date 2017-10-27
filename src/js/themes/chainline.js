@@ -72,6 +72,16 @@ export default {
     },
     extend: 'letter-spacing: 0.02em;',
   },
+  checkBox: {
+    check: {
+      color: '#69B8D6',
+    },
+  },
+  radioButton: {
+    check: {
+      color: '#69B8D6',
+    },
+  },
   heading: {
     // maxWidth chosen to be ~50 characters wide
     // see: https://ux.stackexchange.com/a/34125
