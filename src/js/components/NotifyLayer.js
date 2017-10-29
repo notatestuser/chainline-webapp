@@ -2,8 +2,13 @@ import React, { Component } from 'react';
 
 import { Layer, Box, Heading, Text, Button } from 'grommet';
 import { Validate, Alert } from 'grommet-icons';
+import styled from 'styled-components';
 
 const AUTO_CLOSE_TIME = 1500;
+
+const Buttons = styled(Box)`
+  margin-top: 30px;
+`;
 
 class NotifyLayer extends Component {
   componentDidMount() {
@@ -28,9 +33,9 @@ class NotifyLayer extends Component {
           <Text>
             {message}
           </Text>
-          {!autoClose ? <Box align='start' margin={{ vertical: 'medium', top: 'large' }}>
+          {!autoClose ? <Buttons align='start' margin={{ vertical: 'medium' }}>
             <Button primary={true} label='Okay' onClick={onClose} />
-          </Box> : null}
+          </Buttons> : null}
         </Box>
       </Box>
     </Layer>);

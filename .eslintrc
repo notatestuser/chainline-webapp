@@ -37,6 +37,7 @@
     "import/no-extraneous-dependencies": 0,
     "no-alert": 0,
     "jsx-a11y/href-no-hash": 0,
-    "no-confusing-arrow": ["off"]
+    "no-confusing-arrow": ["off"],
+    "no-underscore-dangle": ["off"]
   }
 }

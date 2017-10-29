@@ -50,6 +50,7 @@ if (env === 'production') {
   devConfig.devtool = 'cheap-module-source-map';
   devConfig.entry = [
     require.resolve('react-dev-utils/webpackHotDevClient'),
+    'babel-polyfill',
     './src/js/index.js',
   ];
   devConfig.devServer = {
@@ -77,7 +78,7 @@ plugins.push(new webpack.LoaderOptionsPlugin(loaderOptionsConfig));
 
 module.exports = Object.assign({
   devtool: 'hidden-source-map',
-  entry: './src/js/index.js',
+  entry: ['babel-polyfill', './src/js/index.js'],
   output: {
     path: path.resolve('./dist'),
     filename: 'index.js',
@@ -99,6 +100,11 @@ module.exports = Object.assign({
         test: /\.js/,
         exclude: /node_modules/,
         loader: 'babel-loader',
+      },
+      {
+        test: /\.worker.js/,
+        exclude: /node_modules/,
+        loader: 'worker-loader',
       },
     ],
   },

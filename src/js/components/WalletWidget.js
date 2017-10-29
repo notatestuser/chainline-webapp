@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import numeral from 'numeral';
 import is from 'is_js';
+import { getAccountFromWIFKey, getBalance, getPrice } from 'chainline-js';
 
 import { Box, Menu, Button } from 'grommet';
 import { Alert, Money, LinkUp, LinkDown } from 'grommet-icons';
+import styled from 'styled-components';
 
-import { getBalance, getPrice } from 'chainline-js';
+const DropDownLabel = styled(Box)`
+  font-weight: 500;
+`;
 
 class WalletWidget extends Component {
   state = {
@@ -14,7 +18,19 @@ class WalletWidget extends Component {
   }
 
   componentDidMount() {
-    getBalance('TestNet', 'AenDCN3Xw3zXC5S5BNbEgT4UmDh6WPg8a1')
+    this._refreshBalance();
+  }
+
+  componentDidUpdate() {
+    this._refreshBalance();
+  }
+
+  _refreshBalance() {
+    if (!this.props.accountWif) return;
+    if (this.state.accountWif === this.props.accountWif) return;
+    this.setState({ accountWif: this.props.accountWif });
+    const { address } = getAccountFromWIFKey(this.props.accountWif);
+    getBalance('TestNet', address)
       .then((balance) => {
         this.setState({ balance: balance.GAS.balance });
       });
@@ -25,7 +41,7 @@ class WalletWidget extends Component {
   }
 
   render() {
-    const { responsiveState, accountWif, onOpenWalletClick } = this.props;
+    const { responsiveState, accountWif, onCreateWalletClick, onOpenWalletClick } = this.props;
     const { balance, gasPriceUSD } = this.state;
 
     // logged in?
@@ -38,11 +54,9 @@ class WalletWidget extends Component {
         }}
       >
         <Box align='start' direction='row' pad='small'>
-          <Box margin={{ right: 'small' }}>
-            <strong>
-              Pay
-            </strong>
-          </Box>
+          <DropDownLabel margin={{ right: 'small' }}>
+            Pay
+          </DropDownLabel>
           <LinkUp />
         </Box>
       </Button>) : null;
@@ -55,11 +69,9 @@ class WalletWidget extends Component {
         }}
       >
         <Box align='start' direction='row' pad='small'>
-          <Box margin={{ right: 'small' }}>
-            <strong>
-              Receive
-            </strong>
-          </Box>
+          <DropDownLabel margin={{ right: 'small' }}>
+            Receive
+          </DropDownLabel>
           <LinkDown />
         </Box>
       </Button>) : null;
@@ -68,11 +80,11 @@ class WalletWidget extends Component {
         key='walletwidget-wallet'
         background='neutral-5'
         full='grow'
-        label={<strong>
+        label={<DropDownLabel>
           Balance: {is.number(balance) ? numeral(balance).format('0,0.00') : '?'} GAS
           {is.number(gasPriceUSD) && typeof balance === 'number' ?
             ` ($${numeral(gasPriceUSD * balance).format('0,0.00')})` : ''}
-        </strong>}
+        </DropDownLabel>}
         icon={<Money />}
         dropAlign={{ right: 'right', top: 'top' }}
         items={[
@@ -90,12 +102,12 @@ class WalletWidget extends Component {
     return (<Menu
       background='neutral-5'
       full='grow'
-      label={<strong>You are not logged in!</strong>}
+      label={<DropDownLabel>You are not logged in!</DropDownLabel>}
       icon={<Alert />}
       dropAlign={{ right: 'right', top: 'top' }}
       items={[
-        { label: 'Create a new wallet' },
-        { label: 'Load a wallet', onClick: () => onOpenWalletClick() }]}
+        { label: 'Create a new wallet', onClick: () => onCreateWalletClick() },
+        { label: 'Load an existing wallet', onClick: () => onOpenWalletClick() }]}
     />);
   }
 }

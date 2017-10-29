@@ -3,27 +3,40 @@ import AutoForm from 'react-auto-form';
 
 import { Layer, Box, Heading, Button, Paragraph, Text, TextInput, Anchor } from 'grommet';
 import { Close, FormLock } from 'grommet-icons';
+import styled from 'styled-components';
 import { Field } from './';
 
-class LoadWalletLayer extends Component {
+const ErrorMsg = styled(Paragraph)`
+  color: red;
+`;
+
+const Emphasis = styled.span`
+  font-weight: 500;
+`;
+
+class CreateWalletLayer extends Component {
   state = {
     loading: false,
+    errorMsg: null,
   }
 
   _onSubmit = async (ev, data) => {
-    const { onClose, onLogin } = this.props;
-    const { wif, passphrase } = data;
+    const { onClose, onCreate } = this.props;
+    const { passphrase, passphraseConfirm } = data;
     ev.preventDefault();
-    if (!wif || !wif.length) return;
     if (!passphrase || !passphrase.length) return;
-    this.setState({ loading: true });
-    await onLogin(wif, passphrase);
+    if (passphraseConfirm !== passphrase) {
+      this.setState({ errorMsg: 'The passphrases do not match!' });
+      return;
+    }
+    this.setState({ loading: true, errorMsg: null });
+    await onCreate(passphrase);
     onClose();
   }
 
   render() {
     const { onClose } = this.props;
-    const { loading } = this.state;
+    const { loading, errorMsg } = this.state;
 
     return (<Layer align='top' onEsc={onClose} size='medium'>
       <Box align='end'>
@@ -34,24 +47,28 @@ class LoadWalletLayer extends Component {
           <AutoForm onSubmit={this._onSubmit}>
             <Box>
               <Heading level={2} margin='none'>
-                Load a Wallet
+                Create a Wallet
               </Heading>
               <Box margin={{ vertical: 'medium', horizontal: 'none', bottom: 'large' }}>
                 <Paragraph margin={{ bottom: 'medium' }}>
-                  Log in to an account you have created before.<br />
-                  You must use a valid Chain Line MVP wallet key.
+                  Your passphrase is secret just like a password.<br />
+                  We cannot retrieve it if it is lost &ndash; it is not sent to us.<br />
+                  <Emphasis>Be sure to keep it safe!</Emphasis>
                 </Paragraph>
-                <Field label='Wallet Key (WIF)'>
-                  <TextInput name='wif' plain={true} />
-                </Field>
+                {errorMsg ? <ErrorMsg>
+                  {errorMsg}
+                </ErrorMsg> : null}
                 <Field label='Passphrase'>
                   <TextInput name='passphrase' type='password' plain={true} />
+                </Field>
+                <Field label='Passphrase (again)'>
+                  <TextInput name='passphraseConfirm' type='password' plain={true} />
                 </Field>
                 <Box margin={{ top: 'medium' }}>
                   <Button
                     primary={true}
                     type={loading ? 'disabled' : 'submit'}
-                    label={loading ? 'Please wait…' : 'Load Wallet'}
+                    label={loading ? 'Please wait…' : 'Create Wallet'}
                   />
                 </Box>
                 <Box direction='row' margin={{ top: 'medlarge' }}>
@@ -73,4 +90,4 @@ class LoadWalletLayer extends Component {
   }
 }
 
-export default LoadWalletLayer;
+export default CreateWalletLayer;

@@ -1,23 +1,53 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import AutoForm from 'react-auto-form';
+import pick from 'pedantic-pick';
+import styled from 'styled-components';
 
 import { Box, Heading, Button, TextInput, RadioButton } from 'grommet';
-import { WidthCappedContainer, Field } from '../components';
+import { WidthCappedContainer, Field, NotifyLayer } from '../components';
 
-const cities = ['Shanghai', 'London', 'Geneva'];
+const CITIES = ['Shanghai', 'London', 'Geneva'];
+const MAX_INFO_LEN = 128;
 
 export default class DemandPage extends Component {
   state = {
-    citySuggestions: [],
+    pickUpCitySuggestions: [],
+    dropOffCitySuggestions: [],
+    selectedItemSize: 'S',
+    infoCharsUsed: 0,
   }
 
   componentDidMount() {
     window.scrollTo(0, 0);
   }
 
+  _onChange = (ev, name, value) => {
+    if (name !== 'infoText') return;
+    this.setState({ infoCharsUsed: value.length });
+  }
+
+  _onSubmit = (ev, data) => {
+    ev.preventDefault();
+    try {
+      const picked = pick(data,
+        '!nes::infoText', '!nes::itemValue', '!nes::pickUpCity', '!nes::dropOffCity', '!nes::expiry', '!nes::reputation');
+      const itemValue = Number.parseFloat(picked.itemValue);
+      const reputation = Number.parseInt(picked.reputation, 10);
+      if (Number.isNaN(itemValue) || Number.isNaN(reputation)) {
+        throw new Error('The item value and minimum reputation must be valid numbers');
+      }
+      // todo: build invoke tx
+    } catch (pickErr) {
+      const { message } = pickErr;
+      const errorMsg = `${message.charAt(0).toUpperCase()}${message.substr(1)}`;
+      this.setState({ notifyMessage: `${errorMsg}. Please correct this and try again.` });
+    }
+  }
+
   render() {
     const { accountWif } = this.props;
-    const { citySuggestions } = this.state;
+    const { pickUpCitySuggestions, dropOffCitySuggestions, notifyMessage, infoCharsUsed } = this.state;
 
     if (!accountWif) {
       return (<Box key='content' direction='column'>
@@ -35,97 +65,116 @@ export default class DemandPage extends Component {
       </Box>);
     }
 
-    return (
-      <Box key='content' direction='column'>
+    const twoDays = 172800000; // in milliseconds
+    const nowDatePlusTwoDays = Date.now() + twoDays;
+    const defaultExpiryDate = new Date(nowDatePlusTwoDays).toISOString().split('T')[0];
+    const timezoneAbbr = new Date().toString().match(/\(([A-Za-z\s].*)\)/)[1];
+
+    return ([
+      /* Simple notifications */
+      notifyMessage ? <NotifyLayer
+        key='demand-notify'
+        size='medium'
+        message={notifyMessage}
+        onClose={() => { this.setState({ notifyMessage: null }); }}
+      /> : null,
+
+      /* Main form */
+      <Box key='demand-form' direction='column'>
         <Box
           background='white'
           direction='column'
           pad='large'
         >
           <WidthCappedContainer>
-            <form
-              name='create-form'
-              onSubmit={(ev) => {
-                ev.preventDefault();
-                const form = document.forms['create-form'];
-                const inputs = form.getElementsByTagName('input');
-                const textareas = form.getElementsByTagName('textarea');
-                const [titleInput] = inputs;
-                const [contentTextArea] = textareas;
-                const title = titleInput.value;
-                const content = contentTextArea.value || contentTextArea.textContent;
-                alert(title);
-                alert(content);
-                return false;
-              }}
-            >
+            <AutoForm onChange={this._onChange} onSubmit={this._onSubmit} trimOnSubmit={true}>
               <Box>
-                <Heading level={2} margin={{ top: 'none' }}>
+                <Heading level={2} margin={{ top: 'none', bottom: 'medlarge' }}>
                   Create a new demand
                 </Heading>
-                <Box margin='none'>
-                  <Field label='What do you need?'>
-                    <TextInput plain={true} placeholder='Enter details about the product you want, e.g. iPhone X 256 GB (Japan model), or paste a pastebin link' />
-                  </Field>
-                  <Field label='Your contact information'>
-                    <TextInput plain={true} placeholder='Publicly visible. Not required if you have used a pastebin link above' />
-                  </Field>
-                  <Field label='User reputation requirement'>
-                    <TextInput plain={true} placeholder='0-1000 (successful transactions)' type='number' />
-                  </Field>
-                  <Field label='Item value (in US Dollars)'>
-                    <TextInput plain={true} placeholder='Please research the market value of the item to make this as accurate as possible' type='number' />
-                  </Field>
-                  <Field label='Item size'>
-                    <Box margin='small' direction='row'>
-                      <RadioButton
-                        label='Small items (jewellery, watches, souvenirs)'
-                        checked={true}
-                      />
-                    </Box>
-                    <Box margin='small' direction='row'>
-                      <RadioButton
-                        label='Medium items (phones, tablets, small electronics)'
-                        checked={false}
-                      />
-                    </Box>
-                    <Box margin='small' direction='row'>
-                      <RadioButton
-                        label='Large items (gift boxes, fashion)'
-                        checked={false}
-                      />
-                    </Box>
-                  </Field>
-                  <Field label='Collect from city'>
-                    <TextInput
-                      plain={true}
-                      placeholder='Must be a main city, or your demand may not be matched'
-                      suggestions={citySuggestions}
-                      onSelect={
-                        ({ suggestion }) => this.setState({ city: suggestion })
-                      }
-                      onInput={event => this.setState({
-                        city: event.target.value,
-                        citySuggestions: event.target.value.length < 3 ? ['Please enter more text'] : cities.filter(
-                          city => city.match(new RegExp(`^${event.target.value}`, 'i'))
-                        ),
-                      })}
-                      value={this.state.city}
+                <Field label='Product and contact information' help={`${MAX_INFO_LEN - infoCharsUsed} letters left`}>
+                  <TextInput name='infoText' placeholder='Enter the product name, collection instructions or pastebin link. You must include your contact details.' maxLength={`${MAX_INFO_LEN}`} plain={true} />
+                </Field>
+                <Field label='Item value (in US Dollars)'>
+                  <TextInput name='itemValue' type='number' placeholder='Research the market value of the item to make this as accurate as possible. If in doubt, specify more.' plain={true} />
+                </Field>
+                <Field label='Item size'>
+                  <Box margin='small' direction='row'>
+                    <RadioButton
+                      name='itemSize'
+                      label='Small items (jewellery, watches, souvenirs)'
+                      checked={this.state.selectedItemSize === 'S'}
+                      onChange={() => { this.setState({ selectedItemSize: 'S' }); }}
                     />
-                  </Field>
-                  <Field label='Expiry date'>
-                    <TextInput plain={true} placeholder='date' type='date' />
-                  </Field>
-                  <Box margin={{ top: 'large' }}>
-                    <Button primary={true} type='submit' label='Submit' />
                   </Box>
+                  <Box margin={{ horizontal: 'small' }} direction='row'>
+                    <RadioButton
+                      name='itemSize'
+                      label='Medium items (phones, tablets, small electronics)'
+                      checked={this.state.selectedItemSize === 'M'}
+                      onChange={() => { this.setState({ selectedItemSize: 'M' }); }}
+                    />
+                  </Box>
+                  <Box margin='small' direction='row'>
+                    <RadioButton
+                      name='itemSize'
+                      label='Large items (gift boxes, fashion items)'
+                      checked={this.state.selectedItemSize === 'L'}
+                      onChange={() => { this.setState({ selectedItemSize: 'L' }); }}
+                    />
+                  </Box>
+                </Field>
+                <Field label='Collect from city'>
+                  <TextInput
+                    name='pickUpCity'
+                    placeholder='Must be a main city. Otherwise your demand may not be matched.'
+                    suggestions={pickUpCitySuggestions}
+                    onSelect={
+                      ({ suggestion }) => this.setState({ pickUpCity: suggestion })
+                    }
+                    onInput={event => this.setState({
+                      pickUpCity: event.target.value,
+                      pickUpCitySuggestions: event.target.value.length < 3 ? ['Please enter more text'] : CITIES.filter(
+                        city => city.match(new RegExp(`^${event.target.value}`, 'i'))
+                      ),
+                    })}
+                    value={this.state.pickUpCity}
+                    plain={true}
+                  />
+                </Field>
+                <Field label='Deliver to city'>
+                  <TextInput
+                    name='dropOffCity'
+                    placeholder='Must be a main city. Be sure to have a central and public meeting place in mind for later.'
+                    suggestions={dropOffCitySuggestions}
+                    onSelect={
+                      ({ suggestion }) => this.setState({ dropOffCity: suggestion })
+                    }
+                    onInput={event => this.setState({
+                      dropOffCity: event.target.value,
+                      dropOffCitySuggestions: event.target.value.length < 3 ? ['Please enter more text'] : CITIES.filter(
+                        city => city.match(new RegExp(`^${event.target.value}`, 'i'))
+                      ),
+                    })}
+                    value={this.state.dropOffCity}
+                    plain={true}
+                  />
+                </Field>
+                <Field label={`Expire at midnight before (${timezoneAbbr})`}>
+                  <TextInput name='expiry' type='date' placeholder='date' defaultValue={defaultExpiryDate} plain={true} />
+                </Field>
+                <Field label='User reputation requirement'>
+                  <TextInput name='reputation' type='number' placeholder='0-1000 successful prior transactions. For now 0 is recommended.' plain={true} />
+                </Field>
+                <Box margin={{ top: 'large' }}>
+                  <Button primary={true} type='submit' label='Submit' />
                 </Box>
               </Box>
-            </form>
+            </AutoForm>
           </WidthCappedContainer>
         </Box>
-      </Box>
-    );
+      </Box>,
+    ]);
   }
 }
 
