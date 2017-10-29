@@ -1,5 +1,6 @@
 /* global self */
 
+import 'babel-polyfill';
 import { generateEncryptedWif, decryptWIF } from 'chainline-js';
 
 self.addEventListener('message', async ({ data }) => {
