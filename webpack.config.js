@@ -3,7 +3,6 @@ const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const env = process.env.NODE_ENV || 'production';
-const useAlias = process.env.USE_ALIAS;
 
 let plugins = [
   new CopyWebpackPlugin([{ from: './public' }]),
@@ -65,13 +64,6 @@ if (env === 'production') {
     },
     historyApiFallback: true,
   };
-  if (useAlias) {
-    console.log('Using alias to local grommet.');
-    alias = {
-      'grommet': path.resolve(__dirname, '../grommet/src/js'),
-      'grommet-icons': path.resolve(__dirname, '../grommet-icons/src/js'),
-    };
-  }
 }
 
 plugins.push(new webpack.LoaderOptionsPlugin(loaderOptionsConfig));
@@ -97,14 +89,17 @@ module.exports = Object.assign({
   module: {
     rules: [
       {
-        test: /\.js/,
+        test: /\.worker.js/,
+        loader: 'worker-loader',
         exclude: /node_modules/,
-        loader: 'babel-loader',
       },
       {
-        test: /\.worker.js/,
-        exclude: /node_modules/,
-        loader: 'worker-loader',
+        test: /\.js/,
+        loader: 'babel-loader',
+        include: [
+          path.resolve(__dirname, './src'),
+          /node_modules\/p-(event|timeout|finally)/,
+        ],
       },
     ],
   },
