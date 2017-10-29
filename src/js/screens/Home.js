@@ -17,7 +17,7 @@ export default class Home extends Component {
         >
           <WidthCappedContainer>
             <Heading level={3} margin={{ top: 'none' }}>
-              <em>What can Chain Line do for you?</em>
+              What can Chain Line do for you?
             </Heading>
 
             <Select

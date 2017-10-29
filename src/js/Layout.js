@@ -17,16 +17,23 @@ const LogoImage = styled.img`
   width: 100%;
 `;
 
-const Boldish = styled.strong`
-  font-weight: 600;
-`;
-
 const HeroBox = styled(Box)`
   min-height: 575px;
 `;
 
-const FlexRoutedAnchor = styled(RoutedAnchor)`
-  display: flex;
+const HeroHeading = styled(Heading)`
+  font-family: Nunito;
+  font-weight: 700;
+`;
+
+const LogoRoutedAnchor = styled(RoutedAnchor)`
+  line-height: 0;
+  min-height: 70px;
+  width: fit-content;
+`;
+
+const GoBackRoutedAnchor = styled(RoutedAnchor)`
+  margin-left: -5px;
 `;
 
 class Layout extends Component {
@@ -61,10 +68,10 @@ class Layout extends Component {
           background='white'
           pad={{ vertical: 'none', horizontal: 'large' }}
         >
-          <WidthCappedContainer>
-            <FlexRoutedAnchor path='/'>
+          <WidthCappedContainer direction='row'>
+            <LogoRoutedAnchor path='/'>
               <LogoImage src={LOGO_SRC} responsiveState={responsiveState} />
-            </FlexRoutedAnchor>
+            </LogoRoutedAnchor>
           </WidthCappedContainer>
         </Box>
 
@@ -74,30 +81,23 @@ class Layout extends Component {
           {[
             <Box
               key='hero-0'
-              animation={[
-                { type: 'zoomIn', duration: 15000, delay: 300 },
-                { type: 'fadeIn', duration: 500, delay: 600 },
-              ]}
             >
-              <Heading
-                textAlign='center'
+              <HeroHeading
                 level={2}
+                textAlign='center'
+                margin={{ vertical: 'medlarge', bottom: 'none' }}
                 size={responsiveState === 'wide' ? 'large' : 'medium'}
               >
-                <Boldish>
-                  Peer-to-peer shipping,<br />
-                  powered by the blockchain.
-                </Boldish>
-              </Heading>
+                <strong>The Internet of Couriers</strong>
+              </HeroHeading>
             </Box>,
             <Box
               key='hero-1'
-              animation={[
-                { type: 'zoomIn', duration: 1000, delay: 2300 },
-                { type: 'fadeIn', duration: 1000, delay: 2200 },
-              ]}
             >
-              <VideoPlayer margin={{ top: 'small', bottom: 'medium' }} />
+              <Heading level={3} textAlign='center'>
+                Chain Line gets anything to you using a smart contract.
+              </Heading>
+              <VideoPlayer margin={{ top: 'small', bottom: 'large' }} />
             </Box>,
           ]}
         </HeroBox> : null}
@@ -106,10 +106,10 @@ class Layout extends Component {
           pad={{ vertical: 'medium', horizontal: 'large' }}
         >
           <WidthCappedContainer>
-            <RoutedAnchor
+            <GoBackRoutedAnchor
               primary={true}
               path='/'
-              label='Go back to the Home Page'
+              label='Go back to the home page'
               icon={<FormPrevious />}
             />
           </WidthCappedContainer>
