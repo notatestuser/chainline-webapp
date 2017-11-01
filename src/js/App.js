@@ -8,6 +8,8 @@ import pEvent from 'p-event';
 import { Grommet, Responsive, Box, Paragraph, Text, Anchor } from 'grommet';
 import styled from 'styled-components';
 
+import { getAccountFromWIFKey } from 'chainline-js';
+
 import chainline from './themes/chainline';
 
 import Layout from './Layout';
@@ -42,8 +44,8 @@ const MSG_WALLET_CREATED = (caller, encryptedWif, copiedToClipboard) => [
   <Paragraph key='MSG_WALLET_CREATED-0' size='full' margin='none'>
     Your Wallet Key (WIF) is ready. Be sure to copy this somewhere safe.
   </Paragraph>,
-  <Box margin={{ vertical: 'small', bottom: 'medium' }}>
-    <KeyReadout key='MSG_WALLET_CREATED-1' size='full'>
+  <Box key='MSG_WALLET_CREATED-1' margin={{ vertical: 'small', bottom: 'medium' }}>
+    <KeyReadout size='full'>
       {encryptedWif}
     </KeyReadout>
     {!copiedToClipboard ? <Anchor
@@ -66,6 +68,17 @@ const MSG_WALLET_CREATED = (caller, encryptedWif, copiedToClipboard) => [
     </Anchor>
     .
   </Paragraph>,
+];
+const MSG_RECEIVE = accountAddress => [
+  <Paragraph key='MSG_RECEIVE-0' size='full' margin='none'>
+    You may use this address to add funds to your wallet.
+    Only GAS transactions are supported at this time; please do not send any other asset.
+  </Paragraph>,
+  <Box key='MSG_RECEIVE-1' margin={{ vertical: 'small' }}>
+    <KeyReadout size='full'>
+      {accountAddress}
+    </KeyReadout>
+  </Box>,
 ];
 
 export default class App extends Component {
@@ -128,6 +141,15 @@ export default class App extends Component {
     });
   }
 
+  _onWalletReceiveClick = () => {
+    const { accountWif } = this.state;
+    const { address } = getAccountFromWIFKey(accountWif);
+    this.setState({
+      notifyMessage: MSG_RECEIVE(address),
+      notifySuccess: true,
+    });
+  }
+
   render() {
     const {
       responsiveState,
@@ -153,7 +175,7 @@ export default class App extends Component {
             message={notifyMessage}
             isSuccess={notifySuccess}
             autoClose={notifyAutoClose}
-            onClose={() => { this.setState({ notifyMessage: null }); }}
+            onClose={() => { this.setState({ notifyMessage: null, notifyAutoClose: false }); }}
           /> : null}
 
           {/* Layers (popups) */}
@@ -178,6 +200,7 @@ export default class App extends Component {
                 accountWif={this.state.accountWif}
                 onCreateWalletClick={() => { this.setState({ isCreateWalletLayerOpen: true }); }}
                 onOpenWalletClick={() => { this.setState({ isLoadWalletLayerOpen: true }); }}
+                onReceiveClick={this._onWalletReceiveClick}
               />,
               <NotificationsWidget key='notifications' />,
             ]}

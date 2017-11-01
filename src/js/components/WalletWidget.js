@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import numeral from 'numeral';
 import is from 'is_js';
 import { getAccountFromWIFKey, getBalance, getPrice } from 'chainline-js';
@@ -7,11 +7,13 @@ import { Box, Menu, Button } from 'grommet';
 import { Alert, Money, LinkUp, LinkDown } from 'grommet-icons';
 import styled from 'styled-components';
 
+const REFRESH_INTERVAL_MS = 15000;
+
 const DropDownLabel = styled(Box)`
   font-weight: 500;
 `;
 
-class WalletWidget extends Component {
+class WalletWidget extends PureComponent {
   state = {
     balance: null,
     gasPriceUSD: null,
@@ -25,24 +27,43 @@ class WalletWidget extends Component {
     this._refreshBalance();
   }
 
+  componentWillUnmount() {
+    if (!this._timer) return;
+    clearInterval(this._timer);
+  }
+
   _refreshBalance() {
-    if (!this.props.accountWif) return;
+    if (!this.props.accountWif) return; // not logged in
     if (this.state.accountWif === this.props.accountWif) return;
     this.setState({ accountWif: this.props.accountWif });
     const { address } = getAccountFromWIFKey(this.props.accountWif);
-    getBalance('TestNet', address)
-      .then((balance) => {
-        this.setState({ balance: balance.GAS.balance });
-      });
-    getPrice('GAS')
-      .then((gasPriceUSD) => {
-        this.setState({ gasPriceUSD });
-      });
+    const refresh = () => {
+      console.debug('Refreshing wallet balance…');
+      getBalance('TestNet', address)
+        .then((balance) => {
+          this.setState({ balance: balance.GAS.balance });
+        });
+      if (is.number(this.state.gasPriceUSD)) return;
+      console.debug('Updating GAS/USD price…');
+      getPrice('GAS')
+        .then((gasPriceUSD) => {
+          this.setState({ gasPriceUSD });
+        });
+    };
+    if (this._timer) clearInterval(this._timer);
+    this._timer = setInterval(refresh, REFRESH_INTERVAL_MS); // every 15 secs
+    refresh();
   }
 
   render() {
-    const { responsiveState, accountWif, onCreateWalletClick, onOpenWalletClick } = this.props;
     const { balance, gasPriceUSD } = this.state;
+    const {
+      responsiveState,
+      accountWif,
+      onCreateWalletClick,
+      onOpenWalletClick,
+      onReceiveClick,
+    } = this.props;
 
     // logged in?
     if (accountWif) {
@@ -64,9 +85,7 @@ class WalletWidget extends Component {
       const receiveWidget = responsiveState === 'wide' ? (<Button
         id='walletwidget-receive'
         a11yTitle='Receive'
-        onClick={() => {
-          alert('Receive clicked');
-        }}
+        onClick={() => { onReceiveClick(); }}
       >
         <Box align='start' direction='row' pad='small'>
           <DropDownLabel margin={{ right: 'small' }}>
@@ -81,7 +100,7 @@ class WalletWidget extends Component {
         background='neutral-5'
         full='grow'
         label={<DropDownLabel>
-          Balance: {is.number(balance) ? numeral(balance).format('0,0.00') : '?'} GAS
+          Balance: {is.number(balance) ? numeral(balance).format('0,0.000') : '?'} GAS
           {is.number(gasPriceUSD) && typeof balance === 'number' ?
             ` ($${numeral(gasPriceUSD * balance).format('0,0.00')})` : ''}
         </DropDownLabel>}
