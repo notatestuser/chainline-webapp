@@ -33,7 +33,7 @@ class NotifyLayer extends Component {
           <Text>
             {message}
           </Text>
-          {!autoClose ? <Buttons align='start' margin={{ vertical: 'medium' }}>
+          {!autoClose ? <Buttons align='start' margin={{ vertical: 'medium', bottom: 'medlarge' }}>
             <Button primary={true} label='Okay' onClick={onClose} />
           </Buttons> : null}
         </Box>

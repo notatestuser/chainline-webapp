@@ -27,7 +27,7 @@ const Field = ({
   return (
     <Box
       direction='column'
-      border={{ color: 'light-2', side: 'bottom', size: 'medium' }}
+      border={{ color: 'light-2', side: 'bottom', size: 'small' }}
       margin={{ vertical: 'xsmall' }}
     >
       {header}
