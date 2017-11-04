@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react';
 import numeral from 'numeral';
 import is from 'is_js';
-import { getAccountFromWIFKey, getBalance, getPrice } from 'chainline-js';
+import { getAccountFromWIFKey, getBalance, getPrice, getReservedGasBalance, doSendAsset } from 'chainline-js';
 
+import styled from 'styled-components';
 import { Box, Menu, Button } from 'grommet';
 import { Alert, Money, LinkUp, LinkDown } from 'grommet-icons';
-import styled from 'styled-components';
+import { SendLayer } from './';
 
 const REFRESH_INTERVAL_MS = 15000;
 
@@ -17,6 +18,7 @@ class WalletWidget extends PureComponent {
   state = {
     balance: null,
     gasPriceUSD: null,
+    sendFundsOpen: false,
   }
 
   componentDidMount() {
@@ -33,46 +35,54 @@ class WalletWidget extends PureComponent {
   }
 
   _refreshBalance() {
-    if (!this.props.accountWif) return; // not logged in
-    if (this.state.accountWif === this.props.accountWif) return;
-    this.setState({ accountWif: this.props.accountWif });
-    const { address } = getAccountFromWIFKey(this.props.accountWif);
-    const refresh = () => {
-      console.debug('Refreshing wallet balance…');
-      getBalance('TestNet', address)
-        .then((balance) => {
-          this.setState({ balance: balance.GAS.balance });
-        });
+    const { accountWif } = this.props;
+    if (!accountWif) return; // not logged in
+    if (this.state.accountWif === accountWif) return;
+    const { address } = getAccountFromWIFKey(accountWif);
+    this.setState({ accountWif, address });
+    const refresh = async () => {
+      console.debug('Refreshing wallet status…');
+      // in parallel, fail safe
+      getBalance('TestNet', address).then((balance) => {
+        this.setState({ balance: balance.GAS.balance });
+      });
+      getReservedGasBalance('TestNet', accountWif).then((reserved) => {
+        this.setState({ reserved: reserved.reservedBalance });
+      });
       if (is.number(this.state.gasPriceUSD)) return;
       console.debug('Updating GAS/USD price…');
-      getPrice('GAS')
-        .then((gasPriceUSD) => {
-          this.setState({ gasPriceUSD });
-        });
+      const gasPriceUSD = await getPrice('GAS');
+      this.setState({ gasPriceUSD });
     };
     if (this._timer) clearInterval(this._timer);
     this._timer = setInterval(refresh, REFRESH_INTERVAL_MS); // every 15 secs
     refresh();
   }
 
+  _onSendFunds = async (address, amount) => {
+    const { onFundsSent } = this.props;
+    const { accountWif } = this.state;
+    const { result, hash } = await doSendAsset('TestNet', address, accountWif, { GAS: parseFloat(amount) });
+    onFundsSent(result, hash);
+  }
+
   render() {
-    const { balance, gasPriceUSD } = this.state;
     const {
       responsiveState,
       accountWif,
       onCreateWalletClick,
       onOpenWalletClick,
       onReceiveClick,
+      onLogOutClick,
     } = this.props;
+    const { balance, reserved, gasPriceUSD, address } = this.state;
 
     // logged in?
     if (accountWif) {
       const sendWidget = responsiveState === 'wide' ? (<Button
         id='walletwidget-send'
         a11yTitle='Pay'
-        onClick={() => {
-          alert('Send clicked');
-        }}
+        onClick={() => { this.setState({ sendFundsOpen: true }); }}
       >
         <Box align='start' direction='row' pad='small'>
           <DropDownLabel margin={{ right: 'small' }}>
@@ -107,16 +117,32 @@ class WalletWidget extends PureComponent {
         icon={<Money />}
         dropAlign={{ right: 'right', top: 'top' }}
         items={[
-          { label: 'Reserved: 0 GAS' },
-          { label: 'Send Money' },
-          { label: 'Receive Money' }]}
+          { label: `Reserved: ${is.number(reserved) ? reserved : 0} GAS`,
+            onClick: () => {},
+            close: false },
+          { label: 'Transactions',
+            onClick: is.number(balance) && balance > 0 ? () => {
+              window.open(`https://neoscan-testnet.io/address/${address}`);
+            } : undefined },
+          { label: 'Log out',
+            onClick: () => { onLogOutClick(); } }]}
       />);
+
+      const sendLayer = this.state.sendFundsOpen ? (<SendLayer
+        balance={balance}
+        accountWif={accountWif}
+        onClose={() => { this.setState({ sendFundsOpen: false }); }}
+        onSendFunds={this._onSendFunds}
+      />) : null;
+
       return [
         sendWidget,
         receiveWidget,
         walletWidget,
+        sendLayer,
       ];
     }
+
     // not logged in
     return (<Menu
       background='neutral-5'

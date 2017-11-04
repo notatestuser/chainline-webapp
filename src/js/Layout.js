@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import styled from 'styled-components';
 import { Box, Heading, Text, Anchor, RoutedAnchor } from 'grommet';
 import { FormPrevious } from 'grommet-icons';
-import styled from 'styled-components';
 
 import { WidthCappedContainer, VideoPlayer } from './components';
 

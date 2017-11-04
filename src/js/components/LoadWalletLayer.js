@@ -27,7 +27,7 @@ class LoadWalletLayer extends Component {
 
     return (<Layer align='top' onEsc={onClose} size='medium'>
       <Box align='end'>
-        <Button icon={<Close />} onClick={onClose} />
+        <Button icon={<Close />} onClick={loading ? () => {} : onClose} />
       </Box>
       <Box direction='row' justify='center'>
         <Box basis='medium' margin={{ vertical: 'none', horizontal: 'large' }}>
@@ -42,7 +42,7 @@ class LoadWalletLayer extends Component {
                   You must use a valid Chain Line MVP wallet key.
                 </Paragraph>
                 <Field label='Wallet Key (WIF)'>
-                  <TextInput name='wif' plain={true} />
+                  <TextInput name='wif' plain={true} autoFocus={true} />
                 </Field>
                 <Field label='Passphrase'>
                   <TextInput name='passphrase' type='password' plain={true} />

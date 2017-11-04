@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Box, Text } from 'grommet';
 import styled from 'styled-components';
+import { Box, Text } from 'grommet';
 
 const Label = styled(Text)`
   font-size: 17px;

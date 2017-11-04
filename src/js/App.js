@@ -5,8 +5,8 @@ import copy from 'copy-to-clipboard';
 import secureRandom from 'secure-random';
 import pEvent from 'p-event';
 
-import { Grommet, Responsive, Box, Paragraph, Text, Anchor } from 'grommet';
 import styled from 'styled-components';
+import { Grommet, Responsive, Box, Paragraph, Text, Anchor } from 'grommet';
 
 import { getAccountFromWIFKey } from 'chainline-js';
 
@@ -40,6 +40,7 @@ const THEMES = {
 };
 
 const MSG_LOGGED_IN = 'You are now logged in.';
+
 const MSG_WALLET_CREATED = (caller, encryptedWif, copiedToClipboard) => [
   <Paragraph key='MSG_WALLET_CREATED-0' size='full' margin='none'>
     Your Wallet Key (WIF) is ready. Be sure to copy this somewhere safe.
@@ -69,8 +70,9 @@ const MSG_WALLET_CREATED = (caller, encryptedWif, copiedToClipboard) => [
     .
   </Paragraph>,
 ];
+
 const MSG_RECEIVE = accountAddress => [
-  <Paragraph key='MSG_RECEIVE-0' size='full' margin='none'>
+  <Paragraph key='MSG_RECEIVE-0' size='full' margin={{ bottom: 'small' }}>
     You may use this address to add funds to your wallet.
     Only GAS transactions are supported at this time; please do not send any other asset.
   </Paragraph>,
@@ -80,6 +82,17 @@ const MSG_RECEIVE = accountAddress => [
     </KeyReadout>
   </Box>,
 ];
+
+const MSG_FUNDS_SENT = txHash => [
+  <Paragraph key='MSG_FUNDS_SENT-0' size='full' margin='none'>
+    The funds are being sent. Balances will update shortly.
+  </Paragraph>,
+  <Anchor key='MSG_FUNDS_SENT-1' href={`https://neoscan-testnet.io/transaction/${txHash}`} target='_blank'>
+    View the transaction (wait 1-2 mins.)
+  </Anchor>,
+];
+
+const MSG_FUNDS_SEND_ERROR = 'Failed to send funds. Is that part of your balance reserved?';
 
 export default class App extends Component {
   state = {
@@ -128,8 +141,8 @@ export default class App extends Component {
       operation: 'decryptWif', encryptedWif, passphrase,
     });
     const { data: { wif, error } } = await pEvent(this.walletWorker, 'message');
-    if (error) {
-      const notifyMessage = `Could not load that wallet. ${error}`;
+    if (error || typeof wif !== 'string') {
+      const notifyMessage = `Could not load that wallet. ${error || 'Invalid WIF.'}`;
       this.setState({ notifyMessage, notifySuccess: false, notifyAutoClose: false });
       return;
     }
@@ -147,6 +160,13 @@ export default class App extends Component {
     this.setState({
       notifyMessage: MSG_RECEIVE(address),
       notifySuccess: true,
+    });
+  }
+
+  _onWalletFundsSent = (success, txHash) => {
+    this.setState({
+      notifyMessage: success ? MSG_FUNDS_SENT(txHash) : MSG_FUNDS_SEND_ERROR,
+      notifySuccess: success,
     });
   }
 
@@ -201,6 +221,8 @@ export default class App extends Component {
                 onCreateWalletClick={() => { this.setState({ isCreateWalletLayerOpen: true }); }}
                 onOpenWalletClick={() => { this.setState({ isLoadWalletLayerOpen: true }); }}
                 onReceiveClick={this._onWalletReceiveClick}
+                onLogOutClick={() => { this.setState({ accountWif: null }); }}
+                onFundsSent={this._onWalletFundsSent}
               />,
               <NotificationsWidget key='notifications' />,
             ]}

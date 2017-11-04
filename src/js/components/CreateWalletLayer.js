@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import AutoForm from 'react-auto-form';
 
+import styled from 'styled-components';
 import { Layer, Box, Heading, Button, Paragraph, Text, TextInput, Anchor } from 'grommet';
 import { Close, FormLock } from 'grommet-icons';
-import styled from 'styled-components';
 import { Field } from './';
 
 const ErrorMsg = styled(Paragraph)`
@@ -59,7 +59,7 @@ class CreateWalletLayer extends Component {
                   {errorMsg}
                 </ErrorMsg> : null}
                 <Field label='Passphrase'>
-                  <TextInput name='passphrase' type='password' plain={true} />
+                  <TextInput name='passphrase' type='password' plain={true} autoFocus={true} />
                 </Field>
                 <Field label='Passphrase (again)'>
                   <TextInput name='passphraseConfirm' type='password' plain={true} />

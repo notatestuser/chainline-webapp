@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
+import styled from 'styled-components';
 import { Layer, Box, Heading, Text, Button } from 'grommet';
 import { Validate, Alert } from 'grommet-icons';
-import styled from 'styled-components';
 
 const AUTO_CLOSE_TIME = 1500;
 

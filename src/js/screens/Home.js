@@ -32,9 +32,13 @@ export default class Home extends Component {
           </WidthCappedContainer>
         </Box>
       </Box>,
-      <Box key='content-1' background={{ dark: true, image: '#69B8D6' }}>
+      // <Box key='content-1' background={{ dark: true, image: '#69B8D6' }}>
+      //   <Grid background={{ dark: true }}>
+      //     <Text>
+      //   </Grid>
+      // </Box>,
+      <Box key='content-2'>
         <Box
-          background={{ dark: true }}
           direction='row'
           align='center'
           pad='large'
@@ -47,7 +51,7 @@ export default class Home extends Component {
             <Paragraph>
               Lorem ipsum whatever dorem lorem ipsum whatever dorem lorem ipsum whatever dorem lorem
               ipsum whatever dorem lorem ipsum whatever dorem lorem ipsum whatever dorem lorem ipsum
-              whatever dorem lorem ipsum whatever dorem lorem ipsum whatever dorem lorem ipsum whatever
+              whatever dorem lorem ipsum whatever dorem lorem ipsum whatever dorem lorem ipsum what
               dorem lorem ipsum whatever dorem lorem
             </Paragraph>
 
