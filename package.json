@@ -16,7 +16,7 @@
     "dist": "cross-env NODE_ENV=production grommet pack"
   },
   "dependencies": {
-    "chainline-js": "git+https://github.com/notatestuser/chainline-js.git",
+    "chainline-js": "git+https://github.com/notatestuser/chainline-js.git#master-built",
     "copy-to-clipboard": "^3.0.8",
     "grommet": ">= 2.0.0-alpha.0 < 3.0.0",
     "grommet-icons": "^0.10.1",
