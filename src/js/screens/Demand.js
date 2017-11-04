@@ -2,10 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import AutoForm from 'react-auto-form';
 import pick from 'pedantic-pick';
-import styled from 'styled-components';
+
+import { openDemand } from 'chainline-js';
+import RIPEMD160 from 'ripemd160';
 
 import { Box, Heading, Button, TextInput, RadioButton } from 'grommet';
 import { WidthCappedContainer, Field, NotifyLayer } from '../components';
+
+import { string2hex } from '../utils';
 
 const CITIES = ['Shanghai', 'London', 'Geneva'];
 const MAX_INFO_LEN = 128;
@@ -32,12 +36,29 @@ export default class DemandPage extends Component {
     try {
       const picked = pick(data,
         '!nes::infoText', '!nes::itemValue', '!nes::pickUpCity', '!nes::dropOffCity', '!nes::expiry', '!nes::reputation');
+      const repRequired = Number.parseInt(picked.reputation, 10);
       const itemValue = Number.parseFloat(picked.itemValue);
-      const reputation = Number.parseInt(picked.reputation, 10);
-      if (Number.isNaN(itemValue) || Number.isNaN(reputation)) {
+      if (Number.isNaN(itemValue) || Number.isNaN(repRequired)) {
         throw new Error('The item value and minimum reputation must be valid numbers');
       }
-      // todo: build invoke tx
+      const { selectedItemSize } = this.state;
+      openDemand('TestNet', this.props.accountWif, {
+        // expiry: BigInteger
+        // expiry: Number.parseInt(new Date(picked.expiry).getTime() / 1000, 10),
+        expiry: 1,
+        // repRequired: BigInteger
+        repRequired,
+        // itemSize: BigInteger
+        itemSize: selectedItemSize === 'S' ? 1 : (selectedItemSize === 'M' ? 2 : 3),  // eslint-disable-line
+        // itemValue: BigInteger
+        itemValue, // todo: convert to gas
+        // infoBlob: ByteArray
+        infoBlob: string2hex(picked.infoText, 128),
+        // pickUpCityHash: Hash160
+        pickUpCityHash: (new RIPEMD160()).update(picked.pickUpCity).digest('hex'),
+        // dropOffCityHash: Hash160
+        dropOffCityHash: (new RIPEMD160()).update(picked.dropOffCity).digest('hex'),
+      });
     } catch (pickErr) {
       const { message } = pickErr;
       const errorMsg = `${message.charAt(0).toUpperCase()}${message.substr(1)}`;
