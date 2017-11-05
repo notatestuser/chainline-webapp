@@ -32,6 +32,10 @@ const Boldish = styled.span`
 `;
 const KeyReadout = Boldish.withComponent(Paragraph);
 
+const ReceiveParagraph = styled(Paragraph)`
+  margin-top: 0;
+`;
+
 const history = createBrowserHistory();
 
 const THEMES = {
@@ -72,11 +76,11 @@ const MSG_WALLET_CREATED = (caller, encryptedWif, copiedToClipboard) => [
 ];
 
 const MSG_RECEIVE = accountAddress => [
-  <Paragraph key='MSG_RECEIVE-0' size='full' margin={{ bottom: 'small' }}>
+  <ReceiveParagraph key='MSG_RECEIVE-0' size='full' margin={{ bottom: 'small' }}>
     You may use this address to add funds to your wallet.
     Only GAS transactions are supported at this time; please do not send any other asset.
-  </Paragraph>,
-  <Box key='MSG_RECEIVE-1' margin={{ vertical: 'small' }}>
+  </ReceiveParagraph>,
+  <Box key='MSG_RECEIVE-1' margin={{ bottom: 'small' }}>
     <KeyReadout size='full'>
       {accountAddress}
     </KeyReadout>
