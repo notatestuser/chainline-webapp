@@ -51,7 +51,7 @@ class WalletWidget extends PureComponent {
       });
       if (is.number(this.state.gasPriceUSD)) return;
       console.debug('Updating GAS/USD price…');
-      const gasPriceUSD = await getPrice('GAS');
+      const gasPriceUSD = await getPrice('GAS', 'USD');
       this.setState({ gasPriceUSD });
     };
     if (this._timer) clearInterval(this._timer);

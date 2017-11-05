@@ -129,7 +129,7 @@ export default class Home extends Component {
                 with someone travelling before your demand&apos;s expiry date.
               </BlurbParagraph>
               <Box margin={{ top: 'small' }}>
-                <RoutedAnchor primary={true} path='/demand/create' label='Create a Demand' />
+                <RoutedAnchor primary={true} path='/demand/create' label='Open a demand' />
               </Box>
             </Box>
 
@@ -146,7 +146,7 @@ export default class Home extends Component {
                 Check back periodically to check your status.
               </BlurbParagraph>
               <Box margin={{ top: 'small' }}>
-                <RoutedAnchor primary={true} path='/travel/create' label='Register Travel' />
+                <RoutedAnchor primary={true} path='/travel/create' label='Register your travel' />
               </Box>
             </Box>
           </WidthCappedContainer>
