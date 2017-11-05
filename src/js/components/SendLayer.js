@@ -26,7 +26,7 @@ class SendLayer extends Component {
     const { sending } = this.state;
 
     return (<Layer align='top' onEsc={onClose} size='medium'>
-      <Box align='end'>
+      <Box align='end' background={{ dark: false }}>
         <Button icon={<Close />} onClick={sending ? () => {} : onClose} />
       </Box>
       <Box direction='row' justify='center'>
