@@ -170,7 +170,7 @@ export default class DemandPage extends Component {
                   <Box margin='small' direction='row'>
                     <RadioButton
                       name='itemSize'
-                      label='Small items (jewellery, watches, souvenirs)'
+                      label='Small item (jewellery, watches, souvenirs)'
                       checked={this.state.selectedItemSize === 'S'}
                       onChange={() => { this.setState({ selectedItemSize: 'S' }); }}
                     />
@@ -178,7 +178,7 @@ export default class DemandPage extends Component {
                   <Box margin={{ horizontal: 'small' }} direction='row'>
                     <RadioButton
                       name='itemSize'
-                      label='Medium items (phones, tablets, small electronics)'
+                      label='Medium item (phones, tablets, small electronics)'
                       checked={this.state.selectedItemSize === 'M'}
                       onChange={() => { this.setState({ selectedItemSize: 'M' }); }}
                     />
@@ -186,7 +186,7 @@ export default class DemandPage extends Component {
                   <Box margin='small' direction='row'>
                     <RadioButton
                       name='itemSize'
-                      label='Large items (gift boxes, fashion items)'
+                      label='Large item (gift boxes, fashion items)'
                       checked={this.state.selectedItemSize === 'L'}
                       onChange={() => { this.setState({ selectedItemSize: 'L' }); }}
                     />

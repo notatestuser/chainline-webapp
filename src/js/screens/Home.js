@@ -112,7 +112,7 @@ export default class Home extends Component {
                 powered entirely by a smart contract.
               </BlurbParagraph>
               <BlurbParagraph>
-                Chain Line is a proof of concept app.
+                Chain Line is an experimental app.
               </BlurbParagraph>
             </Box>
 
