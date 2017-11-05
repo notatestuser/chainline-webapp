@@ -231,8 +231,12 @@ export default class App extends Component {
               <Route
                 exact={true}
                 path='/'
-                render={routeProps =>
-                  <HomePage {...routeProps} accountWif={this.state.accountWif} />}
+                render={routeProps => (
+                  <HomePage
+                    {...routeProps}
+                    accountWif={this.state.accountWif}
+                    responsiveState={responsiveState}
+                  />)}
               />
               <Route
                 exact={true}

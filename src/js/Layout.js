@@ -8,6 +8,7 @@ import { FormPrevious } from 'grommet-icons';
 import { WidthCappedContainer, VideoPlayer } from './components';
 
 const LOGO_SRC = '/img/chainline-logo.svg';
+const SLOGAN_SRC = '/img/chainline-slogan.svg';
 
 const LogoImage = styled.img`
   line-height: 0;
@@ -17,13 +18,18 @@ const LogoImage = styled.img`
   width: 100%;
 `;
 
-const HeroBox = styled(Box)`
-  min-height: 575px;
+const SloganImage = styled(LogoImage)`
+  margin: 0;
+  max-width: 675px;
 `;
 
 const HeroHeading = styled(Heading)`
   font-family: Nunito;
   font-weight: 700;
+`;
+
+const SubSloganHeading = styled(Heading)`
+  letter-spacing: 0.2px;
 `;
 
 const LogoRoutedAnchor = styled(RoutedAnchor)`
@@ -75,32 +81,28 @@ class Layout extends Component {
           </WidthCappedContainer>
         </Box>
 
-        {pathname === '/' ? <HeroBox
+        {pathname === '/' ? <Box
           pad={{ vertical: 'medium', horizontal: 'large' }}
         >
           {[
-            <Box
-              key='hero-0'
-            >
+            <Box key='hero-0'>
               <HeroHeading
                 level={2}
                 textAlign='center'
                 margin={{ vertical: 'medlarge', bottom: 'none' }}
                 size={responsiveState === 'wide' ? 'large' : 'medium'}
               >
-                <strong>The Internet of Couriers</strong>
+                <SloganImage src={SLOGAN_SRC} responsiveState={responsiveState} />
               </HeroHeading>
             </Box>,
-            <Box
-              key='hero-1'
-            >
-              <Heading level={3} textAlign='center'>
-                Chain Line gets anything to you using a smart contract.
-              </Heading>
-              <VideoPlayer margin={{ top: 'small', bottom: 'large' }} />
+            <Box key='hero-1'>
+              <SubSloganHeading level={3} textAlign='center' size={responsiveState === 'wide' ? 'medium' : 'small'}>
+                Chain Line gets anything to you, powered by the blockchain
+              </SubSloganHeading>
+              <VideoPlayer margin={{ top: 'medium', bottom: 'large' }} />
             </Box>,
           ]}
-        </HeroBox> : null}
+        </Box> : null}
 
         {pathname !== '/' ? <Box
           pad={{ vertical: 'medium', horizontal: 'large' }}
