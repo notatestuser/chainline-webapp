@@ -15,6 +15,7 @@ import chainline from './themes/chainline';
 import Layout from './Layout';
 import HomePage from './screens/Home';
 import DemandPage from './screens/Demand';
+import TravelPage from './screens/Travel';
 
 import WalletWorker from './workers/wallet.worker';
 
@@ -248,7 +249,12 @@ export default class App extends Component {
                 component={() =>
                   <DemandPage accountWif={this.state.accountWif} />}
               />
-              <Route exact={true} path='/new-travel' component={() => {}} />
+              <Route
+                exact={true}
+                path='/travel/create'
+                component={() =>
+                  <TravelPage accountWif={this.state.accountWif} />}
+              />
               <Route exact={true} path='/track' component={() => {}} />
             </Switch>
           </Layout>
