@@ -4,8 +4,8 @@ import AutoForm from 'react-auto-form';
 import pick from 'pedantic-pick';
 import numeral from 'numeral';
 
-import { Constants, getAccountFromWIFKey, getBalance, getPrice, openDemand } from 'chainline-js';
 import RIPEMD160 from 'ripemd160';
+import { Constants, getAccountFromWIFKey, getBalance, getPrice, openDemand } from 'chainline-js';
 
 import { Box, Heading, Button, TextInput, RadioButton } from 'grommet';
 import { WidthCappedContainer, Field, NotifyLayer } from '../components';
@@ -22,7 +22,7 @@ export default class DemandPage extends Component {
     dropOffCitySuggestions: [],
     selectedItemSize: 'S',
     infoCharsUsed: 0,
-    gasPriceUSD: null,
+    gasPriceUSD: 0,
     itemValueGAS: 0,
     requiredGAS: 0,
   }
@@ -59,7 +59,7 @@ export default class DemandPage extends Component {
     const { selectedItemSize, requiredGAS } = this.state;
     ev.preventDefault();
     try {
-      // pick out and validate form values
+      // pick out and validate form inputs
       const picked = pick(data,
         '!nes::infoText', '!nes::itemValue', '!nes::pickUpCity', '!nes::dropOffCity', '!nes::expiry', '!nes::reputation');
       const repRequired = Number.parseInt(picked.reputation, 10);
@@ -73,16 +73,14 @@ export default class DemandPage extends Component {
       // balance check
       const { address } = getAccountFromWIFKey(accountWif);
       const { GAS: { balance } } = await getBalance('TestNet', address);
-      const requiredFixed8 = requiredGAS * 100000000;
-      if (requiredFixed8 > balance) {
+      if (requiredGAS > balance) {
         throw new Error(`Insufficient funds. ${requiredGAS.toFixed(3)} GAS required (with fee)`);
       }
 
-      // invoke on the blockchain
+      // invoke contract on the blockchain
       openDemand('TestNet', this.props.accountWif, {
         // expiry: BigInteger
-        // expiry: Number.parseInt(new Date(picked.expiry).getTime() / 1000, 10),
-        expiry: 1,
+        expiry: Number.parseInt(new Date(picked.expiry).getTime() / 1000, 10),
         // repRequired: BigInteger
         repRequired,
         // itemSize: BigInteger
