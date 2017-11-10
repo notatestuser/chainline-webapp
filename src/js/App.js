@@ -12,6 +12,8 @@ import { getAccountFromWIFKey } from 'chainline-js';
 
 import chainline from './themes/chainline';
 
+import WalletProvider from './components/WalletProvider';
+
 import Layout from './Layout';
 import HomePage from './screens/Home';
 import DemandPage from './screens/Demand';
@@ -177,6 +179,7 @@ export default class App extends Component {
 
   render() {
     const {
+      accountWif,
       responsiveState,
       notifyMessage,
       notifySuccess,
@@ -194,70 +197,65 @@ export default class App extends Component {
             <div />
           </Responsive>
 
-          {/* Simple notifications */}
-          {notifyMessage ? <NotifyLayer
-            size='small'
-            message={notifyMessage}
-            isSuccess={notifySuccess}
-            autoClose={notifyAutoClose}
-            onClose={() => { this.setState({ notifyMessage: null, notifyAutoClose: false }); }}
-          /> : null}
+          <WalletProvider wif={accountWif} net='TestNet'>
+            {/* Simple notifications */}
+            {notifyMessage ? <NotifyLayer
+              size='small'
+              message={notifyMessage}
+              isSuccess={notifySuccess}
+              autoClose={notifyAutoClose}
+              onClose={() => { this.setState({ notifyMessage: null, notifyAutoClose: false }); }}
+            /> : null}
 
-          {/* Layers (popups) */}
-          {isCreateWalletLayerOpen &&
-            <CreateWalletLayer
-              onClose={() => this.setState({ isCreateWalletLayerOpen: false })}
-              onCreate={this._onWalletCreate}
-            />}
-          {isLoadWalletLayerOpen &&
-            <LoadWalletLayer
-              onClose={() => this.setState({ isLoadWalletLayerOpen: false })}
-              onLogin={this._onWalletLogin}
-            />}
+            {/* Layers (popups) */}
+            {isCreateWalletLayerOpen &&
+              <CreateWalletLayer
+                onClose={() => this.setState({ isCreateWalletLayerOpen: false })}
+                onCreate={this._onWalletCreate}
+              />}
+            {isLoadWalletLayerOpen &&
+              <LoadWalletLayer
+                onClose={() => this.setState({ isLoadWalletLayerOpen: false })}
+                onLogin={this._onWalletLogin}
+              />}
 
-          {/* Page layout and routes */}
-          <Layout
-            responsiveState={responsiveState}
-            headerWidgets={[
-              <WalletWidget
-                key='wallet'
-                responsiveState={responsiveState}
-                accountWif={this.state.accountWif}
-                onCreateWalletClick={() => { this.setState({ isCreateWalletLayerOpen: true }); }}
-                onOpenWalletClick={() => { this.setState({ isLoadWalletLayerOpen: true }); }}
-                onReceiveClick={this._onWalletReceiveClick}
-                onLogOutClick={() => { this.setState({ accountWif: null }); }}
-                onFundsSent={this._onWalletFundsSent}
-              />,
-              <NotificationsWidget key='notifications' />,
-            ]}
-          >
-            <Switch>
-              <Route
-                exact={true}
-                path='/'
-                render={routeProps => (
-                  <HomePage
-                    {...routeProps}
-                    accountWif={this.state.accountWif}
-                    responsiveState={responsiveState}
-                  />)}
-              />
-              <Route
-                exact={true}
-                path='/demand/create'
-                component={() =>
-                  <DemandPage accountWif={this.state.accountWif} />}
-              />
-              <Route
-                exact={true}
-                path='/travel/create'
-                component={() =>
-                  <TravelPage accountWif={this.state.accountWif} />}
-              />
-              <Route exact={true} path='/track' component={() => {}} />
-            </Switch>
-          </Layout>
+            {/* Page layout and routes */}
+            <Layout
+              responsiveState={responsiveState}
+              headerWidgets={[
+                <WalletWidget
+                  key='wallet'
+                  responsiveState={responsiveState}
+                  onCreateWalletClick={() => { this.setState({ isCreateWalletLayerOpen: true }); }}
+                  onOpenWalletClick={() => { this.setState({ isLoadWalletLayerOpen: true }); }}
+                  onReceiveClick={this._onWalletReceiveClick}
+                  onLogOutClick={() => { this.setState({ accountWif: null }); }}
+                  onFundsSent={this._onWalletFundsSent}
+                />,
+                <NotificationsWidget key='notifications' />,
+              ]}
+            >
+              <Switch>
+                <Route
+                  exact={true}
+                  path='/'
+                  render={routeProps => (
+                    <HomePage {...routeProps} responsiveState={responsiveState} />)}
+                />
+                <Route
+                  exact={true}
+                  path='/demand/create'
+                  component={DemandPage}
+                />
+                <Route
+                  exact={true}
+                  path='/travel/create'
+                  component={TravelPage}
+                />
+                <Route exact={true} path='/track' component={() => {}} />
+              </Switch>
+            </Layout>
+          </WalletProvider>
         </Grommet>
       </Router>
     );

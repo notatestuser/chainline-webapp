@@ -1,21 +1,21 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import AutoForm from 'react-auto-form';
 import pick from 'pedantic-pick';
 import numeral from 'numeral';
 
 import RIPEMD160 from 'ripemd160';
-import { Constants, getAccountFromWIFKey, getBalance, getPrice, openDemand } from 'chainline-js';
+import { Constants, getBalance, getPrice, openDemand } from 'chainline-js';
 
 import { Box, Heading, Button, TextInput, RadioButton } from 'grommet';
 import { WidthCappedContainer, Field, NotifyLayer } from '../components';
+import withWallet from '../helpers/withWallet';
 
 import { string2hex } from '../utils';
 
 const CITIES = ['Shanghai', 'London', 'Geneva'];
 const MAX_INFO_LEN = 128;
 
-export default class DemandPage extends Component {
+class DemandPage extends Component {
   state = {
     loading: false,
     pickUpCitySuggestions: [],
@@ -55,7 +55,7 @@ export default class DemandPage extends Component {
   }
 
   _onSubmit = async (ev, data) => {
-    const { accountWif } = this.props;
+    const { wallet: { wif: accountWif, address } } = this.props;
     const { selectedItemSize, requiredGAS } = this.state;
     ev.preventDefault();
     try {
@@ -71,14 +71,13 @@ export default class DemandPage extends Component {
       this.setState({ loading: true });
 
       // balance check
-      const { address } = getAccountFromWIFKey(accountWif);
       const { GAS: { balance } } = await getBalance('TestNet', address);
       if (requiredGAS > balance) {
         throw new Error(`Insufficient funds. ${requiredGAS.toFixed(3)} GAS required (with fee)`);
       }
 
       // invoke contract on the blockchain
-      openDemand('TestNet', this.props.accountWif, {
+      openDemand('TestNet', accountWif, {
         // expiry: BigInteger
         expiry: Number.parseInt(new Date(picked.expiry).getTime() / 1000, 10),
         // repRequired: BigInteger
@@ -105,7 +104,7 @@ export default class DemandPage extends Component {
   }
 
   render() {
-    const { accountWif } = this.props;
+    const { wallet: { wif: accountWif } } = this.props;
     const {
       loading,
       pickUpCitySuggestions,
@@ -248,6 +247,4 @@ export default class DemandPage extends Component {
   }
 }
 
-DemandPage.contextTypes = {
-  router: PropTypes.any,
-};
+export default withWallet(DemandPage);

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import AutoForm from 'react-auto-form';
 import pick from 'pedantic-pick';
 
@@ -9,6 +8,7 @@ import { Constants, getAccountFromWIFKey, getBalance, getPrice, openTravel } fro
 import styled from 'styled-components';
 import { Box, Heading, Paragraph, Button, TextInput, RadioButton } from 'grommet';
 import { WidthCappedContainer, Field, NotifyLayer } from '../components';
+import withWallet from '../helpers/withWallet';
 
 const CITIES = ['Shanghai', 'London', 'Geneva'];
 
@@ -17,7 +17,7 @@ const IntroParagraph = styled(Paragraph)`
   margin-bottom: 30px;
 `;
 
-export default class TravelPage extends Component {
+class TravelPage extends Component {
   state = {
     pickUpCitySuggestions: [],
     dropOffCitySuggestions: [],
@@ -38,7 +38,7 @@ export default class TravelPage extends Component {
   }
 
   _onSubmit = async (ev, data) => {
-    const { accountWif } = this.props;
+    const { wallet: { wif: accountWif } } = this.props;
     const { selectedItemSize, requiredGAS } = this.state;
     ev.preventDefault();
     try {
@@ -60,7 +60,7 @@ export default class TravelPage extends Component {
       }
 
       // invoke contract on the blockchain
-      openTravel('TestNet', this.props.accountWif, {
+      openTravel('TestNet', accountWif, {
         // expiry: BigInteger
         expiry: Number.parseInt(new Date(picked.expiry).getTime() / 1000, 10),
         // repRequired: BigInteger
@@ -83,7 +83,7 @@ export default class TravelPage extends Component {
   }
 
   render() {
-    const { accountWif } = this.props;
+    const { wallet: { wif: accountWif } } = this.props;
     if (!accountWif) {
       return (<Box key='content' direction='column'>
         <Box
@@ -218,6 +218,4 @@ export default class TravelPage extends Component {
   }
 }
 
-TravelPage.contextTypes = {
-  router: PropTypes.any,
-};
+export default withWallet(TravelPage);
