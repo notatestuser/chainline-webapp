@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import AutoForm from 'react-auto-form';
 
+import styled from 'styled-components';
 import { Layer, Box, Heading, Button, Paragraph, TextInput } from 'grommet';
 import { Close } from 'grommet-icons';
 import { Field } from './';
+
+const WarningSpan = styled.span` color: red; `;
 
 class SendLayer extends Component {
   state = {
@@ -34,11 +37,12 @@ class SendLayer extends Component {
           <AutoForm onSubmit={this._onSubmit}>
             <Box>
               <Heading level={2} margin='none'>
-                Send funds
+                Send Funds
               </Heading>
               <Box margin={{ vertical: 'medium', horizontal: 'none', bottom: 'large' }}>
                 <Paragraph margin={{ bottom: 'medium' }}>
-                  Enter the destination address and the amount to send.
+                  Enter the destination address and the amount to send.{' '}
+                  <WarningSpan>Funds will arrive on the TestNet.</WarningSpan>
                 </Paragraph>
                 <Field label='Address'>
                   <TextInput name='address' placeholder='e.g. AZjJrtgADzhYBen5QzXSarqb2LEkpmVjbW' plain={true} autoFocus={true} />

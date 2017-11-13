@@ -20,7 +20,7 @@ const LogoImage = styled.img`
 
 const SloganImage = styled(LogoImage)`
   margin: 0;
-  max-width: 675px;
+  max-width: 715px;
 `;
 
 const HeroHeading = styled(Heading)`
@@ -30,6 +30,7 @@ const HeroHeading = styled(Heading)`
 
 const SubSloganHeading = styled(Heading)`
   letter-spacing: 0.2px;
+  margin-bottom: 38px;
 `;
 
 const LogoRoutedAnchor = styled(RoutedAnchor)`
@@ -38,13 +39,13 @@ const LogoRoutedAnchor = styled(RoutedAnchor)`
   width: fit-content;
 `;
 
-const GoBackRoutedAnchor = styled(RoutedAnchor)`
-  margin-left: -5px;
-`;
+const GoBackRoutedAnchor = styled(RoutedAnchor)` margin-left: -5px; `;
+
+const Boldish = styled.span` font-weight: 500; `;
 
 class Layout extends Component {
   static contextTypes = {
-    router: PropTypes.func,
+    router: PropTypes.object,
   }
 
   render() {
@@ -97,7 +98,7 @@ class Layout extends Component {
             </Box>,
             <Box key='hero-1'>
               <SubSloganHeading level={3} textAlign='center' size={responsiveState === 'wide' ? 'medium' : 'small'}>
-                Chain Line gets anything to you, powered by the blockchain
+                Chain Line gets <Boldish>anything</Boldish> to you, powered by the blockchain
               </SubSloganHeading>
               <VideoPlayer margin={{ top: 'medium', bottom: 'large' }} />
             </Box>,

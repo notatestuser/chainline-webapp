@@ -33,11 +33,14 @@ const Boldish = styled.span`
   font-weight: 500;
   margin-bottom: 0;
 `;
-const KeyReadout = Boldish.withComponent(Paragraph);
-
-const ReceiveParagraph = styled(Paragraph)`
-  margin-top: 0;
+const KeyReadout = styled(Paragraph)`
+  font-size: 115%;
+  font-weight: 500;
+  line-height: 0px;
+  margin-bottom: 15px;
 `;
+const ReceiveParagraph = styled(Paragraph)` margin-top: 0; `;
+const WarningMsg = styled(Paragraph)` color: red; `;
 
 const history = createBrowserHistory();
 
@@ -52,7 +55,7 @@ const MSG_WALLET_CREATED = (caller, encryptedWif, copiedToClipboard) => [
   <Paragraph key='MSG_WALLET_CREATED-0' size='full' margin='none'>
     Your Wallet Key (WIF) is ready. Be sure to copy this somewhere safe.
   </Paragraph>,
-  <Box key='MSG_WALLET_CREATED-1' margin={{ vertical: 'small', bottom: 'medium' }}>
+  <Box key='MSG_WALLET_CREATED-1' margin={{ vertical: 'small' }}>
     <KeyReadout size='full'>
       {encryptedWif}
     </KeyReadout>
@@ -83,9 +86,13 @@ const MSG_RECEIVE = accountAddress => [
     You may use this address to add funds to your wallet.
     Only GAS transactions are supported at this time; please do not send any other asset.
   </ReceiveParagraph>,
-  <Box key='MSG_RECEIVE-1' margin={{ bottom: 'small' }}>
+  <WarningMsg key='MSG_RECEIVE-1' size='full'>
+    Important: You are currently using the TestNet.<br />
+    Please do not send assets on the MainNet to this address at this time.
+  </WarningMsg>,
+  <Box key='MSG_RECEIVE-2' margin={{ bottom: 'small' }}>
     <KeyReadout size='full'>
-      {accountAddress}
+      ➔&nbsp; {accountAddress}
     </KeyReadout>
   </Box>,
 ];
@@ -99,7 +106,7 @@ const MSG_FUNDS_SENT = txHash => [
   </Anchor>,
 ];
 
-const MSG_FUNDS_SEND_ERROR = 'Failed to send funds. Is that part of your balance reserved?';
+const MSG_FUNDS_SEND_ERROR = 'Failed to send funds. Are those funds available?';
 
 export default class App extends Component {
   state = {

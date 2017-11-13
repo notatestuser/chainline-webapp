@@ -124,7 +124,7 @@ export default {
         large: { size: '52px', height: 1.125, maxWidth: 'auto' },
       },
       3: {
-        medium: { size: '24px', height: 1.333, maxWidth: 'auto' },
+        medium: { size: '23px', height: 1.333, maxWidth: 'auto' },
         small: { size: '18px', height: 1.333, maxWidth: 'auto' },
         large: { size: '36px', height: 1.23, maxWidth: 'auto' },
       },

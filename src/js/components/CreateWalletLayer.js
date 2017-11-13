@@ -6,13 +6,8 @@ import { Layer, Box, Heading, Button, Paragraph, Text, TextInput, Anchor } from 
 import { Close, FormLock } from 'grommet-icons';
 import { Field } from './';
 
-const ErrorMsg = styled(Paragraph)`
-  color: red;
-`;
-
-const Emphasis = styled.span`
-  font-weight: 500;
-`;
+const ErrorMsg = styled(Paragraph)` color: red; `;
+const Emphasis = styled.span` font-weight: 500; `;
 
 class CreateWalletLayer extends Component {
   state = {

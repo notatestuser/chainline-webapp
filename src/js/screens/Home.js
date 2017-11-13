@@ -17,17 +17,17 @@ export default class Home extends Component {
   state = {
     hasStats: false,
     demands: 0,
-    cities: 0,
+    routes: 0,
     funds: 0,
   }
 
   async componentWillMount() {
     try {
-      const { demands, cities, funds } = await getStats('TestNet');
+      const { demands, routes, funds } = await getStats('TestNet');
       this.setState({
         hasStats: true,
         demands: Number.isNaN(parseInt(demands, 10)) ? 0 : demands,
-        cities: Number.isNaN(parseInt(cities, 10)) ? 0 : cities,
+        routes: Number.isNaN(parseInt(routes, 10)) ? 0 : routes,
         funds: Number.isNaN(parseInt(funds, 10)) ? 0 : funds,
       });
     } catch (e) {}  // eslint-disable-line
@@ -35,7 +35,7 @@ export default class Home extends Component {
 
   render() {
     const { responsiveState } = this.props;
-    const { hasStats, demands, cities, funds } = this.state;
+    const { hasStats, demands, routes, funds } = this.state;
 
     return ([
       <Box key='content-0' direction='column'>
@@ -74,10 +74,10 @@ export default class Home extends Component {
           </Box>
           <Box basis='1/3' justify='center' align='center'>
             <Heading level={2} size='large' margin={{ bottom: 'medium' }}>
-              {cities}
+              {routes}
             </Heading>
             <Heading level={3} size={responsiveState === 'wide' ? 'large' : 'medium'} margin='none'>
-              Cities
+              Routes
             </Heading>
           </Box>
           <Box basis='1/3' justify='center' align='center'>
@@ -108,11 +108,10 @@ export default class Home extends Component {
               </BlurbParagraph>
               <BlurbParagraph>
                 Behind Chain Line is a bold vision: to introduce a modern peer-to-peer courier
-                platform to address the needs of shipping companies and individuals alike,
-                powered entirely by a smart contract.
+                platform to address the needs of shipping companies and individuals alike.
               </BlurbParagraph>
               <BlurbParagraph>
-                Chain Line is an experimental app.
+                Chain Line is a functional demo powered entirely by a blockchain smart contract.
               </BlurbParagraph>
             </Box>
 
@@ -129,7 +128,7 @@ export default class Home extends Component {
                 with someone travelling before your demand&apos;s expiry date.
               </BlurbParagraph>
               <Box margin={{ top: 'small' }}>
-                <RoutedAnchor primary={true} path='/demand/create' label='Open a demand' />
+                <RoutedAnchor primary={true} path='/demand/create' label='Demand a shipment' />
               </Box>
             </Box>
 
