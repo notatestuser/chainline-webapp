@@ -3,28 +3,51 @@ import AutoForm from 'react-auto-form';
 import pick from 'pedantic-pick';
 import numeral from 'numeral';
 
-import RIPEMD160 from 'ripemd160';
-import { Constants, getBalance, getPrice, openDemand } from 'chainline-js';
+import styled from 'styled-components';
+import { Box, Heading, Paragraph, Anchor, Button, TextInput, RadioButton } from 'grommet';
+import { CircleInformation } from 'grommet-icons';
 
-import { Box, Heading, Button, TextInput, RadioButton } from 'grommet';
+import { Constants, getBalance, getPrice, openDemand } from 'chainline-js';
+import { string2hex, calculateRealGasConsumption, formatGasConsumption } from '../utils';
 import { WidthCappedContainer, Field, NotifyLayer } from '../components';
 import withWallet from '../helpers/withWallet';
 
-import { string2hex } from '../utils';
-
 const CITIES = ['Shanghai', 'London', 'Geneva'];
 const MAX_INFO_LEN = 128;
+const MIN_ITEM_VALUE_GAS = 0.5;
+
+const NoticeParagraph = styled(Paragraph)` margin-top: 0; `;
+const CostReadout = styled(Paragraph)` font-weight: 500; `;
+
+export const MSG_GAS_CONSUMED = gasConsumed => [
+  <NoticeParagraph key='MSG_GAS_CONSUMED-0' size='full' margin={{ bottom: 'small' }}>
+    Using a smart contract is{' '}
+    <Anchor href='http://docs.neo.org/en-us/sc/systemfees.html' target='_blank' rel='noopener noreferrer'>
+      not always free
+    </Anchor>. There is often a cost associated with{' '}
+    &ldquo;invoking&rdquo; a contract to deter spammers and secure the system.
+  </NoticeParagraph>,
+  <CostReadout key='MSG_GAS_CONSUMED-1' size='full'>
+    System fees payable now: {formatGasConsumption(gasConsumed)} GAS
+  </CostReadout>,
+  <NoticeParagraph key='MSG_GAS_CONSUMED-2' size='full' margin='none'>
+    If you agree to pay these fees{' '}
+    click &ldquo;Okay&rdquo; and then &ldquo;Confirm Payment&rdquo;.
+  </NoticeParagraph>,
+];
 
 class DemandPage extends Component {
   state = {
     loading: false,
+    showingGasConsumptionNotice: false,
     pickUpCitySuggestions: [],
     dropOffCitySuggestions: [],
     selectedItemSize: 'S',
     infoCharsUsed: 0,
     gasPriceUSD: 0,
     itemValueGAS: 0,
-    requiredGAS: 0,
+    requiredGAS: 0, // item value + fee
+    gasConsumed: 0, // invocation cost
   }
 
   componentDidMount() {
@@ -39,24 +62,27 @@ class DemandPage extends Component {
   }
 
   _onChange = (ev, name, value) => {
+    const gasConsumed = 0; // reset, require local invoke again
     if (name === 'infoText') {
-      this.setState({ infoCharsUsed: value.length });
+      this.setState({ infoCharsUsed: value.length, gasConsumed });
     } else if (name === 'itemValue') {
       const { gasPriceUSD } = this.state;
       const itemValueUSD = parseFloat(value);
       if (Number.isNaN(itemValueUSD) || itemValueUSD === 0 || !gasPriceUSD) {
-        this.setState({ itemValueGAS: 0 });
+        this.setState({ itemValueGAS: 0, gasConsumed });
       } else {
         const itemValueGAS = itemValueUSD / gasPriceUSD;
         const requiredGAS = Constants.FEE_DEMAND_REWARD_GAS + itemValueGAS;
-        this.setState({ itemValueGAS, requiredGAS });
+        this.setState({ itemValueGAS, requiredGAS, gasConsumed });
       }
+    } else {
+      this.setState({ gasConsumed });
     }
   }
 
   _onSubmit = async (ev, data) => {
-    const { wallet: { wif: accountWif, address } } = this.props;
-    const { selectedItemSize, requiredGAS } = this.state;
+    const { wallet: { wif: accountWif, address, net } } = this.props;
+    const { selectedItemSize, itemValueGAS, requiredGAS } = this.state;
     ev.preventDefault();
     try {
       // pick out and validate form inputs
@@ -70,29 +96,44 @@ class DemandPage extends Component {
 
       this.setState({ loading: true });
 
-      // balance check
-      const { GAS: { balance } } = await getBalance('TestNet', address);
+      // live balance check
+      const { GAS: { balance } } = await getBalance(net, address);
       if (requiredGAS > balance) {
         throw new Error(`Insufficient funds. ${requiredGAS.toFixed(3)} GAS required (with fee)`);
       }
 
       // invoke contract on the blockchain
-      openDemand('TestNet', accountWif, {
+      const { result, gasConsumed, success } = await openDemand(net, accountWif, {
         // expiry: BigInteger
         expiry: Number.parseInt(new Date(picked.expiry).getTime() / 1000, 10),
         // repRequired: BigInteger
         repRequired,
         // itemSize: BigInteger
         itemSize: selectedItemSize === 'S' ? 1 : (selectedItemSize === 'M' ? 2 : 3),  // eslint-disable-line
-        // itemValue: BigInteger
-        itemValue,
+        // itemValue: number (converted to a fixed8 BigInteger in the library)
+        itemValue: itemValueGAS,
         // infoBlob: ByteArray
         infoBlob: string2hex(picked.infoText, 128),
-        // pickUpCityHash: Hash160
-        pickUpCityHash: (new RIPEMD160()).update(picked.pickUpCity).digest('hex'),
-        // dropOffCityHash: Hash160
-        dropOffCityHash: (new RIPEMD160()).update(picked.dropOffCity).digest('hex'),
+        // pickUpCity: String (hashed downstream)
+        pickUpCity: picked.pickUpCity,
+        // dropOffCity: String
+        dropOffCity: picked.dropOffCity,
       });
+
+      if (!success) {
+        throw new Error('Non-success return value');
+      }
+
+      if (result && !this.state.gasConsumed) {
+        const realGasConsumption = calculateRealGasConsumption(gasConsumed);
+        this.setState({
+          gasConsumed: realGasConsumption,
+          notifyMessage: MSG_GAS_CONSUMED(realGasConsumption),
+          showingGasConsumptionNotice: true,
+        });
+      } else {
+        throw new Error('Contract invocation failed');
+      }
     } catch (pickErr) {
       const { message } = pickErr;
       let errorMsg = 'Unknown error';
@@ -107,11 +148,15 @@ class DemandPage extends Component {
     const { wallet: { wif: accountWif } } = this.props;
     const {
       loading,
+      showingGasConsumptionNotice,
       pickUpCitySuggestions,
       dropOffCitySuggestions,
       notifyMessage,
       infoCharsUsed,
       itemValueGAS,
+      requiredGAS,
+      gasPriceUSD,
+      gasConsumed,
     } = this.state;
 
     if (!accountWif) {
@@ -123,17 +168,20 @@ class DemandPage extends Component {
         >
           <WidthCappedContainer>
             <Heading level={2} margin={{ top: 'none' }}>
-              You must be logged in to do this!
+              You must log in to proceed.
             </Heading>
           </WidthCappedContainer>
         </Box>
       </Box>);
     }
 
-    const twoDays = 172800000; // in milliseconds
-    const nowDatePlusTwoDays = Date.now() + twoDays;
+    const nowDatePlusTwoDays = Date.now() + 172800000; // 2 days in ms
     const defaultExpiryDate = new Date(nowDatePlusTwoDays).toISOString().split('T')[0];
     const timezoneAbbr = new Date().toString().match(/\(([A-Za-z\s].*)\)/)[1];
+    const totalPaymentGAS = formatGasConsumption(requiredGAS + gasConsumed);
+    const submitLabel = gasConsumed && !showingGasConsumptionNotice ?
+      `Confirm Payment: ${totalPaymentGAS} GAS` :
+      'Register Travel';
 
     return ([
       /* Simple notifications */
@@ -141,7 +189,14 @@ class DemandPage extends Component {
         key='demand-notify'
         size='medium'
         message={notifyMessage}
-        onClose={() => { this.setState({ notifyMessage: null }); }}
+        customIcon={showingGasConsumptionNotice ? <CircleInformation size='large' /> : null}
+        onClose={() => {
+          this.setState({
+            loading: false,
+            notifyMessage: null,
+            showingGasConsumptionNotice: false,
+          });
+        }}
       /> : null,
 
       /* Main form */
@@ -155,13 +210,13 @@ class DemandPage extends Component {
             <AutoForm onChange={this._onChange} onSubmit={this._onSubmit} trimOnSubmit={true}>
               <Box>
                 <Heading level={2} margin={{ top: 'none', bottom: 'medlarge' }}>
-                  Open a new demand
+                  Demand a shipment
                 </Heading>
                 <Field label='Product and contact information' help={`${MAX_INFO_LEN - infoCharsUsed} letters left`}>
                   <TextInput name='infoText' placeholder='Enter the product name, collection instructions or pastebin link. You must include your contact details.' maxLength={`${MAX_INFO_LEN}`} plain={true} />
                 </Field>
                 <Field label='Item value (in US Dollars)' help={itemValueGAS ? `${numeral(itemValueGAS).format('0,0.000')} GAS + fee: ${Constants.FEE_DEMAND_REWARD_GAS} GAS` : ''}>
-                  <TextInput name='itemValue' type='number' placeholder='Research the market value of the item to make this as accurate as possible. If in doubt, specify more.' plain={true} />
+                  <TextInput name='itemValue' type='number' min={(gasPriceUSD * MIN_ITEM_VALUE_GAS).toFixed(2)} step='0.01' placeholder='Research the market value of the item to make this as accurate as possible. If in doubt, specify more.' plain={true} />
                 </Field>
                 <Field label='Item size'>
                   <Box margin='small' direction='row'>
@@ -235,7 +290,7 @@ class DemandPage extends Component {
                   <Button
                     primary={true}
                     type={loading ? 'disabled' : 'submit'}
-                    label={loading ? 'Please wait…' : 'Open Demand'}
+                    label={loading ? 'Please wait…' : submitLabel}
                   />
                 </Box>
               </Box>

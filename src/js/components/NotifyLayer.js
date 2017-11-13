@@ -6,9 +6,7 @@ import { Validate, Alert } from 'grommet-icons';
 
 const AUTO_CLOSE_TIME = 1500;
 
-const Buttons = styled(Box)`
-  margin-top: 30px;
-`;
+const Buttons = styled(Box)` margin-top: 30px; `;
 
 class NotifyLayer extends Component {
   componentDidMount() {
@@ -19,15 +17,15 @@ class NotifyLayer extends Component {
   }
 
   render() {
-    const { message, isSuccess, autoClose, onClose, size = 'medium' } = this.props;
+    const { message, isSuccess, customIcon, autoClose, onClose, size = 'medium' } = this.props;
     if (!message) return null;
     return (<Layer align='top' onEsc={onClose} size={size}>
       <Box pad={{ horizontal: 'medium', top: 'medium' }}>
         <Heading level={2} margin='medium'>
-          {isSuccess ?
+          {customIcon || (isSuccess ?
             <Validate size='large' /> :
             <Alert size='large' />
-          }&nbsp;
+          )}&nbsp;
         </Heading>
         <Box margin={{ horizontal: 'none', bottom: autoClose ? 'large' : 'none' }}>
           <Text>

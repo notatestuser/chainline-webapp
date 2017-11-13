@@ -45,6 +45,7 @@ class WalletProvider extends Component {
 
   getChildContext() {
     const { wif, balance, reserved, reputation } = this.state;
+    const { net } = this.props;
     let address = null;
     if (wif) address = getAccountFromWIFKey(wif).address;
     return {
@@ -57,6 +58,7 @@ class WalletProvider extends Component {
         reputationString: is.number(reputation) ? numeral(reputation).format('0,0') : '?',
         reserved,
         reservedString: is.number(reserved) ? numeral(reserved).format(NUMBER_FORMAT) : '?',
+        net,
         wif,
       },
     };

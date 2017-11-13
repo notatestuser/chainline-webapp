@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import AutoForm from 'react-auto-form';
 import pick from 'pedantic-pick';
 
-import RIPEMD160 from 'ripemd160';
-import { Constants, getAccountFromWIFKey, getBalance, getPrice, openTravel } from 'chainline-js';
-
 import styled from 'styled-components';
 import { Box, Heading, Paragraph, Button, TextInput, RadioButton } from 'grommet';
+import { CircleInformation } from 'grommet-icons';
+
+import { Constants, getBalance, getPrice, openTravel } from 'chainline-js';
+import { calculateRealGasConsumption, formatGasConsumption } from '../utils';
 import { WidthCappedContainer, Field, NotifyLayer } from '../components';
 import withWallet from '../helpers/withWallet';
+import { MSG_GAS_CONSUMED } from './Demand';
 
 const CITIES = ['Shanghai', 'London', 'Geneva'];
 
@@ -19,6 +21,8 @@ const IntroParagraph = styled(Paragraph)`
 
 class TravelPage extends Component {
   state = {
+    loading: false,
+    showingGasConsumptionNotice: false,
     pickUpCitySuggestions: [],
     dropOffCitySuggestions: [],
     selectedItemSize: 'S',
@@ -37,8 +41,12 @@ class TravelPage extends Component {
     this.setState({ gasPriceUSD });
   }
 
+  _onChange = () => {
+    this.setState({ gasConsumed: 0 }); // reset, require local invoke again
+  }
+
   _onSubmit = async (ev, data) => {
-    const { wallet: { wif: accountWif } } = this.props;
+    const { wallet: { wif: accountWif, address, net } } = this.props;
     const { selectedItemSize, requiredGAS } = this.state;
     ev.preventDefault();
     try {
@@ -52,26 +60,40 @@ class TravelPage extends Component {
 
       this.setState({ loading: true });
 
-      // balance check
-      const { address } = getAccountFromWIFKey(accountWif);
-      const { GAS: { balance } } = await getBalance('TestNet', address);
+      // live balance check
+      const { GAS: { balance } } = await getBalance(net, address);
       if (requiredGAS > balance) {
         throw new Error(`Insufficient funds. ${requiredGAS.toFixed(3)} GAS required (deposit)`);
       }
 
       // invoke contract on the blockchain
-      openTravel('TestNet', accountWif, {
+      const { result, gasConsumed, success } = await openTravel(net, accountWif, {
         // expiry: BigInteger
         expiry: Number.parseInt(new Date(picked.expiry).getTime() / 1000, 10),
         // repRequired: BigInteger
         repRequired,
         // carrySpace: BigInteger
         carrySpace: selectedItemSize === 'S' ? 1 : (selectedItemSize === 'M' ? 2 : 3),  // eslint-disable-line
-        // pickUpCityHash: Hash160
-        pickUpCityHash: (new RIPEMD160()).update(picked.pickUpCity).digest('hex'),
-        // dropOffCityHash: Hash160
-        dropOffCityHash: (new RIPEMD160()).update(picked.dropOffCity).digest('hex'),
+        // pickUpCity: String (hashed downstream)
+        pickUpCity: picked.pickUpCity,
+        // dropOffCity: String
+        dropOffCity: picked.dropOffCity,
       });
+
+      if (!success) {
+        throw new Error('Non-success return value');
+      }
+
+      if (result && !this.state.gasConsumed) {
+        const realGasConsumption = calculateRealGasConsumption(gasConsumed);
+        this.setState({
+          gasConsumed: realGasConsumption,
+          notifyMessage: MSG_GAS_CONSUMED(realGasConsumption),
+          showingGasConsumptionNotice: true,
+        });
+      } else {
+        throw new Error('Contract invocation failed');
+      }
     } catch (pickErr) {
       const { message } = pickErr;
       let errorMsg = 'Unknown error';
@@ -93,7 +115,7 @@ class TravelPage extends Component {
         >
           <WidthCappedContainer>
             <Heading level={2} margin={{ top: 'none' }}>
-              You must be logged in to do this!
+              You must log in to proceed.
             </Heading>
           </WidthCappedContainer>
         </Box>
@@ -102,19 +124,36 @@ class TravelPage extends Component {
 
     const {
       loading,
+      showingGasConsumptionNotice,
       pickUpCitySuggestions,
       dropOffCitySuggestions,
       notifyMessage,
       requiredGAS,
+      gasConsumed,
     } = this.state;
+
+    const nowDatePlusOneDay = Date.now() + 86400000; // 1 day in ms
+    const earliestTravelDate = new Date(nowDatePlusOneDay).toISOString().substring(0, 16);
     const timezoneAbbr = new Date().toString().match(/\(([A-Za-z\s].*)\)/)[1];
+    const totalPaymentGAS = formatGasConsumption(requiredGAS + gasConsumed);
+    const submitLabel = gasConsumed && !showingGasConsumptionNotice ?
+      `Confirm Payment: ${totalPaymentGAS} GAS` :
+      'Register Travel';
+
     return ([
       /* Simple notifications */
       notifyMessage ? <NotifyLayer
         key='travel-notify'
         size='medium'
         message={notifyMessage}
-        onClose={() => { this.setState({ notifyMessage: null }); }}
+        customIcon={showingGasConsumptionNotice ? <CircleInformation size='large' /> : null}
+        onClose={() => {
+          this.setState({
+            loading: false,
+            notifyMessage: null,
+            showingGasConsumptionNotice: false,
+          });
+        }}
       /> : null,
 
       /* Main form */
@@ -125,7 +164,7 @@ class TravelPage extends Component {
           pad='large'
         >
           <WidthCappedContainer>
-            <AutoForm onSubmit={this._onSubmit} trimOnSubmit={true}>
+            <AutoForm onChange={this._onChange} onSubmit={this._onSubmit} trimOnSubmit={true}>
               <Box>
                 <Heading level={2} margin={{ top: 'none', bottom: 'medlarge' }}>
                   Register your travel
@@ -171,7 +210,7 @@ class TravelPage extends Component {
                   />
                 </Field>
                 <Field label={`Travelling at (${timezoneAbbr} time)`}>
-                  <TextInput name='expiry' type='datetime-local' plain={true} />
+                  <TextInput name='expiry' type='datetime-local' min={earliestTravelDate} plain={true} />
                 </Field>
                 <Field label='Available carry space'>
                   <Box margin='small' direction='row'>
@@ -206,7 +245,7 @@ class TravelPage extends Component {
                   <Button
                     primary={true}
                     type={loading ? 'disabled' : 'submit'}
-                    label={loading ? 'Please wait…' : 'Register Travel'}
+                    label={loading ? 'Please wait…' : submitLabel}
                   />
                 </Box>
               </Box>
