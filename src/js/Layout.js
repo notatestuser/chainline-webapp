@@ -98,7 +98,8 @@ class Layout extends Component {
             </Box>,
             <Box key='hero-1'>
               <SubSloganHeading level={3} textAlign='center' size={responsiveState === 'wide' ? 'medium' : 'small'}>
-                Chain Line gets <Boldish>anything</Boldish> to you, powered by the blockchain
+                {/* Introducing a global shipping network with no staff, trains or planes. */}
+                Introducing the <Boldish>smarter</Boldish> shipping network for an e-commerce era
               </SubSloganHeading>
               <VideoPlayer margin={{ top: 'medium', bottom: 'large' }} />
             </Box>,
