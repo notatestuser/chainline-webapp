@@ -2,12 +2,18 @@ import React, { Component } from 'react';  // eslint-disable-line
 import PropTypes from 'prop-types';
 import numeral from 'numeral';
 import is from 'is_js';
-import { getAccountFromWIFKey, getBalance, getWalletState } from 'chainline-js';
+import {
+  getAccountFromWIFKey,
+  getBalance,
+  getPrice,
+  getWalletState,
+} from 'chainline-js';
 
 const REFRESH_INTERVAL_MS = 15000;
 const NUMBER_FORMAT = '0,0.000';
 
 export const contextTypes = {
+  gasPriceUSD: PropTypes.number,
   wallet: PropTypes.shape({
     address: PropTypes.string,
     balance: PropTypes.number,
@@ -45,11 +51,13 @@ class WalletProvider extends Component {
     clearInterval(this._timer);
   }
 
+
   getChildContext() {
-    const { address, wif, balance, reserved, reputation } = this.state;
+    const { address, wif, balance, reserved, reputation, gasPriceUSD } = this.state;
     const { net } = this.props;
     const effectiveBalance = balance - reserved;
     return {
+      gasPriceUSD,
       wallet: {
         address,
         balance,
@@ -65,6 +73,16 @@ class WalletProvider extends Component {
         wif,
       },
     };
+  }
+
+  _refreshGasPriceUSD = async () => {
+    console.debug('Updating GAS/USD price…');
+    try {
+      const gasPriceUSD = await getPrice('GAS', 'USD');
+      this.setState({ gasPriceUSD });
+    } catch (e) {
+      alert('Unable to retrieve the current GAS price in USD. This is bad, things will be broken!');
+    }
   }
 
   _refreshState() {
@@ -96,6 +114,7 @@ class WalletProvider extends Component {
           reputation,
         });
       });
+      this._refreshGasPriceUSD();
     };
     if (this._timer) clearInterval(this._timer);
     this._timer = setInterval(refresh, REFRESH_INTERVAL_MS); // every 15 secs

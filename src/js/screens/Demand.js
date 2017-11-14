@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { Box, Heading, Paragraph, Anchor, Button, TextInput, RadioButton } from 'grommet';
 import { CircleInformation } from 'grommet-icons';
 
-import { Constants, getBalance, getPrice, openDemand } from 'chainline-js';
+import { Constants, getBalance, openDemand } from 'chainline-js';
 import { string2hex, calculateRealGasConsumption, formatGasConsumption } from '../utils';
 import { WidthCappedContainer, Field, NotifyLayer } from '../components';
 import withWallet from '../helpers/withWallet';
@@ -18,12 +18,13 @@ const MIN_ITEM_VALUE_GAS = 0.5;
 
 const NoticeParagraph = styled(Paragraph)` margin-top: 0; `;
 const CostReadout = styled(Paragraph)` font-weight: 500; `;
+const Disclaimer = styled(Paragraph)` font-weight: 500; `;
 
 export const MSG_GAS_CONSUMED = gasConsumed => [
   <NoticeParagraph key='MSG_GAS_CONSUMED-0' size='full' margin={{ bottom: 'small' }}>
-    Using a smart contract is{' '}
+    Using a smart contract{' '}
     <Anchor href='http://docs.neo.org/en-us/sc/systemfees.html' target='_blank' rel='noopener noreferrer'>
-      not always free
+      incurs system fees
     </Anchor>. There is often a cost associated with{' '}
     &ldquo;invoking&rdquo; a contract to deter spammers and secure the system.
   </NoticeParagraph>,
@@ -52,13 +53,6 @@ class DemandPage extends Component {
 
   componentDidMount() {
     window.scrollTo(0, 0);
-    this._refreshGasPriceUSD();
-  }
-
-  _refreshGasPriceUSD = async () => {
-    console.debug('Updating GAS/USD price…');
-    const gasPriceUSD = await getPrice('GAS', 'USD');
-    this.setState({ gasPriceUSD });
   }
 
   _onChange = (ev, name, value) => {
@@ -66,7 +60,7 @@ class DemandPage extends Component {
     if (name === 'infoText') {
       this.setState({ infoCharsUsed: value.length, gasConsumed });
     } else if (name === 'itemValue') {
-      const { gasPriceUSD } = this.state;
+      const { gasPriceUSD } = this.props;
       const itemValueUSD = parseFloat(value);
       if (Number.isNaN(itemValueUSD) || itemValueUSD === 0 || !gasPriceUSD) {
         this.setState({ itemValueGAS: 0, gasConsumed });
@@ -145,7 +139,7 @@ class DemandPage extends Component {
   }
 
   render() {
-    const { wallet: { wif: accountWif } } = this.props;
+    const { wallet: { wif: accountWif }, gasPriceUSD } = this.props;
     const {
       loading,
       showingGasConsumptionNotice,
@@ -155,7 +149,6 @@ class DemandPage extends Component {
       infoCharsUsed,
       itemValueGAS,
       requiredGAS,
-      gasPriceUSD,
       gasConsumed,
     } = this.state;
 
@@ -182,6 +175,10 @@ class DemandPage extends Component {
     const submitLabel = gasConsumed && !showingGasConsumptionNotice ?
       `Confirm Payment: ${totalPaymentGAS} GAS` :
       'Open Demand';
+    const meetsMinimumValue = itemValueGAS >= Constants.MIN_GAS_ITEM_VALUE;
+    const itemValueHelpText = (meetsMinimumValue ?
+      (itemValueGAS ? `${numeral(itemValueGAS).format('0,0.000')} GAS + fee: ${Constants.FEE_DEMAND_REWARD_GAS} GAS` : '') :
+      `Minimum: $${numeral(Constants.MIN_GAS_ITEM_VALUE * gasPriceUSD).format('0,0.00')}`);
 
     return ([
       /* Simple notifications */
@@ -212,10 +209,18 @@ class DemandPage extends Component {
                 <Heading level={2} margin={{ top: 'none', bottom: 'medlarge' }}>
                   Demand a shipment
                 </Heading>
-                <Field label='Product and contact information' help={`${MAX_INFO_LEN - infoCharsUsed} letters left`}>
-                  <TextInput name='infoText' placeholder='Enter the product name, collection instructions or pastebin link. You must include your contact details.' maxLength={`${MAX_INFO_LEN}`} plain={true} />
+                <Field
+                  label={[
+                    <span key='caci-0'>Collection and contact details &nbsp;</span>,
+                    <Anchor key='caci-1' href='//pastebin.chainline.co/create' target='_blank'>
+                      (use the pastebin)
+                    </Anchor>,
+                  ]}
+                  help={`${MAX_INFO_LEN - infoCharsUsed} letters left`}
+                >
+                  <TextInput name='infoText' placeholder='You must include temporary contact details. Do NOT mention any pickup or dropoff locations in this box.' maxLength={`${MAX_INFO_LEN}`} plain={true} />
                 </Field>
-                <Field label='Item value (in US Dollars)' help={itemValueGAS ? `${numeral(itemValueGAS).format('0,0.000')} GAS + fee: ${Constants.FEE_DEMAND_REWARD_GAS} GAS` : ''}>
+                <Field label='Item value (in US Dollars)' help={itemValueHelpText}>
                   <TextInput name='itemValue' type='number' min={(gasPriceUSD * MIN_ITEM_VALUE_GAS).toFixed(2)} step='0.01' placeholder='Research the market value of the item to make this as accurate as possible. If in doubt, specify more.' plain={true} />
                 </Field>
                 <Field label='Item size'>
@@ -244,7 +249,10 @@ class DemandPage extends Component {
                     />
                   </Box>
                 </Field>
-                <Field label='Collect from city'>
+                <Field
+                  label='Collect from city'
+                  help='Not publicly visible*'
+                >
                   <TextInput
                     name='pickUpCity'
                     placeholder='Must be a main city. Otherwise your demand may not be matched.'
@@ -262,7 +270,10 @@ class DemandPage extends Component {
                     plain={true}
                   />
                 </Field>
-                <Field label='Deliver to city'>
+                <Field
+                  label='Deliver to city'
+                  help='Not publicly visible*'
+                >
                   <TextInput
                     name='dropOffCity'
                     placeholder='Must be a main city. Be sure to have a central and public meeting place in mind for later.'
@@ -289,12 +300,16 @@ class DemandPage extends Component {
                 <Box margin={{ top: 'large' }}>
                   <Button
                     primary={true}
-                    type={loading ? 'disabled' : 'submit'}
+                    type={loading || !meetsMinimumValue ? 'disabled' : 'submit'}
                     label={loading ? 'Please wait…' : submitLabel}
                   />
                 </Box>
               </Box>
             </AutoForm>
+            <Disclaimer size='full' margin={{ top: 'large' }}>
+              Please be aware:<br />
+              All entered information, unless marked with an asterisk *,  is publicly visible on the blockchain
+            </Disclaimer>
           </WidthCappedContainer>
         </Box>
       </Box>,

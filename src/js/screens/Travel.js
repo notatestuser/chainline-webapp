@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Box, Heading, Paragraph, Button, TextInput, RadioButton } from 'grommet';
 import { CircleInformation } from 'grommet-icons';
 
-import { Constants, getBalance, getPrice, openTravel } from 'chainline-js';
+import { Constants, openTravel } from 'chainline-js';
 import { calculateRealGasConsumption, formatGasConsumption } from '../utils';
 import { WidthCappedContainer, Field, NotifyLayer, WaitForInvokeLayer } from '../components';
 import withWallet from '../helpers/withWallet';
@@ -18,6 +18,7 @@ const IntroParagraph = styled(Paragraph)`
   margin-top: 0;
   margin-bottom: 30px;
 `;
+const Disclaimer = styled(Paragraph)` font-weight: 500; `;
 
 class TravelPage extends Component {
   state = {
@@ -27,19 +28,11 @@ class TravelPage extends Component {
     pickUpCitySuggestions: [],
     dropOffCitySuggestions: [],
     selectedItemSize: 'S',
-    gasPriceUSD: 0,
     requiredGAS: Constants.FEE_TRAVEL_DEPOSIT_GAS,
   }
 
   componentDidMount() {
     window.scrollTo(0, 0);
-    this._refreshGasPriceUSD();
-  }
-
-  _refreshGasPriceUSD = async () => {
-    console.debug('Updating GAS/USD price…');
-    const gasPriceUSD = await getPrice('GAS', 'USD');
-    this.setState({ gasPriceUSD });
   }
 
   _onChange = () => {
@@ -47,7 +40,7 @@ class TravelPage extends Component {
   }
 
   _onSubmit = async (ev, data) => {
-    const { wallet: { wif: accountWif, address, net, effectiveBalance: balance } } = this.props;
+    const { wallet: { wif: accountWif, net, effectiveBalance: balance } } = this.props;
     const { selectedItemSize, requiredGAS } = this.state;
     ev.preventDefault();
     try {
@@ -198,7 +191,10 @@ class TravelPage extends Component {
                   The system will reserve a refundable deposit of {requiredGAS} GAS.&nbsp;
                   Please make sure that you have this in your wallet.
                 </IntroParagraph>
-                <Field label='Departure city'>
+                <Field
+                  label='Departure city'
+                  help='Not publicly visible*'
+                >
                   <TextInput
                     name='pickUpCity'
                     placeholder='Must be a main city. Otherwise you may not be matched up.'
@@ -216,7 +212,10 @@ class TravelPage extends Component {
                     plain={true}
                   />
                 </Field>
-                <Field label='Destination city'>
+                <Field
+                  label='Destination city'
+                  help='Not publicly visible*'
+                >
                   <TextInput
                     name='dropOffCity'
                     placeholder='Must be a main city. Be sure to contact the demand owner upon arrival to arrange to meet in a public place.'
@@ -275,6 +274,10 @@ class TravelPage extends Component {
                 </Box>
               </Box>
             </AutoForm>
+            <Disclaimer size='full' margin={{ top: 'large' }}>
+              Please be aware:<br />
+              All entered information, unless marked with an asterisk *,  is publicly visible on the blockchain
+            </Disclaimer>
           </WidthCappedContainer>
         </Box>
       </Box>,

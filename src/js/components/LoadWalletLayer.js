@@ -38,7 +38,7 @@ class LoadWalletLayer extends Component {
               </Heading>
               <Box margin={{ vertical: 'medium', horizontal: 'none', bottom: 'large' }}>
                 <Paragraph margin={{ bottom: 'medium' }}>
-                  Log in to an account you have created before.<br />
+                  Log in to an wallet you have created before.<br />
                   You must use a valid Chain Line MVP wallet key.
                 </Paragraph>
                 <Field label='Wallet Key (WIF)'>

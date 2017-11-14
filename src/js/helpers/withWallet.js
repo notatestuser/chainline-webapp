@@ -8,7 +8,11 @@ const withWallet = ChildComponent =>
 
     render() {
       const { props, context } = this;
-      return <ChildComponent {...props} wallet={context.wallet} />;
+      return (<ChildComponent
+        {...props}
+        wallet={context.wallet}
+        gasPriceUSD={context.gasPriceUSD}
+      />);
     }
   };
 

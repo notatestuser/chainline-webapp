@@ -142,17 +142,17 @@ class Layout extends Component {
 
             {responsiveState === 'wide' && <Box direction='row' responsive={true}>
               <Box pad={{ horizontal: 'medium' }}>
-                <Anchor href='#'>
+                <Anchor href='//github.com/notatestuser/chainline-webapp/wiki' target='_blank'>
                   User Guide
                 </Anchor>
               </Box>
               <Box pad={{ horizontal: 'medium' }}>
-                <Anchor href='#'>
-                  Documentation
+                <Anchor href='/_src' target='_blank'>
+                  Source Code
                 </Anchor>
               </Box>
               <Box pad={{ horizontal: 'medium' }}>
-                <Anchor href='#'>
+                <Anchor href='//neo.org' target='_blank'>
                   About the Neo Blockchain
                 </Anchor>
               </Box>
