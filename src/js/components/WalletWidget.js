@@ -1,11 +1,13 @@
 import React, { PureComponent } from 'react';
 import numeral from 'numeral';
 import is from 'is_js';
-import { getPrice, doSendAsset } from 'chainline-js';
 
 import styled from 'styled-components';
 import { Box, Menu, Button } from 'grommet';
 import { Alert, Money, LinkUp, LinkDown } from 'grommet-icons';
+
+import { getPrice, doSendAsset } from 'chainline-js';
+
 import { SendLayer } from './';
 import withWallet from '../helpers/withWallet';
 
@@ -27,11 +29,6 @@ class WalletWidget extends PureComponent {
     this._refreshGasPrice();
   }
 
-  componentWillUnmount() {
-    if (!this._timer) return;
-    clearInterval(this._timer);
-  }
-
   async _refreshGasPrice() {
     if (is.number(this.state.gasPriceUSD)) return;
     console.debug('Updating GAS/USD price…');
@@ -47,7 +44,7 @@ class WalletWidget extends PureComponent {
 
   render() {
     const {
-      wallet: { address, wif, balance, balanceString, reservedString, reputationString },
+      wallet: { address, wif, balance, effectiveBalanceString, reservedString, reputationString },
       responsiveState,
       onCreateWalletClick,
       onOpenWalletClick,
@@ -89,7 +86,7 @@ class WalletWidget extends PureComponent {
         background='neutral-5'
         full='grow'
         label={<DropDownLabel>
-          Balance: {balanceString} GAS
+          Balance: {effectiveBalanceString} GAS
           {is.number(gasPriceUSD) && typeof balance === 'number' ?
             ` ($${numeral(gasPriceUSD * balance).format('0,0.00')})` : ''}
         </DropDownLabel>}

@@ -181,7 +181,7 @@ class DemandPage extends Component {
     const totalPaymentGAS = formatGasConsumption(requiredGAS + gasConsumed);
     const submitLabel = gasConsumed && !showingGasConsumptionNotice ?
       `Confirm Payment: ${totalPaymentGAS} GAS` :
-      'Register Travel';
+      'Open Demand';
 
     return ([
       /* Simple notifications */

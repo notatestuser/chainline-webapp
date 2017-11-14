@@ -8,7 +8,7 @@ import { CircleInformation } from 'grommet-icons';
 
 import { Constants, getBalance, getPrice, openTravel } from 'chainline-js';
 import { calculateRealGasConsumption, formatGasConsumption } from '../utils';
-import { WidthCappedContainer, Field, NotifyLayer } from '../components';
+import { WidthCappedContainer, Field, NotifyLayer, WaitForInvokeLayer } from '../components';
 import withWallet from '../helpers/withWallet';
 import { MSG_GAS_CONSUMED } from './Demand';
 
@@ -22,6 +22,7 @@ const IntroParagraph = styled(Paragraph)`
 class TravelPage extends Component {
   state = {
     loading: false,
+    sendingTx: false,
     showingGasConsumptionNotice: false,
     pickUpCitySuggestions: [],
     dropOffCitySuggestions: [],
@@ -46,7 +47,7 @@ class TravelPage extends Component {
   }
 
   _onSubmit = async (ev, data) => {
-    const { wallet: { wif: accountWif, address, net } } = this.props;
+    const { wallet: { wif: accountWif, address, net, effectiveBalance: balance } } = this.props;
     const { selectedItemSize, requiredGAS } = this.state;
     ev.preventDefault();
     try {
@@ -61,13 +62,12 @@ class TravelPage extends Component {
       this.setState({ loading: true });
 
       // live balance check
-      const { GAS: { balance } } = await getBalance(net, address);
+      console.log('Effective balance:', balance);
       if (requiredGAS > balance) {
         throw new Error(`Insufficient funds. ${requiredGAS.toFixed(3)} GAS required (deposit)`);
       }
 
-      // invoke contract on the blockchain
-      const { result, gasConsumed, success } = await openTravel(net, accountWif, {
+      const args = {
         // expiry: BigInteger
         expiry: Number.parseInt(new Date(picked.expiry).getTime() / 1000, 10),
         // repRequired: BigInteger
@@ -78,21 +78,39 @@ class TravelPage extends Component {
         pickUpCity: picked.pickUpCity,
         // dropOffCity: String
         dropOffCity: picked.dropOffCity,
-      });
+      };
 
-      if (!success) {
-        throw new Error('Non-success return value');
-      }
+      // case: user has not seen the system fees popup yet, run a test invoke
+      if (!this.state.gasConsumed) {
+        // invoke contract on the blockchain
+        const { result, gasConsumed, success } = await openTravel(net, accountWif, args);
+        if (!success || !result) {
+          throw new Error('Non-success return value');
+        }
 
-      if (result && !this.state.gasConsumed) {
         const realGasConsumption = calculateRealGasConsumption(gasConsumed);
         this.setState({
           gasConsumed: realGasConsumption,
           notifyMessage: MSG_GAS_CONSUMED(realGasConsumption),
           showingGasConsumptionNotice: true,
         });
+
+      // case: user has confirmed the fee payment
+      } else if (this.state.gasConsumed) {
+        // live balance check (again)
+        console.log('Effective balance:', balance);
+        if (requiredGAS + this.state.gasConsumed > balance) {
+          throw new Error(`Insufficient funds. ${requiredGAS.toFixed(3)} GAS required (deposit + fees)`);
+        }
+
+        const { result } = await openTravel(net, accountWif, args, true, this.state.gasConsumed);
+        this.setState({ loading: true });
+        if (!result) {
+          throw new Error('Non-success return value');
+        }
+        this.setState({ sendingTx: true });
       } else {
-        throw new Error('Contract invocation failed');
+        throw new Error('Unexpected form state');
       }
     } catch (pickErr) {
       const { message } = pickErr;
@@ -124,6 +142,7 @@ class TravelPage extends Component {
 
     const {
       loading,
+      sendingTx,
       showingGasConsumptionNotice,
       pickUpCitySuggestions,
       dropOffCitySuggestions,
@@ -141,6 +160,12 @@ class TravelPage extends Component {
       'Register Travel';
 
     return ([
+      /* "Waiting for invoke" popup */
+      sendingTx ? <WaitForInvokeLayer
+        key='travel-invokelayer'
+        onInvokeComplete={() => { alert('Invoke complete!'); }}
+      /> : null,
+
       /* Simple notifications */
       notifyMessage ? <NotifyLayer
         key='travel-notify'

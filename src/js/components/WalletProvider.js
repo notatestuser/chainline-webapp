@@ -12,6 +12,8 @@ export const contextTypes = {
     address: PropTypes.string,
     balance: PropTypes.number,
     balanceString: PropTypes.string,
+    effectiveBalance: PropTypes.number,
+    effectiveBalanceString: PropTypes.string,
     isLoaded: PropTypes.bool,
     reserved: PropTypes.number,
     reservedString: PropTypes.string,
@@ -44,15 +46,16 @@ class WalletProvider extends Component {
   }
 
   getChildContext() {
-    const { wif, balance, reserved, reputation } = this.state;
+    const { address, wif, balance, reserved, reputation } = this.state;
     const { net } = this.props;
-    let address = null;
-    if (wif) address = getAccountFromWIFKey(wif).address;
+    const effectiveBalance = balance - reserved;
     return {
       wallet: {
         address,
         balance,
         balanceString: is.number(balance) ? numeral(balance).format(NUMBER_FORMAT) : '?',
+        effectiveBalance,
+        effectiveBalanceString: is.number(effectiveBalance) ? numeral(effectiveBalance).format(NUMBER_FORMAT) : '?',
         isLoaded: !!wif,
         reputation,
         reputationString: is.number(reputation) ? numeral(reputation).format('0,0') : '?',

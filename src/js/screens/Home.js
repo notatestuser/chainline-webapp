@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import numeral from 'numeral';
+import is from 'is_js';
 
 import styled from 'styled-components';
 import { Box, Heading, Paragraph, Select, RoutedAnchor } from 'grommet';
 
-import { getStats } from 'chainline-js';
+import { getPrice, getStats } from 'chainline-js';
 
 import { WidthCappedContainer } from '../components';
 
@@ -16,6 +18,7 @@ const BlurbParagraph = styled(Paragraph)`
 export default class Home extends Component {
   state = {
     hasStats: false,
+    gasPriceUSD: null,
     demands: 0,
     routes: 0,
     funds: 0,
@@ -30,12 +33,24 @@ export default class Home extends Component {
         routes: Number.isNaN(parseInt(routes, 10)) ? 0 : routes,
         funds: Number.isNaN(parseInt(funds, 10)) ? 0 : funds,
       });
+      this._refreshGasPrice();
     } catch (e) {}  // eslint-disable-line
+  }
+
+  componentDidUpdate() {
+    this._refreshGasPrice();
+  }
+
+  async _refreshGasPrice() {
+    if (is.number(this.state.gasPriceUSD)) return;
+    console.debug('Updating GAS/USD price…');
+    const gasPriceUSD = await getPrice('GAS', 'USD');
+    this.setState({ gasPriceUSD });
   }
 
   render() {
     const { responsiveState } = this.props;
-    const { hasStats, demands, routes, funds } = this.state;
+    const { hasStats, gasPriceUSD, demands, routes, funds } = this.state;
 
     return ([
       <Box key='content-0' direction='column'>
@@ -53,7 +68,7 @@ export default class Home extends Component {
             <Select
               size='large'
               options={[
-                'I would like an item to be delivered to me from overseas.',
+                'I would like an item to be delivered to me from another city.',
                 'I am travelling and have extra space to carry items.',
                 'There is a Chain Line shipment I would like to track.',
               ]}
@@ -80,14 +95,14 @@ export default class Home extends Component {
               Routes
             </Heading>
           </Box>
-          <Box basis='1/3' justify='center' align='center'>
+          {gasPriceUSD ? <Box basis='1/3' justify='center' align='center'>
             <Heading level={2} size='large' margin={{ bottom: 'medium' }}>
-              {funds}
+              ${numeral(funds * gasPriceUSD).format('0,0')}
             </Heading>
             <Heading level={3} size={responsiveState === 'wide' ? 'large' : 'medium'} margin='none'>
               Reserved
             </Heading>
-          </Box>
+          </Box> : null}
         </WidthCappedContainer>
       </Box>,
       <Box key='content-2'>
@@ -108,7 +123,7 @@ export default class Home extends Component {
               </BlurbParagraph>
               <BlurbParagraph>
                 Behind Chain Line is a bold vision: to introduce a modern peer-to-peer courier
-                platform to address the needs of shipping companies and individuals alike.
+                platform to address the needs of modern shipping companies and individuals alike.
               </BlurbParagraph>
               <BlurbParagraph>
                 Chain Line is a functional demo powered entirely by a blockchain smart contract.
