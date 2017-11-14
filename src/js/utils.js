@@ -1,5 +1,6 @@
 import numeral from 'numeral';
 import is from 'is_js';
+import { gasCostCeil } from 'chainline-js';
 
 // http://docs.neo.org/en-us/sc/systemfees.html
 // const CHECKSIG_COST = 0.1;
@@ -14,11 +15,13 @@ const FREE_GAS = 10;
  * @param {number|string} gasConsumption
  * @return {string} the real GAS consumption cost with extras (see above)
  */
-export const calculateRealGasConsumption = (gasConsumption = 0) => Math.max(
-  ((is.number(gasConsumption) ? gasConsumption : parseFloat(gasConsumption))
-    + EXTRA_GAS_CONSUMPTION_CHARGES
-  ) - FREE_GAS
-  , COST_MIN);
+export const calculateRealGasConsumption = (gasConsumption = 0) =>
+  Math.max(
+    gasCostCeil(
+      ((is.number(gasConsumption) ? gasConsumption : parseFloat(gasConsumption))
+        + EXTRA_GAS_CONSUMPTION_CHARGES
+      ) - FREE_GAS)
+    , COST_MIN);
 
 /**
  * Converts GAS consumption cost to a human readable form.
