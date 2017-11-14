@@ -8,14 +8,37 @@ import { FormPrevious } from 'grommet-icons';
 import { WidthCappedContainer, VideoPlayer } from './components';
 
 const LOGO_SRC = '/img/chainline-logo.svg';
+const TRACK_SRC = '/img/nav-track-shipment.svg';
 const SLOGAN_SRC = '/img/chainline-slogan.svg';
+
+const HeaderWidgets = styled(WidthCappedContainer)`
+  position: relative;
+  left: 15px;
+`;
+
+const LogoBox = styled(Box)` border-bottom: 1px solid #e0e0e0; `;
 
 const LogoImage = styled.img`
   line-height: 0;
   max-width: ${({ responsiveState }) =>
     responsiveState === 'wide' ? '265px' : 'auto'};
-  margin: 16px 0px;
+  margin: auto;
   width: 100%;
+`;
+
+const LogoRoutedAnchor = styled(RoutedAnchor)`
+  line-height: 0;
+  display: flex;
+  flex: 0 0 auto;
+  width: fit-content;
+  height: 74px; /* there's a 1px border! */
+`;
+
+const TrackImage = styled.img`
+  max-width: 140px;
+  position: relative;
+  top: 1px;
+  margin: auto;
 `;
 
 const SloganImage = styled(LogoImage)`
@@ -31,12 +54,6 @@ const HeroHeading = styled(Heading)`
 const SubSloganHeading = styled(Heading)`
   letter-spacing: 0.2px;
   margin-bottom: 38px;
-`;
-
-const LogoRoutedAnchor = styled(RoutedAnchor)`
-  line-height: 0;
-  min-height: 70px;
-  width: fit-content;
 `;
 
 const GoBackRoutedAnchor = styled(RoutedAnchor)` margin-left: -5px; `;
@@ -66,21 +83,24 @@ class Layout extends Component {
           align='center'
           pad={{ vertical: 'none', horizontal: 'large' }}
         >
-          <WidthCappedContainer justify='flex-end' direction='row'>
+          <HeaderWidgets justify='flex-end' direction='row'>
             {headerWidgets}
-          </WidthCappedContainer>
+          </HeaderWidgets>
         </Box>
 
-        <Box
+        <LogoBox
           background='white'
           pad={{ vertical: 'none', horizontal: 'large' }}
         >
-          <WidthCappedContainer direction='row'>
+          <WidthCappedContainer direction='row' align='center' justify='space-between' wrap='wrap'>
             <LogoRoutedAnchor path='/'>
               <LogoImage src={LOGO_SRC} responsiveState={responsiveState} />
             </LogoRoutedAnchor>
+            <LogoRoutedAnchor path='/'>
+              <TrackImage src={TRACK_SRC} alt='Open Tracking' />
+            </LogoRoutedAnchor>
           </WidthCappedContainer>
-        </Box>
+        </LogoBox>
 
         {pathname === '/' ? <Box
           pad={{ vertical: 'medium', horizontal: 'large' }}
