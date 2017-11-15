@@ -35,6 +35,8 @@ const LogoRoutedAnchor = styled(RoutedAnchor)`
   height: 74px; /* there's a 1px border! */
 `;
 
+const TrackingAnchor = LogoRoutedAnchor.withComponent(Anchor);
+
 const TrackImage = styled.img`
   display: ${({ responsiveState }) =>
     responsiveState === 'wide' ? 'block' : 'none'};
@@ -72,7 +74,7 @@ class Layout extends Component {
   }
 
   render() {
-    const { responsiveState, headerWidgets, children } = this.props;
+    const { responsiveState, headerWidgets, onOpenTrackingClick, children } = this.props;
     const { router } = this.context;
     const { pathname } = router.route.location;
 
@@ -102,9 +104,9 @@ class Layout extends Component {
             <LogoRoutedAnchor path='/'>
               <LogoImage src={LOGO_SRC} responsiveState={responsiveState} />
             </LogoRoutedAnchor>
-            <LogoRoutedAnchor path='/'>
+            <TrackingAnchor onClick={onOpenTrackingClick}>
               <TrackImage src={TRACK_SRC} alt='Open Tracking' responsiveState={responsiveState} />
-            </LogoRoutedAnchor>
+            </TrackingAnchor>
           </WidthCappedContainer>
         </LogoBox>
 

@@ -46,6 +46,7 @@ class CreateWalletLayer extends Component {
               </Heading>
               <Box margin={{ vertical: 'medium', horizontal: 'none', bottom: 'large' }}>
                 <Paragraph margin={{ bottom: 'medium' }}>
+                  Send and receive funds with a Chain Line wallet.<br />
                   Your passphrase is secret just like a password.<br />
                   <Emphasis>Be sure to keep it safe!</Emphasis>
                 </Paragraph>

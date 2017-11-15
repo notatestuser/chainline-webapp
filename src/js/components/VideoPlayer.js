@@ -53,7 +53,7 @@ class VideoPlayer extends Component {
             <Box
               pad='medium'
               round='medium'
-              background={{ color: 'light-5', opacity: 'medium' }}
+              background={{ color: 'light-6', opacity: 'medium' }}
             >
               <Play size={responsiveState === 'wide' ? 'xlarge' : 'large'} color='brand' />
             </Box>

@@ -27,6 +27,7 @@ import {
   WalletWidget,
   LoadWalletLayer,
   CreateWalletLayer,
+  TrackingLayer,
 } from './components';
 
 const Boldish = styled.span`
@@ -117,6 +118,7 @@ export default class App extends Component {
     notifyAutoClose: false,
     isCreateWalletLayerOpen: false,
     isLoadWalletLayerOpen: false,
+    isTrackingLayerOpen: false,
   }
 
   constructor() {
@@ -184,6 +186,10 @@ export default class App extends Component {
     });
   }
 
+  _onOpenTrackingClick = () => {
+    this.setState({ isTrackingLayerOpen: true });
+  }
+
   render() {
     const {
       accountWif,
@@ -193,6 +199,7 @@ export default class App extends Component {
       notifyAutoClose,
       isCreateWalletLayerOpen,
       isLoadWalletLayerOpen,
+      isTrackingLayerOpen,
     } = this.state;
 
     return (
@@ -225,6 +232,10 @@ export default class App extends Component {
                 onClose={() => this.setState({ isLoadWalletLayerOpen: false })}
                 onLogin={this._onWalletLogin}
               />}
+            {isTrackingLayerOpen &&
+              <TrackingLayer
+                onClose={() => this.setState({ isTrackingLayerOpen: false })}
+              />}
 
             {/* Page layout and routes */}
             <Layout
@@ -241,6 +252,7 @@ export default class App extends Component {
                 />,
                 accountWif ? <NotificationsWidget key='notifications' /> : null,
               ]}
+              onOpenTrackingClick={this._onOpenTrackingClick}
             >
               <Switch>
                 <Route

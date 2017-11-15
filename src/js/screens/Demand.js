@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { withRouter } from 'react-router';
 import AutoForm from 'react-auto-form';
+import PropTypes from 'prop-types';
 import pick from 'pedantic-pick';
 import numeral from 'numeral';
 
@@ -232,12 +233,9 @@ class DemandPage extends Component {
       /* "Waiting for invoke" popup */
       sendingTx ? <WaitForInvokeLayer
         key='demand-invokelayer'
-        onInvokeComplete={({ wallet: { stateLookupKey } }) => {
-          const { router } = this.context;
-          alert(`Invoke complete! Lookup key: ${stateLookupKey}`);
-          const trackingId = `${stateLookupKey}`; // todo: add city
-          (router.history || router)
-            .push(`/track/${trackingId}/${pickUpCity}/${dropOffCity}`);
+        onInvokeComplete={() => {
+          const { history } = this.props;
+          history.push(`/track/${stateLookupKey}/${pickUpCity}/${dropOffCity}`);
         }}
       /> : null,
 
@@ -378,4 +376,4 @@ class DemandPage extends Component {
   }
 }
 
-export default withBlockchainProvider(DemandPage);
+export default withBlockchainProvider(withRouter(DemandPage));
