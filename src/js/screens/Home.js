@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import numeral from 'numeral';
 
@@ -9,6 +10,12 @@ import { getStats } from 'chainline-js';
 
 import { WidthCappedContainer } from '../components';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
+
+const DROPDOWN_OPTIONS = {
+  'I would like an item to be delivered to me from elsewhere.': '/demand/create',
+  'I am travelling soon and have extra space to carry items.': '/travel/create',
+  'There is a Chain Line shipment I would like to track.': 'TRACK',
+};
 
 const BlurbParagraph = styled(Paragraph)`
   margin-top: 0;
@@ -58,12 +65,15 @@ class Home extends Component {
             </Heading>
             <Select
               size='large'
-              options={[
-                'I would like an item to be delivered to me from elsewhere.',
-                'I am travelling and have extra space to carry items.',
-                'There is a Chain Line shipment I would like to track.',
-              ]}
+              options={Object.keys(DROPDOWN_OPTIONS)}
               value='Select a journey'
+              onChange={({ option }) => {
+                if (DROPDOWN_OPTIONS[option] === 'TRACK') {
+                  this.props.onTrackClicked();
+                  return;
+                }
+                this.props.history.push(DROPDOWN_OPTIONS[option]);
+              }}
             />
           </WidthCappedContainer>
         </Box>
@@ -167,4 +177,4 @@ Home.contextTypes = {
   router: PropTypes.any,
 };
 
-export default withBlockchainProvider(Home);
+export default withBlockchainProvider(withRouter(Home));

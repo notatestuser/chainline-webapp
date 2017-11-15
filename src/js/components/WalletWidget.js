@@ -110,7 +110,9 @@ class WalletWidget extends PureComponent {
     return (<Menu
       background='neutral-5'
       full='grow'
-      label={<DropDownLabel>You are not logged in!</DropDownLabel>}
+      label={<DropDownLabel>
+        Log in to start using Chain Line
+      </DropDownLabel>}
       icon={<Alert />}
       dropAlign={{ right: 'right', top: 'top' }}
       items={[

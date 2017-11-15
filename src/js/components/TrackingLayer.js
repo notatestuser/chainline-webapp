@@ -55,7 +55,7 @@ class TrackingLayer extends Component {
           <AutoForm onSubmit={this._onSubmit}>
             <Box>
               <Heading level={2} margin='none'>
-                Tracking
+                Track a Shipment
               </Heading>
               <Box margin={{ vertical: 'medium', horizontal: 'none', bottom: 'large' }}>
                 {isInvalid ? <ErrorMsg>
@@ -64,7 +64,7 @@ class TrackingLayer extends Component {
                 <Field label='Tracking ID'>
                   <TextInput
                     name='trackingId'
-                    placeholder='e.g. b1910c5a0200a25c7e'
+                    placeholder='e.g. b1910c5a00a25c7e02'
                     plain={true}
                     autoFocus={true}
                   />

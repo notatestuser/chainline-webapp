@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import styled from 'styled-components';
-import { Box, Button, Stack, Video } from 'grommet';
+import { Box, Text, Button, Stack, Video } from 'grommet';
 import { PlayFill as Play, Revert } from 'grommet-icons';
 
 const VIDEO_CONTENT = src => [
@@ -29,6 +29,13 @@ const FullHeightStack = styled(Stack)`
   height: 100%;
 `;
 
+const PlayIntroText = styled(Text)`
+  font-weight: 500;
+  position: relative;
+  top: 25px;
+  user-select: none;
+`;
+
 class VideoPlayer extends Component {
   state = {
     state: 'before',
@@ -48,16 +55,19 @@ class VideoPlayer extends Component {
           {VIDEO_CONTENT(src)}
         </Video>
 
-        {state === 'before' ? <Box justify='center' align='center'>
+        {state === 'before' ? <Box justify='center' align='center' background={{ dark: true }}>
           <Button onClick={() => this.setState({ state: 'during' })}>
             <Box
               pad='medium'
               round='medium'
-              background={{ color: 'light-6', opacity: 'medium' }}
+              background={{ color: 'light-5', opacity: 'medium' }}
             >
               <Play size={responsiveState === 'wide' ? 'xlarge' : 'large'} color='brand' />
             </Box>
           </Button>
+          <PlayIntroText color='brand'>
+            PLAY INTRO VIDEO
+          </PlayIntroText>
         </Box> : null}
 
         {state === 'after' ? <Box direction='row' justify='center' align='center'>

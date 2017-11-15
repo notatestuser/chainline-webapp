@@ -259,7 +259,11 @@ export default class App extends Component {
                   exact={true}
                   path='/'
                   render={routeProps => (
-                    <HomePage {...routeProps} responsiveState={responsiveState} />)}
+                    <HomePage
+                      {...routeProps}
+                      responsiveState={responsiveState}
+                      onTrackClicked={() => { this.setState({ isTrackingLayerOpen: true }); }}
+                    />)}
                 />
                 <Route
                   exact={true}

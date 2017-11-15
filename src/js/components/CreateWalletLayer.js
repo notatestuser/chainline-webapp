@@ -71,7 +71,7 @@ class CreateWalletLayer extends Component {
                   <Text>
                     Your private wallet key is never sent to us.<br />
                     All wallet operations happen in your browser. <br />
-                    <Anchor href='https://github.com/notatestuser/chainline-webapp' target='_blank'>
+                    <Anchor href='/_src' target='_blank'>
                       Chain Line web app source code
                     </Anchor>
                   </Text>
