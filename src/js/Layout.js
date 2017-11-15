@@ -13,7 +13,7 @@ const SLOGAN_SRC = '/img/chainline-slogan.svg';
 
 const HeaderWidgets = styled(WidthCappedContainer)`
   position: relative;
-  left: 15px;
+  left: 13px;
 `;
 
 const LogoBox = styled(Box)` border-bottom: 1px solid #e0e0e0; `;
@@ -35,10 +35,12 @@ const LogoRoutedAnchor = styled(RoutedAnchor)`
 `;
 
 const TrackImage = styled.img`
+  display: ${({ responsiveState }) =>
+    responsiveState === 'wide' ? 'block' : 'none'};
+  margin: auto;
   max-width: 140px;
   position: relative;
   top: 1px;
-  margin: auto;
 `;
 
 const SloganImage = styled(LogoImage)`
@@ -97,7 +99,7 @@ class Layout extends Component {
               <LogoImage src={LOGO_SRC} responsiveState={responsiveState} />
             </LogoRoutedAnchor>
             <LogoRoutedAnchor path='/'>
-              <TrackImage src={TRACK_SRC} alt='Open Tracking' />
+              <TrackImage src={TRACK_SRC} alt='Open Tracking' responsiveState={responsiveState} />
             </LogoRoutedAnchor>
           </WidthCappedContainer>
         </LogoBox>
@@ -119,7 +121,7 @@ class Layout extends Component {
             <Box key='hero-1'>
               <SubSloganHeading level={3} textAlign='center' size={responsiveState === 'wide' ? 'medium' : 'small'}>
                 {/* Introducing a global shipping network with no staff, trains or planes. */}
-                Introducing the <Boldish>smarter</Boldish> shipping network for an e-commerce era
+                Introducing a <Boldish>smarter</Boldish> shipping network for the e-commerce age
               </SubSloganHeading>
               <VideoPlayer margin={{ top: 'medium', bottom: 'large' }} />
             </Box>,

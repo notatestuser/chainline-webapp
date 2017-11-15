@@ -47,7 +47,6 @@ class CreateWalletLayer extends Component {
               <Box margin={{ vertical: 'medium', horizontal: 'none', bottom: 'large' }}>
                 <Paragraph margin={{ bottom: 'medium' }}>
                   Your passphrase is secret just like a password.<br />
-                  We cannot retrieve it if it is lost &ndash; it is not sent to us.<br />
                   <Emphasis>Be sure to keep it safe!</Emphasis>
                 </Paragraph>
                 {errorMsg ? <ErrorMsg>
