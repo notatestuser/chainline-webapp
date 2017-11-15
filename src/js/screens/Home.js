@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
-import PropTypes from 'prop-types';
 import numeral from 'numeral';
 
 import styled from 'styled-components';
@@ -172,9 +171,5 @@ class Home extends Component {
     ]);
   }
 }
-
-Home.contextTypes = {
-  router: PropTypes.any,
-};
 
 export default withBlockchainProvider(withRouter(Home));

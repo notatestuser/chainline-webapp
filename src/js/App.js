@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import copy from 'copy-to-clipboard';
 import secureRandom from 'secure-random';
@@ -13,13 +13,10 @@ import { getAccountFromWIFKey } from 'chainline-js';
 import chainline from './themes/chainline';
 
 import BlockchainProvider from './components/BlockchainProvider';
+import WalletWorker from './workers/wallet.worker';
 
 import Layout from './Layout';
-import HomePage from './screens/Home';
-import DemandPage from './screens/Demand';
-import TravelPage from './screens/Travel';
-
-import WalletWorker from './workers/wallet.worker';
+import Routes from './Routes';
 
 import {
   NotifyLayer,
@@ -254,29 +251,10 @@ export default class App extends Component {
               ]}
               onOpenTrackingClick={this._onOpenTrackingClick}
             >
-              <Switch>
-                <Route
-                  exact={true}
-                  path='/'
-                  render={routeProps => (
-                    <HomePage
-                      {...routeProps}
-                      responsiveState={responsiveState}
-                      onTrackClicked={() => { this.setState({ isTrackingLayerOpen: true }); }}
-                    />)}
-                />
-                <Route
-                  exact={true}
-                  path='/demand/create'
-                  component={DemandPage}
-                />
-                <Route
-                  exact={true}
-                  path='/travel/create'
-                  component={TravelPage}
-                />
-                <Route exact={true} path='/track' component={() => {}} />
-              </Switch>
+              <Routes
+                responsiveState={responsiveState}
+                onTrackClicked={() => { this.setState({ isTrackingLayerOpen: true }); }}
+              />
             </Layout>
           </BlockchainProvider>
         </Grommet>
