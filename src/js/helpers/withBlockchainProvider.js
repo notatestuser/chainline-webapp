@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
-import { contextTypes } from '../components/WalletProvider';
+import { contextTypes } from '../components/BlockchainProvider';
 
-const withWallet = ChildComponent =>
+const withBlockchainProvider = ChildComponent =>
   class extends Component {
     static contextTypes = contextTypes
 
@@ -16,4 +16,4 @@ const withWallet = ChildComponent =>
     }
   };
 
-export default withWallet;
+export default withBlockchainProvider;

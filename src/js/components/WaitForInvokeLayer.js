@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Layer, Box, Heading, Text } from 'grommet';
 
-import withWallet from '../helpers/withWallet';
+import withBlockchainProvider from '../helpers/withBlockchainProvider';
 
 const WavesKeyframes = keyframes`
   0% {
@@ -101,4 +101,4 @@ class WaitForInvokeLayer extends Component {
   }
 }
 
-export default withWallet(WaitForInvokeLayer);
+export default withBlockchainProvider(WaitForInvokeLayer);

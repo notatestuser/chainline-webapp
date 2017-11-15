@@ -10,7 +10,7 @@ import { CircleInformation } from 'grommet-icons';
 import { Constants, getBalance, openDemand } from 'chainline-js';
 import { string2hex, calculateRealGasConsumption, formatGasConsumption } from '../utils';
 import { WidthCappedContainer, Field, NotifyLayer } from '../components';
-import withWallet from '../helpers/withWallet';
+import withBlockchainProvider from '../helpers/withBlockchainProvider';
 
 const CITIES = ['Shanghai', 'London', 'Geneva'];
 const MAX_INFO_LEN = 128;
@@ -317,4 +317,4 @@ class DemandPage extends Component {
   }
 }
 
-export default withWallet(DemandPage);
+export default withBlockchainProvider(DemandPage);

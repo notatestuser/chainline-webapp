@@ -9,7 +9,7 @@ import { CircleInformation } from 'grommet-icons';
 import { Constants, openTravel } from 'chainline-js';
 import { calculateRealGasConsumption, formatGasConsumption } from '../utils';
 import { WidthCappedContainer, Field, NotifyLayer, WaitForInvokeLayer } from '../components';
-import withWallet from '../helpers/withWallet';
+import withBlockchainProvider from '../helpers/withBlockchainProvider';
 import { MSG_GAS_CONSUMED } from './Demand';
 
 const CITIES = ['Shanghai', 'London', 'Geneva'];
@@ -285,4 +285,4 @@ class TravelPage extends Component {
   }
 }
 
-export default withWallet(TravelPage);
+export default withBlockchainProvider(TravelPage);

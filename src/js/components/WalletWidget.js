@@ -9,7 +9,7 @@ import { Alert, Money, LinkUp, LinkDown } from 'grommet-icons';
 import { getPrice, doSendAsset } from 'chainline-js';
 
 import { SendLayer } from './';
-import withWallet from '../helpers/withWallet';
+import withBlockchainProvider from '../helpers/withBlockchainProvider';
 
 const DropDownLabel = styled(Box)`
   font-weight: 500;
@@ -136,4 +136,4 @@ class WalletWidget extends PureComponent {
   }
 }
 
-export default withWallet(WalletWidget);
+export default withBlockchainProvider(WalletWidget);

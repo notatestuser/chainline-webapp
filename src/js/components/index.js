@@ -6,7 +6,7 @@ import _NotifyLayer from './NotifyLayer';
 import _SendLayer from './SendLayer';
 import _VideoPlayer from './VideoPlayer';
 import _WaitForInvokeLayer from './WaitForInvokeLayer';
-import _WalletProvider from './WalletProvider';
+import _BlockchainProvider from './BlockchainProvider';
 import _WalletWidget from './WalletWidget';
 
 export const CreateWalletLayer = _CreateWalletLayer;
@@ -17,7 +17,7 @@ export const NotifyLayer = _NotifyLayer;
 export const SendLayer = _SendLayer;
 export const VideoPlayer = _VideoPlayer;
 export const WaitForInvokeLayer = _WaitForInvokeLayer;
-export const WalletProvider = _WalletProvider;
+export const BlockchainProvider = _BlockchainProvider;
 export const WalletWidget = _WalletWidget;
 
 export * from './WidthCappedContainer';

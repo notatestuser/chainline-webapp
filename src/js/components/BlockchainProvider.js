@@ -33,7 +33,7 @@ const defaultState = {
   wif: null,
 };
 
-class WalletProvider extends Component {
+class BlockchainProvider extends Component {
   static childContextTypes = contextTypes
 
   state = defaultState
@@ -124,4 +124,4 @@ class WalletProvider extends Component {
   render() { return this.props.children; }
 }
 
-export default WalletProvider;
+export default BlockchainProvider;

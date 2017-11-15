@@ -12,7 +12,7 @@ import { getAccountFromWIFKey } from 'chainline-js';
 
 import chainline from './themes/chainline';
 
-import WalletProvider from './components/WalletProvider';
+import BlockchainProvider from './components/BlockchainProvider';
 
 import Layout from './Layout';
 import HomePage from './screens/Home';
@@ -204,7 +204,7 @@ export default class App extends Component {
             <div />
           </Responsive>
 
-          <WalletProvider wif={accountWif} net='TestNet'>
+          <BlockchainProvider wif={accountWif} net='TestNet'>
             {/* Simple notifications */}
             {notifyMessage ? <NotifyLayer
               size='small'
@@ -262,7 +262,7 @@ export default class App extends Component {
                 <Route exact={true} path='/track' component={() => {}} />
               </Switch>
             </Layout>
-          </WalletProvider>
+          </BlockchainProvider>
         </Grommet>
       </Router>
     );
