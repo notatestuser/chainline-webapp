@@ -45,7 +45,6 @@ class DemandPage extends Component {
     dropOffCitySuggestions: [],
     selectedItemSize: 'S',
     infoCharsUsed: 0,
-    gasPriceUSD: 0,
     itemValueGAS: 0,
     requiredGAS: 0, // item value + fee
     gasConsumed: 0, // invocation cost

@@ -1,24 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import numeral from 'numeral';
-import is from 'is_js';
 
 import styled from 'styled-components';
 import { Box, Heading, Paragraph, Select, RoutedAnchor } from 'grommet';
 
-import { getPrice, getStats } from 'chainline-js';
+import { getStats } from 'chainline-js';
 
 import { WidthCappedContainer } from '../components';
+import withBlockchainProvider from '../helpers/withBlockchainProvider';
 
 const BlurbParagraph = styled(Paragraph)`
   margin-top: 0;
   padding-right: 12px;
 `;
 
-export default class Home extends Component {
+class Home extends Component {
   state = {
     hasStats: false,
-    gasPriceUSD: null,
     demands: 0,
     routes: 0,
     funds: 0,
@@ -33,24 +32,12 @@ export default class Home extends Component {
         routes: Number.isNaN(parseInt(routes, 10)) ? 0 : routes,
         funds: Number.isNaN(parseInt(funds, 10)) ? 0 : funds,
       });
-      this._refreshGasPrice();
     } catch (e) {}  // eslint-disable-line
   }
 
-  componentDidUpdate() {
-    this._refreshGasPrice();
-  }
-
-  async _refreshGasPrice() {
-    if (is.number(this.state.gasPriceUSD)) return;
-    console.debug('Updating GAS/USD price…');
-    const gasPriceUSD = await getPrice('GAS', 'USD');
-    this.setState({ gasPriceUSD });
-  }
-
   render() {
-    const { responsiveState } = this.props;
-    const { hasStats, gasPriceUSD, demands, routes, funds } = this.state;
+    const { responsiveState, gasPriceUSD } = this.props;
+    const { hasStats, demands, routes, funds } = this.state;
 
     return ([
       <Box key='content-0' direction='column'>
@@ -173,3 +160,5 @@ export default class Home extends Component {
 Home.contextTypes = {
   router: PropTypes.any,
 };
+
+export default withBlockchainProvider(Home);

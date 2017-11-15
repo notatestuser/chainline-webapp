@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Box, Menu, Button } from 'grommet';
 import { Alert, Money, LinkUp, LinkDown } from 'grommet-icons';
 
-import { getPrice, doSendAsset } from 'chainline-js';
+import { doSendAsset } from 'chainline-js';
 
 import { SendLayer } from './';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
@@ -17,23 +17,7 @@ const DropDownLabel = styled(Box)`
 
 class WalletWidget extends PureComponent {
   state = {
-    gasPriceUSD: null,
     sendFundsOpen: false,
-  }
-
-  componentDidMount() {
-    this._refreshGasPrice();
-  }
-
-  componentDidUpdate() {
-    this._refreshGasPrice();
-  }
-
-  async _refreshGasPrice() {
-    if (is.number(this.state.gasPriceUSD)) return;
-    console.debug('Updating GAS/USD price…');
-    const gasPriceUSD = await getPrice('GAS', 'USD');
-    this.setState({ gasPriceUSD });
   }
 
   _onSendFunds = async (address, amount) => {
@@ -45,13 +29,13 @@ class WalletWidget extends PureComponent {
   render() {
     const {
       wallet: { address, wif, balance, effectiveBalanceString, reservedString, reputationString },
+      gasPriceUSD,
       responsiveState,
       onCreateWalletClick,
       onOpenWalletClick,
       onReceiveClick,
       onLogOutClick,
     } = this.props;
-    const { gasPriceUSD } = this.state;
 
     // logged in?
     if (wif) {
