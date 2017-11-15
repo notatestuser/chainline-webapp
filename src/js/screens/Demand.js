@@ -7,9 +7,9 @@ import styled from 'styled-components';
 import { Box, Heading, Paragraph, Anchor, Button, TextInput, RadioButton } from 'grommet';
 import { CircleInformation } from 'grommet-icons';
 
-import { Constants, getBalance, openDemand } from 'chainline-js';
+import { Constants, openDemand } from 'chainline-js';
 import { string2hex, calculateRealGasConsumption, formatGasConsumption } from '../utils';
-import { WidthCappedContainer, Field, NotifyLayer } from '../components';
+import { WidthCappedContainer, Field, NotifyLayer, WaitForInvokeLayer } from '../components';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
 
 const CITIES = ['Shanghai', 'London', 'Geneva'];
@@ -40,6 +40,7 @@ export const MSG_GAS_CONSUMED = gasConsumed => [
 class DemandPage extends Component {
   state = {
     loading: false,
+    sendingTx: false,
     showingGasConsumptionNotice: false,
     pickUpCitySuggestions: [],
     dropOffCitySuggestions: [],
@@ -74,7 +75,7 @@ class DemandPage extends Component {
   }
 
   _onSubmit = async (ev, data) => {
-    const { wallet: { wif: accountWif, address, net } } = this.props;
+    const { wallet: { wif: accountWif, address, net, effectiveBalance: balance } } = this.props;
     const { selectedItemSize, itemValueGAS, requiredGAS } = this.state;
     ev.preventDefault();
     try {
@@ -89,14 +90,12 @@ class DemandPage extends Component {
 
       this.setState({ loading: true });
 
-      // live balance check
-      const { GAS: { balance } } = await getBalance(net, address);
+      console.debug('Effective balance:', balance);
       if (requiredGAS > balance) {
         throw new Error(`Insufficient funds. ${requiredGAS.toFixed(3)} GAS required (with fee)`);
       }
 
-      // invoke contract on the blockchain
-      const { result, gasConsumed, success } = await openDemand(net, accountWif, {
+      const invokeArgs = {
         // expiry: BigInteger
         expiry: Number.parseInt(new Date(picked.expiry).getTime() / 1000, 10),
         // repRequired: BigInteger
@@ -111,24 +110,42 @@ class DemandPage extends Component {
         pickUpCity: picked.pickUpCity,
         // dropOffCity: String
         dropOffCity: picked.dropOffCity,
-      });
+      };
 
-      if (!success) {
-        throw new Error('Non-success return value');
-      }
+      // case: user has not seen the system fees popup yet, run a test invoke
+      if (!this.state.gasConsumed) {
+        const { result, gasConsumed, success } = await openDemand(net, accountWif, invokeArgs);
+        if (!success || !result) {
+          throw new Error('Non-success return value');
+        }
 
-      if (result && !this.state.gasConsumed) {
         const realGasConsumption = calculateRealGasConsumption(gasConsumed);
         this.setState({
           gasConsumed: realGasConsumption,
           notifyMessage: MSG_GAS_CONSUMED(realGasConsumption),
           showingGasConsumptionNotice: true,
         });
+
+      // case: user has confirmed the fee payment
+      } else if (this.state.gasConsumed) {
+        console.debug('Effective balance:', balance);
+        if (requiredGAS + this.state.gasConsumed > balance) {
+          throw new Error(`Insufficient funds. ${requiredGAS.toFixed(3)} GAS required`);
+        }
+
+        // do the real invoke
+        const { result } =
+            await openDemand(net, accountWif, invokeArgs, true, this.state.gasConsumed);
+        this.setState({ loading: true });
+        if (!result) {
+          throw new Error('Non-success return value');
+        }
+        this.setState({ sendingTx: true });
       } else {
-        throw new Error('Contract invocation failed');
+        throw new Error('Unexpected form state');
       }
-    } catch (pickErr) {
-      const { message } = pickErr;
+    } catch (err) {
+      const { message } = err;
       let errorMsg = 'Unknown error';
       if (message) {
         errorMsg = `${message.charAt(0).toUpperCase()}${message.substr(1)}`;
@@ -139,17 +156,6 @@ class DemandPage extends Component {
 
   render() {
     const { wallet: { wif: accountWif }, gasPriceUSD } = this.props;
-    const {
-      loading,
-      showingGasConsumptionNotice,
-      pickUpCitySuggestions,
-      dropOffCitySuggestions,
-      notifyMessage,
-      infoCharsUsed,
-      itemValueGAS,
-      requiredGAS,
-      gasConsumed,
-    } = this.state;
 
     if (!accountWif) {
       return (<Box key='content' direction='column'>
@@ -167,6 +173,19 @@ class DemandPage extends Component {
       </Box>);
     }
 
+    const {
+      loading,
+      sendingTx,
+      showingGasConsumptionNotice,
+      pickUpCitySuggestions,
+      dropOffCitySuggestions,
+      notifyMessage,
+      infoCharsUsed,
+      itemValueGAS,
+      requiredGAS,
+      gasConsumed,
+    } = this.state;
+
     const nowDatePlusTwoDays = Date.now() + 172800000; // 2 days in ms
     const defaultExpiryDate = new Date(nowDatePlusTwoDays).toISOString().split('T')[0];
     const timezoneAbbr = new Date().toString().match(/\(([A-Za-z\s].*)\)/)[1];
@@ -180,6 +199,12 @@ class DemandPage extends Component {
       `Minimum: $${numeral(Constants.MIN_GAS_ITEM_VALUE * gasPriceUSD).format('0,0.00')}`);
 
     return ([
+      /* "Waiting for invoke" popup */
+      sendingTx ? <WaitForInvokeLayer
+        key='demand-invokelayer'
+        onInvokeComplete={() => { alert('Invoke complete!'); }}
+      /> : null,
+
       /* Simple notifications */
       notifyMessage ? <NotifyLayer
         key='demand-notify'
@@ -307,7 +332,8 @@ class DemandPage extends Component {
             </AutoForm>
             <Disclaimer size='full' margin={{ top: 'large' }}>
               Please be aware:<br />
-              All entered information, unless marked with an asterisk *,  is publicly visible on the blockchain
+              All entered information, unless marked with an asterisk *,{' '}
+              is publicly visible on the blockchain
             </Disclaimer>
           </WidthCappedContainer>
         </Box>

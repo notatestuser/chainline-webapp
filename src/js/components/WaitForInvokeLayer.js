@@ -65,7 +65,7 @@ class WaitForInvokeLayer extends Component {
 
   componentWillReceiveProps({ wallet: { balance, reserved } }) {
     const { startBalance, startReserved } = this.state;
-    console.log('WaitForInvokeLayer componentWillReceiveProps', balance, reserved);
+    console.debug('WaitForInvokeLayer is waiting...', balance, reserved);
     if (balance !== startBalance || reserved !== startReserved) {
       // something changed. take the user to the next page.
       this.props.onInvokeComplete();

@@ -29,6 +29,7 @@ class TravelPage extends Component {
     dropOffCitySuggestions: [],
     selectedItemSize: 'S',
     requiredGAS: Constants.FEE_TRAVEL_DEPOSIT_GAS,
+    gasConsumed: 0,
   }
 
   componentDidMount() {
@@ -54,13 +55,12 @@ class TravelPage extends Component {
 
       this.setState({ loading: true });
 
-      // live balance check
-      console.log('Effective balance:', balance);
+      console.debug('Effective balance:', balance);
       if (requiredGAS > balance) {
         throw new Error(`Insufficient funds. ${requiredGAS.toFixed(3)} GAS required (deposit)`);
       }
 
-      const args = {
+      const invokeArgs = {
         // expiry: BigInteger
         expiry: Number.parseInt(new Date(picked.expiry).getTime() / 1000, 10),
         // repRequired: BigInteger
@@ -76,7 +76,7 @@ class TravelPage extends Component {
       // case: user has not seen the system fees popup yet, run a test invoke
       if (!this.state.gasConsumed) {
         // invoke contract on the blockchain
-        const { result, gasConsumed, success } = await openTravel(net, accountWif, args);
+        const { result, gasConsumed, success } = await openTravel(net, accountWif, invokeArgs);
         if (!success || !result) {
           throw new Error('Non-success return value');
         }
@@ -90,13 +90,15 @@ class TravelPage extends Component {
 
       // case: user has confirmed the fee payment
       } else if (this.state.gasConsumed) {
-        // live balance check (again)
-        console.log('Effective balance:', balance);
+        // balance check (again)
+        console.debug('Effective balance:', balance);
         if (requiredGAS + this.state.gasConsumed > balance) {
           throw new Error(`Insufficient funds. ${requiredGAS.toFixed(3)} GAS required (deposit + fees)`);
         }
 
-        const { result } = await openTravel(net, accountWif, args, true, this.state.gasConsumed);
+        // do the real invoke
+        const { result } =
+            await openTravel(net, accountWif, invokeArgs, true, this.state.gasConsumed);
         this.setState({ loading: true });
         if (!result) {
           throw new Error('Non-success return value');
@@ -105,8 +107,8 @@ class TravelPage extends Component {
       } else {
         throw new Error('Unexpected form state');
       }
-    } catch (pickErr) {
-      const { message } = pickErr;
+    } catch (err) {
+      const { message } = err;
       let errorMsg = 'Unknown error';
       if (message) {
         errorMsg = `${message.charAt(0).toUpperCase()}${message.substr(1)}`;
@@ -276,7 +278,8 @@ class TravelPage extends Component {
             </AutoForm>
             <Disclaimer size='full' margin={{ top: 'large' }}>
               Please be aware:<br />
-              All entered information, unless marked with an asterisk *,  is publicly visible on the blockchain
+              All entered information, unless marked with an asterisk *,{' '}
+              is publicly visible on the blockchain
             </Disclaimer>
           </WidthCappedContainer>
         </Box>
