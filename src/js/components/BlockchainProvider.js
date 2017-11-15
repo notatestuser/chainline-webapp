@@ -92,6 +92,7 @@ class BlockchainProvider extends Component {
       // not logged in / user logged out
       this.setState(defaultState);
     }
+    if (!this.state.gasPriceUSD) this._refreshGasPriceUSD();
     if (!wif) return;
     if (this.state.wif === wif) return;
     const { address, programHash } = getAccountFromWIFKey(wif);
@@ -99,7 +100,7 @@ class BlockchainProvider extends Component {
     const refresh = async () => {
       console.debug('Refreshing wallet state…');
       // in parallel, fail-safe
-      getBalance(net, address).then((response) => {
+      getBalance(net, address, true).then((response) => {
         const { reserved } = this.state;
         const newBalance = response.GAS.balance;
         this.setState({
@@ -124,7 +125,6 @@ class BlockchainProvider extends Component {
         alert(`Could not get wallet state! ${message}`);
         console.error('getWalletState error', err);
       });
-      this._refreshGasPriceUSD();
     };
     if (this._timer) clearInterval(this._timer);
     this._timer = setInterval(refresh, REFRESH_INTERVAL_MS); // every 15 secs
