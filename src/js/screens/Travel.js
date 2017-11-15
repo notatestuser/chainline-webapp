@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import AutoForm from 'react-auto-form';
 import pick from 'pedantic-pick';
 
@@ -21,10 +22,16 @@ const IntroParagraph = styled(Paragraph)`
 const Disclaimer = styled(Paragraph)` font-weight: 500; `;
 
 class TravelPage extends Component {
+  static contextTypes = {
+    router: PropTypes.object.isRequired,
+  }
+
   state = {
     loading: false,
     sendingTx: false,
     showingGasConsumptionNotice: false,
+    pickUpCity: null,
+    dropOffCity: null,
     pickUpCitySuggestions: [],
     dropOffCitySuggestions: [],
     selectedItemSize: 'S',
@@ -36,8 +43,15 @@ class TravelPage extends Component {
     window.scrollTo(0, 0);
   }
 
-  _onChange = () => {
-    this.setState({ gasConsumed: 0 }); // reset, require local invoke again
+  _onChange = (ev, name, value) => {
+    const gasConsumed = 0; // reset, require local invoke again
+    if (name === 'pickUpCity') {
+      this.setState({ pickUpCity: value, gasConsumed });
+    } else if (name === 'dropOffCity') {
+      this.setState({ dropOffCity: value, gasConsumed });
+    } else {
+      this.setState({ gasConsumed }); // reset, require local invoke again
+    }
   }
 
   _onSubmit = async (ev, data) => {
@@ -139,6 +153,8 @@ class TravelPage extends Component {
       loading,
       sendingTx,
       showingGasConsumptionNotice,
+      pickUpCity,
+      dropOffCity,
       pickUpCitySuggestions,
       dropOffCitySuggestions,
       notifyMessage,
@@ -159,7 +175,11 @@ class TravelPage extends Component {
       sendingTx ? <WaitForInvokeLayer
         key='travel-invokelayer'
         onInvokeComplete={({ wallet: { stateLookupKey } }) => {
+          const { router } = this.context;
           alert(`Invoke complete! Lookup key: ${stateLookupKey}`);
+          const trackingId = `${stateLookupKey}`; // todo: add city
+          (router.history || router)
+            .push(`/track/${trackingId}/${pickUpCity}/${dropOffCity}`);
         }}
       /> : null,
 

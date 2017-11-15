@@ -118,11 +118,11 @@ class BlockchainProvider extends Component {
           balance: balance - reservedBalance,
           reputation,
           stateLookupKey,
-        }).catch((err) => {
-          const { message } = err;
-          alert(`Could not get wallet state! ${message}`);
-          console.error('getWalletState error', err);
         });
+      }).catch((err) => {
+        const { message } = err;
+        alert(`Could not get wallet state! ${message}`);
+        console.error('getWalletState error', err);
       });
       this._refreshGasPriceUSD();
     };

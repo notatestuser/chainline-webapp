@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import AutoForm from 'react-auto-form';
 import pick from 'pedantic-pick';
 import numeral from 'numeral';
@@ -38,10 +39,16 @@ export const MSG_GAS_CONSUMED = gasConsumed => [
 ];
 
 class DemandPage extends Component {
+  static contextTypes = {
+    router: PropTypes.object.isRequired,
+  }
+
   state = {
     loading: false,
     sendingTx: false,
     showingGasConsumptionNotice: false,
+    pickUpCity: null,
+    dropOffCity: null,
     pickUpCitySuggestions: [],
     dropOffCitySuggestions: [],
     selectedItemSize: 'S',
@@ -69,13 +76,17 @@ class DemandPage extends Component {
         const requiredGAS = Constants.FEE_DEMAND_REWARD_GAS + itemValueGAS;
         this.setState({ itemValueGAS, requiredGAS, gasConsumed });
       }
+    } else if (name === 'pickUpCity') {
+      this.setState({ pickUpCity: value, gasConsumed });
+    } else if (name === 'dropOffCity') {
+      this.setState({ dropOffCity: value, gasConsumed });
     } else {
       this.setState({ gasConsumed });
     }
   }
 
   _onSubmit = async (ev, data) => {
-    const { wallet: { wif: accountWif, address, net, effectiveBalance: balance } } = this.props;
+    const { wallet: { wif: accountWif, net, effectiveBalance: balance } } = this.props;
     const { selectedItemSize, itemValueGAS, requiredGAS } = this.state;
     ev.preventDefault();
     try {
@@ -177,6 +188,8 @@ class DemandPage extends Component {
       loading,
       sendingTx,
       showingGasConsumptionNotice,
+      pickUpCity,
+      dropOffCity,
       pickUpCitySuggestions,
       dropOffCitySuggestions,
       notifyMessage,
@@ -203,7 +216,11 @@ class DemandPage extends Component {
       sendingTx ? <WaitForInvokeLayer
         key='demand-invokelayer'
         onInvokeComplete={({ wallet: { stateLookupKey } }) => {
+          const { router } = this.context;
           alert(`Invoke complete! Lookup key: ${stateLookupKey}`);
+          const trackingId = `${stateLookupKey}`; // todo: add city
+          (router.history || router)
+            .push(`/track/${trackingId}/${pickUpCity}/${dropOffCity}`);
         }}
       /> : null,
 
