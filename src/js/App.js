@@ -239,7 +239,7 @@ export default class App extends Component {
                   onLogOutClick={() => { this.setState({ accountWif: null }); }}
                   onFundsSent={this._onWalletFundsSent}
                 />,
-                <NotificationsWidget key='notifications' />,
+                accountWif ? <NotificationsWidget key='notifications' /> : null,
               ]}
             >
               <Switch>

@@ -15,6 +15,10 @@ const BlurbParagraph = styled(Paragraph)`
   padding-right: 12px;
 `;
 
+const BlurbPoints = styled.ol`
+  margin: 0 0 8px;
+`;
+
 class Home extends Component {
   state = {
     hasStats: false,
@@ -55,11 +59,11 @@ class Home extends Component {
             <Select
               size='large'
               options={[
-                'I would like an item to be delivered to me from another city.',
+                'I would like an item to be delivered to me from elsewhere.',
                 'I am travelling and have extra space to carry items.',
                 'There is a Chain Line shipment I would like to track.',
               ]}
-              value='Select one'
+              value='Select a journey'
             />
           </WidthCappedContainer>
         </Box>
@@ -102,7 +106,7 @@ class Home extends Component {
           <WidthCappedContainer direction='row' wrap='wrap'>
             <Box basis={responsiveState === 'wide' ? '1/3' : 'full'}>
               <Heading level={3} margin={{ top: responsiveState === 'wide' ? 'none' : undefined }}>
-                How does Chain Line work?
+                How does it work?
               </Heading>
               <BlurbParagraph>
                 Chain Line uses a network of untrusted peers to get products and valuable items to
@@ -119,16 +123,18 @@ class Home extends Component {
 
             <Box basis={responsiveState === 'wide' ? '1/3' : 'full'}>
               <Heading level={3} margin={{ top: responsiveState === 'wide' ? 'none' : undefined }}>
-                &ldquo;Demand&rdquo; a shipment
+                &ldquo;Demand&rdquo; a Shipment
               </Heading>
               <BlurbParagraph>
                 Whether it&apos;s a new phone or a package from a friend, Chain Line can help
                 transport the goods you need.
               </BlurbParagraph>
-              <BlurbParagraph>
-                Tell us which product you need and its origin city, and we will try to match you
-                with someone travelling before your demand&apos;s expiry date.
-              </BlurbParagraph>
+              <BlurbPoints>
+                <li>Tell it what you need</li>
+                <li>Deposit the cost of the item</li>
+                <li>You are matched to a courier</li>
+                <li>You receive your item!</li>
+              </BlurbPoints>
               <Box margin={{ top: 'small' }}>
                 <RoutedAnchor primary={true} path='/demand/create' label='Demand a shipment' />
               </Box>
@@ -136,15 +142,15 @@ class Home extends Component {
 
             <Box basis={responsiveState === 'wide' ? '1/3' : 'full'}>
               <Heading level={3} margin={{ top: responsiveState === 'wide' ? 'none' : undefined }}>
-                Tell us you&apos;re travelling
+                Become a Courier
               </Heading>
               <BlurbParagraph>
                 Have extra carry space and want to earn courier fees?
               </BlurbParagraph>
               <BlurbParagraph>
-                Register your travel dates with Chain Line and we will try to match you up with
+                Register your travel dates with Chain Line and it will try to match you up with
                 someone looking to transport an item from the city you are visiting.
-                Check back periodically to check your status.
+                You buy the item and deliver it in your own time.
               </BlurbParagraph>
               <Box margin={{ top: 'small' }}>
                 <RoutedAnchor primary={true} path='/travel/create' label='Register your travel' />

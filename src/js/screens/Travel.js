@@ -98,7 +98,7 @@ class TravelPage extends Component {
         const realGasConsumption = calculateRealGasConsumption(gasConsumed);
         this.setState({
           gasConsumed: realGasConsumption,
-          notifyMessage: MSG_GAS_CONSUMED(realGasConsumption),
+          notifyMessage: MSG_GAS_CONSUMED(realGasConsumption, Constants.FEE_DEMAND_REWARD_GAS),
           showingGasConsumptionNotice: true,
         });
 
@@ -128,21 +128,33 @@ class TravelPage extends Component {
         errorMsg = `${message.charAt(0).toUpperCase()}${message.substr(1)}`;
       }
       this.setState({ loading: false, notifyMessage: `${errorMsg}. Please correct this and try again.` });
+      console.error('form error', err);
     }
   }
 
   render() {
-    const { wallet: { wif: accountWif } } = this.props;
+    const { wallet: { wif: accountWif, stateLookupKey } } = this.props;
+
+    // not logged in
     if (!accountWif) {
       return (<Box key='content' direction='column'>
-        <Box
-          background='white'
-          direction='column'
-          pad='large'
-        >
+        <Box background='white' direction='column' pad='large'>
           <WidthCappedContainer>
             <Heading level={2} margin={{ top: 'none' }}>
               You must log in to proceed.
+            </Heading>
+          </WidthCappedContainer>
+        </Box>
+      </Box>);
+    }
+
+    // existing demand or travel open
+    if (stateLookupKey) {
+      return (<Box key='content' direction='column'>
+        <Box background='white' direction='column' pad='large'>
+          <WidthCappedContainer>
+            <Heading level={2} margin={{ top: 'none' }}>
+              Please complete your existing transaction first.
             </Heading>
           </WidthCappedContainer>
         </Box>

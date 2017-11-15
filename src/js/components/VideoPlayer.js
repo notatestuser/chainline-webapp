@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 
+import styled from 'styled-components';
 import { Box, Button, Stack, Video } from 'grommet';
 import { PlayFill as Play, Revert } from 'grommet-icons';
 
-const VIDEO_CONTENT = [
-  <source key='video' src='/assets/small.mp4' type='video/mp4' />,
+const VIDEO_CONTENT = src => [
+  <source key='video' src={src} type='video/mp4' />,
   <track
     key='cc'
     label='English'
@@ -15,6 +16,19 @@ const VIDEO_CONTENT = [
   />,
 ];
 
+const CenteredBox = styled(Box)`
+  background: rgb(240, 240, 240);
+  width: ${props => props.width};
+  height: ${props =>
+    props.responsiveState !== 'wide' ? 'auto' : `${(9 / 16) * Number.parseInt(props.width, 10)}px`};
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const FullHeightStack = styled(Stack)`
+  height: 100%;
+`;
+
 class VideoPlayer extends Component {
   state = {
     state: 'before',
@@ -22,15 +36,16 @@ class VideoPlayer extends Component {
 
   render() {
     const { state } = this.state;
+    const { src, margin, width, responsiveState } = this.props;
 
-    return (<Box align='center' margin={this.props.margin}>
-      <Stack>
+    return (<CenteredBox align='center' margin={margin} width={width} responsiveState={responsiveState}>
+      <FullHeightStack>
         <Video
           controls={false}
           autoPlay={state === 'during'}
           onEnded={() => this.setState({ state: 'after' })}
         >
-          {VIDEO_CONTENT}
+          {VIDEO_CONTENT(src)}
         </Video>
 
         {state === 'before' ? <Box justify='center' align='center'>
@@ -38,9 +53,9 @@ class VideoPlayer extends Component {
             <Box
               pad='medium'
               round='medium'
-              background={{ color: 'light-2', opacity: 'weak' }}
+              background={{ color: 'light-5', opacity: 'medium' }}
             >
-              <Play size='large' color='brand' />
+              <Play size={responsiveState === 'wide' ? 'xlarge' : 'large'} color='brand' />
             </Box>
           </Button>
         </Box> : null}
@@ -57,8 +72,8 @@ class VideoPlayer extends Component {
             </Box>
           </Button>
         </Box> : null}
-      </Stack>
-    </Box>);
+      </FullHeightStack>
+    </CenteredBox>);
   }
 }
 

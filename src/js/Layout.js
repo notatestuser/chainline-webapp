@@ -10,6 +10,7 @@ import { WidthCappedContainer, VideoPlayer } from './components';
 const LOGO_SRC = '/img/chainline-logo.svg';
 const TRACK_SRC = '/img/nav-track-shipment.svg';
 const SLOGAN_SRC = '/img/chainline-slogan.svg';
+const VIDEO_SRC = 'https://f001.backblazeb2.com/file/chainline-assets/explainer.mp4';
 
 const HeaderWidgets = styled(WidthCappedContainer)`
   position: relative;
@@ -21,7 +22,7 @@ const LogoBox = styled(Box)` border-bottom: 1px solid #e0e0e0; `;
 const LogoImage = styled.img`
   line-height: 0;
   max-width: ${({ responsiveState }) =>
-    responsiveState === 'wide' ? '265px' : 'auto'};
+    responsiveState === 'wide' ? '255px' : 'auto'};
   margin: auto;
   width: 100%;
 `;
@@ -38,7 +39,7 @@ const TrackImage = styled.img`
   display: ${({ responsiveState }) =>
     responsiveState === 'wide' ? 'block' : 'none'};
   margin: auto;
-  max-width: 140px;
+  max-width: 150px;
   position: relative;
   top: 1px;
 `;
@@ -46,6 +47,7 @@ const TrackImage = styled.img`
 const SloganImage = styled(LogoImage)`
   margin: 0;
   max-width: 715px;
+  transform: ${({ responsiveState }) => responsiveState === 'wide' ? '' : 'scale(1.1)'};
 `;
 
 const HeroHeading = styled(Heading)`
@@ -57,6 +59,8 @@ const SubSloganHeading = styled(Heading)`
   letter-spacing: 0.2px;
   margin-bottom: 38px;
 `;
+
+const Footer = styled(Box)` white-space: nowrap; `;
 
 const GoBackRoutedAnchor = styled(RoutedAnchor)` margin-left: -5px; `;
 
@@ -121,9 +125,14 @@ class Layout extends Component {
             <Box key='hero-1'>
               <SubSloganHeading level={3} textAlign='center' size={responsiveState === 'wide' ? 'medium' : 'small'}>
                 {/* Introducing a global shipping network with no staff, trains or planes. */}
-                Introducing a <Boldish>smarter</Boldish> shipping network for the e-commerce age
+                Introducing a <Boldish>smarter</Boldish> shipping network for the age of e-commerce
               </SubSloganHeading>
-              <VideoPlayer margin={{ top: 'medium', bottom: 'large' }} />
+              <VideoPlayer
+                src={VIDEO_SRC}
+                width='850px'
+                margin={{ top: 'medium', bottom: 'large' }}
+                responsiveState={responsiveState}
+              />
             </Box>,
           ]}
         </Box> : null}
@@ -150,7 +159,7 @@ class Layout extends Component {
         direction='column'
         justify='between'
       >
-        <Box
+        <Footer
           direction='row'
           align='center'
           pad='medium'
@@ -159,10 +168,10 @@ class Layout extends Component {
           <WidthCappedContainer direction='row' justify='space-between'>
             <Text margin='none'>
               © 2017 The Chain Line Contributors.&nbsp;
-              MIT Licensed.
+              {responsiveState === 'wide' ? ' MIT Licensed.' : null}
             </Text>
 
-            {responsiveState === 'wide' && <Box direction='row' responsive={true}>
+            {responsiveState === 'wide' ? <Box direction='row' responsive={true}>
               <Box pad={{ horizontal: 'medium' }}>
                 <Anchor href='//github.com/notatestuser/chainline-webapp/wiki' target='_blank'>
                   User Guide
@@ -175,12 +184,12 @@ class Layout extends Component {
               </Box>
               <Box pad={{ horizontal: 'medium' }}>
                 <Anchor href='//neo.org' target='_blank'>
-                  About the Neo Blockchain
+                  Powered by Neo Smart Economy
                 </Anchor>
               </Box>
-            </Box>}
+            </Box> : null}
           </WidthCappedContainer>
-        </Box>
+        </Footer>
       </Box>,
     ];
   }
