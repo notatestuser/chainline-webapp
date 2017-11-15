@@ -53,7 +53,7 @@ class BlockchainProvider extends Component {
 
 
   getChildContext() {
-    const { address, wif, balance, reserved, reputation, gasPriceUSD } = this.state;
+    const { address, wif, balance, reserved, reputation, stateLookupKey, gasPriceUSD } = this.state;
     const { net } = this.props;
     const effectiveBalance = balance - reserved;
     return {
@@ -65,11 +65,12 @@ class BlockchainProvider extends Component {
         effectiveBalance,
         effectiveBalanceString: is.number(effectiveBalance) ? numeral(effectiveBalance).format(NUMBER_FORMAT) : '?',
         isLoaded: !!wif,
+        net,
         reputation,
         reputationString: is.number(reputation) ? numeral(reputation).format('0,0') : '?',
         reserved,
         reservedString: is.number(reserved) ? numeral(reserved).format(NUMBER_FORMAT) : '?',
-        net,
+        stateLookupKey,
         wif,
       },
     };
@@ -96,7 +97,7 @@ class BlockchainProvider extends Component {
     const { address, programHash } = getAccountFromWIFKey(wif);
     this.setState({ wif, address });
     const refresh = async () => {
-      console.debug('Refreshing wallet status…');
+      console.debug('Refreshing wallet state…');
       // in parallel, fail-safe
       getBalance(net, address).then((response) => {
         const { reserved } = this.state;
@@ -104,14 +105,23 @@ class BlockchainProvider extends Component {
         this.setState({
           balance: reserved ? newBalance - reserved : newBalance,
         });
+      }).catch((err) => {
+        const { message } = err;
+        alert(`Could not get wallet balance! ${message}`);
+        console.error('getBalance error', err);
       });
       getWalletState(net, wif, programHash).then((response) => {
         const { balance } = this.state;
-        const { reservedBalance, reputation } = response;
+        const { reservedBalance, reputation, stateLookupKey } = response;
         this.setState({
           reserved: reservedBalance,
           balance: balance - reservedBalance,
           reputation,
+          stateLookupKey,
+        }).catch((err) => {
+          const { message } = err;
+          alert(`Could not get wallet state! ${message}`);
+          console.error('getWalletState error', err);
         });
       });
       this._refreshGasPriceUSD();
@@ -121,7 +131,9 @@ class BlockchainProvider extends Component {
     refresh();
   }
 
-  render() { return this.props.children; }
+  render() {
+    return this.props.children;
+  }
 }
 
 export default BlockchainProvider;

@@ -202,7 +202,9 @@ class DemandPage extends Component {
       /* "Waiting for invoke" popup */
       sendingTx ? <WaitForInvokeLayer
         key='demand-invokelayer'
-        onInvokeComplete={() => { alert('Invoke complete!'); }}
+        onInvokeComplete={({ wallet: { stateLookupKey } }) => {
+          alert(`Invoke complete! Lookup key: ${stateLookupKey}`);
+        }}
       /> : null,
 
       /* Simple notifications */

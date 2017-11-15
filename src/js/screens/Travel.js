@@ -158,7 +158,9 @@ class TravelPage extends Component {
       /* "Waiting for invoke" popup */
       sendingTx ? <WaitForInvokeLayer
         key='travel-invokelayer'
-        onInvokeComplete={() => { alert('Invoke complete!'); }}
+        onInvokeComplete={({ wallet: { stateLookupKey } }) => {
+          alert(`Invoke complete! Lookup key: ${stateLookupKey}`);
+        }}
       /> : null,
 
       /* Simple notifications */
