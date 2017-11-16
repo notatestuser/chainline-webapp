@@ -1,24 +1,29 @@
 import React from 'react';
+import { toAddress, hexstring2ab, parseTravelHex } from 'chainline-js';
+import { Table } from './';
+import { formatCarrySpace } from '../utils';
+import withBlockchainProvider from '../helpers/withBlockchainProvider';
 
-// const expiry = consumeBytes(state, Constants.TIMESTAMP_SIZE)
-// const repRequired = consumeBytes(state, Constants.REP_REQUIRED_SIZE)
-// const carrySpace = consumeBytes(state, Constants.CARRY_SPACE_SIZE)
-// const owner = consumeBytes(state, Constants.HASH160_SIZE)
-
-export default ({ travel }) => {
-  const view = {
-    'Expires at': new Date(travel.expiry).toLocaleString(),
-    'Owner': `${travel.owner}`,
+const TravelView = ({ travel: hex, extraAttributes, wallet: { address } }) => {
+  const travel = parseTravelHex(hex);
+  const timezoneAbbr = new Date().toString().match(/\(([A-Za-z\s].*)\)/)[1];
+  const view = Object.assign({}, extraAttributes || {}, {
+    'Expires at': `${travel.expiry.toLocaleString()} ${timezoneAbbr}`,
+    'Carry space': formatCarrySpace(travel.carrySpace),
     'Min. reputation': travel.repRequired,
-    'Carry space': travel.carrySpace,
-  };
+    'Owner address': address === travel.owner ? 'You!' : `${toAddress(hexstring2ab(travel.owner))}`,
+  });
   const keys = Object.keys(view);
   return (
-    <table>
-      {keys.map(key => (
-        <tr>
-          <th>{key}</th>
-          <td>{view[key]}</td>
-        </tr>))}
-    </table>);
+    <Table>
+      <tbody>
+        {keys.map((key, idx) => (
+          <tr key={idx}>
+            <th>{key}</th>
+            <td>{view[key]}</td>
+          </tr>))}
+      </tbody>
+    </Table>);
 };
+
+export default withBlockchainProvider(TravelView);

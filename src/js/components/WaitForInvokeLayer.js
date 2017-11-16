@@ -16,16 +16,15 @@ class WaitForInvokeLayer extends Component {
     this.setState({ startBalance, startReserved });
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { wallet: { balance, reserved } } = nextProps;
+  componentDidUpdate() {
+    const { wallet: { balance, reserved } } = this.props;
     const { startBalance, startReserved } = this.state;
     console.debug('WaitForInvokeLayer is waiting…', balance, reserved);
     if (balance !== startBalance || reserved !== startReserved) {
       // something changed. take the user to the next page.
-      this.props.onInvokeComplete(nextProps);
+      this.props.onInvokeComplete(this.props);
     }
   }
-
 
   render() {
     const { onClose, size = 'medium' } = this.props;

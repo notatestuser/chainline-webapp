@@ -60,7 +60,7 @@ class TrackingLayer extends Component {
               <Box margin={{ vertical: 'medium', horizontal: 'none', bottom: 'large' }}>
                 <Paragraph margin={{ bottom: 'medium' }}>
                   You will need your tracking ID.{' '}
-                  This is the one provided when registering a demand or travel.
+                  This is the one you got when you opened a demand or travel.
                 </Paragraph>
                 {isInvalid ? <ErrorMsg>
                   Please fill out all fields!

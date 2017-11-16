@@ -1,28 +1,31 @@
 import React from 'react';
+import { toAddress, hexstring2ab, parseDemandHex } from 'chainline-js';
+import { Table } from './';
+import { formatCarrySpace } from '../utils';
+import withBlockchainProvider from '../helpers/withBlockchainProvider';
 
-// const expiry = consumeBytes(state, Constants.TIMESTAMP_SIZE)
-// const itemValue = consumeBytes(state, Constants.VALUE_SIZE)
-// const owner = consumeBytes(state, Constants.HASH160_SIZE)
-// const repRequired = consumeBytes(state, Constants.REP_REQUIRED_SIZE)
-// const itemSize = consumeBytes(state, Constants.CARRY_SPACE_SIZE)
-// const infoBlob = consumeBytes(state, Constants.INFO_BLOB_SIZE)
-
-export default ({ demand }) => {
+const DemandView = ({ demand: hex, wallet: { address } }) => {
+  const demand = parseDemandHex(hex);
+  const timezoneAbbr = new Date().toString().match(/\(([A-Za-z\s].*)\)/)[1];
   const view = {
-    'Expires at': new Date(demand.expiry).toLocaleString(),
+    'Expires at': `${demand.expiry.toLocaleString()} ${timezoneAbbr}`,
+    'Item class': formatCarrySpace(demand.itemSize),
     'Item value': `${demand.itemValue} GAS`,
-    'Owner': `${demand.owner}`,
     'Min. reputation': demand.repRequired,
-    'Item size': demand.itemSize,
     'Information': demand.infoBlob,
+    'Owner address': address === demand.owner ? 'You!' : `${toAddress(hexstring2ab(demand.owner))}`,
   };
   const keys = Object.keys(view);
   return (
-    <table>
-      {keys.map(key => (
-        <tr>
-          <th>{key}</th>
-          <td>{view[key]}</td>
-        </tr>))}
-    </table>);
+    <Table>
+      <tbody>
+        {keys.map((key, idx) => (
+          <tr key={idx}>
+            <th>{key}</th>
+            <td>{view[key]}</td>
+          </tr>))}
+      </tbody>
+    </Table>);
 };
+
+export default withBlockchainProvider(DemandView);

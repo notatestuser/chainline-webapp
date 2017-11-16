@@ -27,6 +27,7 @@ export default props => (
     <Route
       exact={true}
       path='/track/:trackingId/:city1/:city2'
-      component={TrackingPage}
+      component={routeProps => (
+        <TrackingPage {...routeProps} {...props} />)}
     />
   </Switch>);

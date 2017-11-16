@@ -32,6 +32,20 @@ export const formatGasConsumption = (gasConsumption = 0) =>
   numeral(gasConsumption).format('0,0.000');
 
 /**
+ * Converts the numeric form of "carry space" to a string.
+ * @param {number} space
+ * @return {string} the readable string form
+ */
+export const formatCarrySpace = space => (() => {
+  switch (space) {
+    case 1: return 'Small items';
+    case 2: return 'Medium items';
+    case 3: return 'Large items';
+    default: return space;
+  }
+})();
+
+/**
  * Converts a number to a hexstring of a suitable size.
  * @param {number} num
  * @param {number} size - the required size in chars, eg 2 for Uint8, 4 for Uint16. Defaults to 2.

@@ -21,8 +21,8 @@ class WalletWidget extends PureComponent {
   }
 
   _onSendFunds = async (address, amount) => {
-    const { onFundsSent, wallet: { wif: accountWif } } = this.props;
-    const { result, hash } = await doSendAsset('TestNet', address, accountWif, { GAS: parseFloat(amount) });
+    const { onFundsSent, wallet: { wif: accountWif, net } } = this.props;
+    const { result, hash } = await doSendAsset(net, address, accountWif, { GAS: parseFloat(amount) });
     onFundsSent(result, hash);
   }
 

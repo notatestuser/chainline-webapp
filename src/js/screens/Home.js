@@ -83,7 +83,7 @@ class Home extends Component {
         >
           <WidthCappedContainer>
             <Heading level={3} margin={{ top: 'none' }}>
-              What can Chain Line do for you?
+              How can Chain Line help you?
             </Heading>
             <Select
               size='large'

@@ -21,7 +21,7 @@ const LogoBox = styled(Box)` border-bottom: 1px solid #e0e0e0; `;
 const LogoImage = styled.img`
   line-height: 0;
   max-width: ${({ responsiveState }) =>
-    responsiveState === 'wide' ? '255px' : 'auto'};
+    responsiveState === 'wide' ? '255px' : '75%'};
   margin: auto;
   width: 100%;
 `;
@@ -31,7 +31,7 @@ const LogoRoutedAnchor = styled(RoutedAnchor)`
   color: #333;
   display: flex;
   flex: 0 0 auto;
-  font-size: 19.5px;
+  font-size: 19px;
   font-weight: 500;
   height: 74px; /* there's a 1px border! */
   line-height: 0;
@@ -39,7 +39,9 @@ const LogoRoutedAnchor = styled(RoutedAnchor)`
   width: fit-content;
 `;
 
-const UserGuideAnchor = LogoRoutedAnchor.withComponent(Anchor);
+const NavBox = styled(Box)` flex-basis: 26%; `;
+
+const NavAnchor = LogoRoutedAnchor.withComponent(Anchor);
 
 const SloganImage = styled(LogoImage)`
   margin: 0;
@@ -100,9 +102,14 @@ class Layout extends Component {
             <LogoRoutedAnchor path='/'>
               <LogoImage src={LOGO_SRC} responsiveState={responsiveState} />
             </LogoRoutedAnchor>
-            {responsiveState === 'wide' ? <UserGuideAnchor href='https://git.io/vF1SL' target='_blank'>
-              User Guide
-            </UserGuideAnchor> : null}
+            {responsiveState === 'wide' ? <NavBox direction='row' justify='between'>
+              <NavAnchor onClick={() => { this.props.onOpenTrackingClick(); }}>
+                Tracking
+              </NavAnchor>
+              <NavAnchor href='/guide' target='_blank'>
+                User Guide
+              </NavAnchor>
+            </NavBox> : null}
           </WidthCappedContainer>
         </LogoBox>
 
@@ -170,17 +177,17 @@ class Layout extends Component {
             </Text>
 
             {responsiveState === 'wide' ? <Box direction='row' responsive={true}>
-              <Box pad={{ horizontal: 'medium' }}>
-                <Anchor href='//github.com/notatestuser/chainline-webapp/wiki' target='_blank'>
-                  User Guide
-                </Anchor>
-              </Box>
-              <Box pad={{ horizontal: 'medium' }}>
+              <Box pad={{ horizontal: 'small' }}>
                 <Anchor href='/_src' target='_blank'>
                   Source Code
                 </Anchor>
               </Box>
-              <Box pad={{ horizontal: 'medium' }}>
+              <Box pad={{ horizontal: 'small' }}>
+                <Anchor href='//neo.org/Testnet/Create' target='_blank'>
+                  Get TestNet GAS
+                </Anchor>
+              </Box>
+              <Box pad={{ horizontal: 'small' }}>
                 <Anchor href='//neo.org' target='_blank'>
                   Powered by Neo Smart Economy
                 </Anchor>
