@@ -8,19 +8,13 @@ import { Close } from 'grommet-icons';
 
 import { Constants } from 'chainline-js';
 
-import { Field } from './';
+import { Field, CityTextInput } from './';
 
 const ErrorMsg = styled(Paragraph)` color: red; `;
-
-const CITIES = ['Shanghai', 'London', 'Geneva'];
 
 class TrackingLayer extends Component {
   state = {
     isInvalid: false,
-    pickUpCity: null,
-    dropOffCity: null,
-    pickUpCitySuggestions: [],
-    dropOffCitySuggestions: [],
   }
 
   _onSubmit = async (ev, data) => {
@@ -37,13 +31,7 @@ class TrackingLayer extends Component {
   }
 
   render() {
-    const {
-      isInvalid,
-      pickUpCity,
-      dropOffCity,
-      pickUpCitySuggestions,
-      dropOffCitySuggestions,
-    } = this.state;
+    const { isInvalid } = this.state;
     const { onClose } = this.props;
 
     return (<Layer align='top' onEsc={onClose} size='medium'>
@@ -74,40 +62,10 @@ class TrackingLayer extends Component {
                   />
                 </Field>
                 <Field label='Collection city'>
-                  <TextInput
-                    name='pickUpCity'
-                    placeholder='e.g. Tokyo'
-                    suggestions={pickUpCitySuggestions}
-                    onSelect={
-                      ({ suggestion }) => this.setState({ pickUpCity: suggestion })
-                    }
-                    onInput={event => this.setState({
-                      pickUpCity: event.target.value,
-                      pickUpCitySuggestions: event.target.value.length < 3 ? ['Please enter more text'] : CITIES.filter(
-                        city => city.match(new RegExp(`^${event.target.value}`, 'i'))
-                      ),
-                    })}
-                    value={pickUpCity}
-                    plain={true}
-                  />
+                  <CityTextInput name='pickUpCity' />
                 </Field>
                 <Field label='Destination city'>
-                  <TextInput
-                    name='dropOffCity'
-                    placeholder='e.g. London'
-                    suggestions={dropOffCitySuggestions}
-                    onSelect={
-                      ({ suggestion }) => this.setState({ dropOffCity: suggestion })
-                    }
-                    onInput={event => this.setState({
-                      dropOffCity: event.target.value,
-                      dropOffCitySuggestions: event.target.value.length < 3 ? ['Please enter more text'] : CITIES.filter(
-                        city => city.match(new RegExp(`^${event.target.value}`, 'i'))
-                      ),
-                    })}
-                    value={dropOffCity}
-                    plain={true}
-                  />
+                  <CityTextInput name='dropOffCity' />
                 </Field>
                 <Box margin={{ top: 'medium' }}>
                   <Button

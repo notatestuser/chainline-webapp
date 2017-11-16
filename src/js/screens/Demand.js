@@ -11,10 +11,9 @@ import { CircleInformation } from 'grommet-icons';
 
 import { Constants, openDemand } from 'chainline-js';
 import { string2hex, calculateRealGasConsumption, formatGasConsumption } from '../utils';
-import { WidthCappedContainer, Field, NotifyLayer, WaitForInvokeLayer } from '../components';
+import { WidthCappedContainer, Field, NotifyLayer, WaitForInvokeLayer, CityTextInput } from '../components';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
 
-const CITIES = ['Shanghai', 'London', 'Geneva'];
 const MAX_INFO_LEN = 128;
 const MIN_ITEM_VALUE_GAS = 0.5;
 
@@ -33,7 +32,8 @@ export const MSG_GAS_CONSUMED = (gasConsumed, rewardGas) => [
   <CostReadout key='MSG_GAS_CONSUMED-1' size='full'>
     System fees payable now: {formatGasConsumption(gasConsumed)} GAS
     {rewardGas ? <br /> : null}
-    {rewardGas ? <span>Reward upon successful delivery: {formatGasConsumption(rewardGas)} GAS</span> : null}
+    {rewardGas ?
+      <span>Reward upon successful delivery: {formatGasConsumption(rewardGas)} GAS</span> : null}
   </CostReadout>,
   <NoticeParagraph key='MSG_GAS_CONSUMED-2' size='full'>
     If you agree to pay these fees{' '}
@@ -56,8 +56,6 @@ class DemandPage extends Component {
     showingGasConsumptionNotice: false,
     pickUpCity: null,
     dropOffCity: null,
-    pickUpCitySuggestions: [],
-    dropOffCitySuggestions: [],
     selectedItemSize: 'S',
     infoCharsUsed: 0,
     itemValueGAS: 0,
@@ -208,8 +206,6 @@ class DemandPage extends Component {
       showingGasConsumptionNotice,
       pickUpCity,
       dropOffCity,
-      pickUpCitySuggestions,
-      dropOffCitySuggestions,
       notifyMessage,
       infoCharsUsed,
       itemValueGAS,
@@ -307,47 +303,11 @@ class DemandPage extends Component {
                     />
                   </Box>
                 </Field>
-                <Field
-                  label='Collect from city'
-                  help='Not publicly visible*'
-                >
-                  <TextInput
-                    name='pickUpCity'
-                    placeholder='Must be a main city. Otherwise your demand may not be matched.'
-                    suggestions={pickUpCitySuggestions}
-                    onSelect={
-                      ({ suggestion }) => this.setState({ pickUpCity: suggestion })
-                    }
-                    onInput={event => this.setState({
-                      pickUpCity: event.target.value,
-                      pickUpCitySuggestions: event.target.value.length < 3 ? ['Please enter more text'] : CITIES.filter(
-                        city => city.match(new RegExp(`^${event.target.value}`, 'i'))
-                      ),
-                    })}
-                    value={this.state.pickUpCity}
-                    plain={true}
-                  />
+                <Field label='Collect from city' help='Not publicly visible*'>
+                  <CityTextInput name='pickUpCity' />
                 </Field>
-                <Field
-                  label='Deliver to city'
-                  help='Not publicly visible*'
-                >
-                  <TextInput
-                    name='dropOffCity'
-                    placeholder='Must be a main city. Be sure to have a central and public meeting place in mind for later.'
-                    suggestions={dropOffCitySuggestions}
-                    onSelect={
-                      ({ suggestion }) => this.setState({ dropOffCity: suggestion })
-                    }
-                    onInput={event => this.setState({
-                      dropOffCity: event.target.value,
-                      dropOffCitySuggestions: event.target.value.length < 3 ? ['Please enter more text'] : CITIES.filter(
-                        city => city.match(new RegExp(`^${event.target.value}`, 'i'))
-                      ),
-                    })}
-                    value={this.state.dropOffCity}
-                    plain={true}
-                  />
+                <Field label='Deliver to city' help='Not publicly visible*'>
+                  <CityTextInput name='dropOffCity' />
                 </Field>
                 <Field label={`Expire at midnight before (${timezoneAbbr})`}>
                   <TextInput name='expiry' type='date' placeholder='date' defaultValue={defaultExpiryDate} plain={true} />

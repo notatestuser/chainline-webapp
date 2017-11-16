@@ -10,11 +10,9 @@ import { CircleInformation } from 'grommet-icons';
 
 import { Constants, openTravel } from 'chainline-js';
 import { calculateRealGasConsumption, formatGasConsumption } from '../utils';
-import { WidthCappedContainer, Field, NotifyLayer, WaitForInvokeLayer } from '../components';
+import { WidthCappedContainer, Field, NotifyLayer, WaitForInvokeLayer, CityTextInput } from '../components';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
 import { MSG_GAS_CONSUMED } from './Demand';
-
-const CITIES = ['Shanghai', 'London', 'Geneva'];
 
 const IntroParagraph = styled(Paragraph)`
   margin-top: 0;
@@ -31,10 +29,6 @@ class TravelPage extends Component {
     loading: false,
     sendingTx: false,
     showingGasConsumptionNotice: false,
-    pickUpCity: null,
-    dropOffCity: null,
-    pickUpCitySuggestions: [],
-    dropOffCitySuggestions: [],
     selectedItemSize: 'S',
     requiredGAS: Constants.FEE_TRAVEL_DEPOSIT_GAS,
     gasConsumed: 0,
@@ -168,8 +162,6 @@ class TravelPage extends Component {
       showingGasConsumptionNotice,
       pickUpCity,
       dropOffCity,
-      pickUpCitySuggestions,
-      dropOffCitySuggestions,
       notifyMessage,
       requiredGAS,
       gasConsumed,
@@ -225,47 +217,11 @@ class TravelPage extends Component {
                   The system will reserve a refundable deposit of {requiredGAS} GAS.&nbsp;
                   Please make sure that you have this in your wallet.
                 </IntroParagraph>
-                <Field
-                  label='Departure city'
-                  help='Not publicly visible*'
-                >
-                  <TextInput
-                    name='pickUpCity'
-                    placeholder='Must be a main city. Otherwise you may not be matched up.'
-                    suggestions={pickUpCitySuggestions}
-                    onSelect={
-                      ({ suggestion }) => this.setState({ pickUpCity: suggestion })
-                    }
-                    onInput={event => this.setState({
-                      pickUpCity: event.target.value,
-                      pickUpCitySuggestions: event.target.value.length < 3 ? ['Please enter more text'] : CITIES.filter(
-                        city => city.match(new RegExp(`^${event.target.value}`, 'i'))
-                      ),
-                    })}
-                    value={this.state.pickUpCity}
-                    plain={true}
-                  />
+                <Field label='Departure city' help='Not publicly visible*'>
+                  <CityTextInput name='pickUpCity' />
                 </Field>
-                <Field
-                  label='Destination city'
-                  help='Not publicly visible*'
-                >
-                  <TextInput
-                    name='dropOffCity'
-                    placeholder='Must be a main city. Be sure to contact the demand owner upon arrival to arrange to meet in a public place.'
-                    suggestions={dropOffCitySuggestions}
-                    onSelect={
-                      ({ suggestion }) => this.setState({ dropOffCity: suggestion })
-                    }
-                    onInput={event => this.setState({
-                      dropOffCity: event.target.value,
-                      dropOffCitySuggestions: event.target.value.length < 3 ? ['Please enter more text'] : CITIES.filter(
-                        city => city.match(new RegExp(`^${event.target.value}`, 'i'))
-                      ),
-                    })}
-                    value={this.state.dropOffCity}
-                    plain={true}
-                  />
+                <Field label='Destination city' help='Not publicly visible*'>
+                  <CityTextInput name='dropOffCity' />
                 </Field>
                 <Field label={`Travelling at (${timezoneAbbr} time)`}>
                   <TextInput name='expiry' type='datetime-local' min={earliestTravelDate} plain={true} />

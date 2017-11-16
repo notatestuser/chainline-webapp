@@ -20,7 +20,6 @@ import Routes from './Routes';
 
 import {
   NotifyLayer,
-  NotificationsWidget,
   WalletWidget,
   LoadWalletLayer,
   CreateWalletLayer,
@@ -239,7 +238,7 @@ export default class App extends Component {
               responsiveState={responsiveState}
               headerWidgets={[
                 <WalletWidget
-                  key='wallet'
+                  key='wallet-widget'
                   responsiveState={responsiveState}
                   onCreateWalletClick={() => { this.setState({ isCreateWalletLayerOpen: true }); }}
                   onOpenWalletClick={() => { this.setState({ isLoadWalletLayerOpen: true }); }}
@@ -247,7 +246,6 @@ export default class App extends Component {
                   onLogOutClick={() => { this.setState({ accountWif: null }); }}
                   onFundsSent={this._onWalletFundsSent}
                 />,
-                accountWif ? <NotificationsWidget key='notifications' /> : null,
               ]}
               onOpenTrackingClick={this._onOpenTrackingClick}
             >
