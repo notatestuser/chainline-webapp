@@ -20,8 +20,9 @@ const LogoBox = styled(Box)` border-bottom: 1px solid #e0e0e0; `;
 
 const LogoImage = styled.img`
   line-height: 0;
+  min-width: 250px;
   max-width: ${({ responsiveState }) =>
-    responsiveState === 'wide' ? '255px' : '75%'};
+    responsiveState === 'wide' ? '255px' : '60%'};
   margin: auto;
   width: 100%;
 `;
@@ -39,20 +40,25 @@ const LogoRoutedAnchor = styled(RoutedAnchor)`
   width: fit-content;
 `;
 
-const NavBox = styled(Box)` flex-basis: 26%; `;
+const NavBox = styled(Box)`
+  flex-basis: 25%;
+  min-width: 250px;
+`;
 
 const NavAnchor = LogoRoutedAnchor.withComponent(Anchor);
 
 const SloganImage = styled(LogoImage)`
   margin: 0;
-  max-width: 715px;
-  transform: ${({ responsiveState }) => responsiveState === 'wide' ? '' : 'scale(1.1)'};
+  max-width: 700px;
+  transform: ${({ responsiveState }) =>
+    responsiveState === 'wide' ? '' : 'scale(1.1)'};
 `;
 
 const HeroHeading = styled(Heading)`
   font-family: Nunito;
   font-weight: 700;
-  margin-top: 50px;
+  margin-top: ${({ responsiveState }) =>
+    responsiveState === 'wide' ? '60px' : '30px'};
 `;
 
 const SubSloganHeading = styled(Heading)`
@@ -123,6 +129,7 @@ class Layout extends Component {
                 textAlign='center'
                 margin={{ vertical: 'medlarge', bottom: 'none' }}
                 size={responsiveState === 'wide' ? 'large' : 'medium'}
+                responsiveState={responsiveState}
               >
                 <SloganImage src={SLOGAN_SRC} responsiveState={responsiveState} />
               </HeroHeading>
