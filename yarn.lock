@@ -2799,15 +2799,15 @@ grommet-icons@^0.10.0, grommet-icons@^0.10.1:
   dependencies:
     deep-assign "^2.0.0"
 
-"grommet@>= 2.0.0-alpha.0 < 3.0.0":
-  version "2.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/grommet/-/grommet-2.0.0-alpha.0.tgz#c85d05b51fd4a3b0fbee123cd67d6186b1d3b218"
+grommet@2.0.0-alpha.3:
+  version "2.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/grommet/-/grommet-2.0.0-alpha.3.tgz#30d8766e45ea9d2c7205e0ae21914419143c41ca"
   dependencies:
     grommet-icons "^0.10.0"
     markdown-to-jsx "^5.4.2"
     polished "^1.3.0"
     prop-types "^15.5.10"
-    react-desc "^2.2.0"
+    react-desc "^3.2.0"
     recompose "^0.25.1"
 
 growly@^1.3.0:
@@ -5017,9 +5017,9 @@ react-desc@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/react-desc/-/react-desc-2.1.1.tgz#205fe131aa8e448d3d3ae3e7ae4b13a359f1b785"
 
-react-desc@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/react-desc/-/react-desc-2.2.0.tgz#83852e0cca6948c00468c4800fae5fbf272d195b"
+react-desc@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/react-desc/-/react-desc-3.2.0.tgz#88a947fdf029ed271a04abc98520d4776b13735c"
 
 react-dev-utils@^0.4.2:
   version "0.4.2"

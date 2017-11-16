@@ -7,7 +7,10 @@ export default {
     colors: {
       background,
       darkBackgroundTextColor: 'rgba(255, 255, 255, 0.95)',
-      accent: ['#2AD2C9', '#614767', '#ff8d6d'],
+      darkBackground: {
+        text: 'rgba(255, 255, 255, 0.95)',
+      },
+      accent: ['#2AD2C9', '#614767', '#ff8d6d', '#61c9cf'],
       brand: '#69B8D6',
       neutral: ['#425563', '#5F7A76', '#80746E', '#767676', '#f8f8f8'],
       status: {
@@ -37,6 +40,7 @@ export default {
       small: `${baseSpacing / 2}px`,
       medium: `${baseSpacing}px`,
       medlarge: `${baseSpacing * 1.4}px`,
+      medlarge2: '40px',
       large: `${baseSpacing * 2}px`,
       xlarge: `${baseSpacing * 4}px`,
     },
@@ -124,7 +128,7 @@ export default {
         large: { size: '52px', height: 1.125, maxWidth: 'auto' },
       },
       3: {
-        medium: { size: '24px', height: 1.333, maxWidth: 'auto' },
+        medium: { size: '26px', height: 1.333, maxWidth: 'auto' },
         small: { size: '18px', height: 1.333, maxWidth: 'auto' },
         large: { size: '36px', height: 1.23, maxWidth: 'auto' },
       },
