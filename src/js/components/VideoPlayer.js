@@ -26,13 +26,16 @@ const CenteredBox = styled(Box)`
 `;
 
 const FullHeightStack = styled(Stack)`
+  align-items: center;
+  display: flex;
   height: 100%;
 `;
 
 const PlayIntroText = styled(Text)`
+  font-size: 25px;
   font-weight: 500;
   position: relative;
-  top: 25px;
+  top: 30px;
   user-select: none;
 `;
 
@@ -60,13 +63,13 @@ class VideoPlayer extends Component {
             <Box
               pad='medium'
               round='medium'
-              background={{ color: 'light-5', opacity: 'medium' }}
+              background={{ color: 'neutral-1', opacity: 'strong' }}
             >
-              <Play size={responsiveState === 'wide' ? 'xlarge' : 'large'} color='brand' />
+              <Play size={responsiveState === 'wide' ? 'xlarge' : 'large'} color='accent-4' />
             </Box>
           </Button>
-          <PlayIntroText color='brand'>
-            PLAY INTRO VIDEO
+          <PlayIntroText color='accent-4'>
+            PLAY INTRO
           </PlayIntroText>
         </Box> : null}
 

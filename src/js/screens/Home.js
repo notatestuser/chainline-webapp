@@ -12,9 +12,24 @@ import withBlockchainProvider from '../helpers/withBlockchainProvider';
 
 const DROPDOWN_OPTIONS = {
   'I would like an item to be delivered to me from elsewhere.': '/demand/create',
-  'I am travelling soon and have extra space to carry items.': '/travel/create',
+  'I am a courier and have extra space to carry items.': '/travel/create',
   'There is a Chain Line shipment I would like to track.': 'TRACK',
 };
+
+const WhiteSection = styled(Box)`
+  padding-bottom: 65px;
+  padding-top: 65px;
+`;
+
+const StatsHeading = styled.h3`
+  font-size: 24px;
+  font-weight: 500;
+  margin: 50px 0;
+  text-align: center;
+  text-transform: uppercase;
+`;
+
+const StatsInnerBox = styled(Box)` justify-content: space-around; `;
 
 const BlurbParagraph = styled(Paragraph)`
   margin-top: 0;
@@ -25,6 +40,13 @@ const BlurbPoints = styled.ol`
   margin: 0 0 8px;
 `;
 
+const StatsBox = styled(Box)`
+  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 0 70px;
+`;
+
+const StatNumber = styled(Heading)` transform: scale(1.3); `;
+
 class Home extends Component {
   state = {
     hasStats: false,
@@ -34,8 +56,9 @@ class Home extends Component {
   }
 
   async componentWillMount() {
+    const { wallet: { net } } = this.props;
     try {
-      const { demands, routes, funds } = await getStats('TestNet');
+      const { demands, routes, funds } = await getStats(net);
       this.setState({
         hasStats: true,
         demands: Number.isNaN(parseInt(demands, 10)) ? 0 : demands,
@@ -51,7 +74,7 @@ class Home extends Component {
 
     return ([
       <Box key='content-0' direction='column'>
-        <Box
+        <WhiteSection
           background='white'
           direction='column'
           justify='center'
@@ -75,38 +98,51 @@ class Home extends Component {
               }}
             />
           </WidthCappedContainer>
-        </Box>
+        </WhiteSection>
       </Box>,
-      hasStats && <Box key='content-1' background={{ dark: true, image: '#69B8D6' }} pad={{ bottom: 'large' }}>
-        <WidthCappedContainer direction='row'>
-          <Box basis='1/3' justify='center' align='center'>
-            <Heading level={2} size='large' margin={{ bottom: 'medium' }}>
-              {demands}
-            </Heading>
-            <Heading level={3} size={responsiveState === 'wide' ? 'large' : 'medium'} margin='none'>
-              Demands
-            </Heading>
-          </Box>
-          <Box basis='1/3' justify='center' align='center'>
-            <Heading level={2} size='large' margin={{ bottom: 'medium' }}>
-              {routes}
-            </Heading>
-            <Heading level={3} size={responsiveState === 'wide' ? 'large' : 'medium'} margin='none'>
-              Routes
-            </Heading>
-          </Box>
-          {gasPriceUSD ? <Box basis='1/3' justify='center' align='center'>
-            <Heading level={2} size='large' margin={{ bottom: 'medium' }}>
-              ${numeral(funds * gasPriceUSD).format('0,0')}
-            </Heading>
-            <Heading level={3} size={responsiveState === 'wide' ? 'large' : 'medium'} margin='none'>
-              Reserved
-            </Heading>
-          </Box> : null}
+      hasStats && <StatsBox
+        key='content-1'
+        background={{ dark: true, image: '#69B8D6' }}
+        pad={{ bottom: 'large' }}
+        animation={[
+          { type: 'zoomIn', duration: 500, delay: 0 },
+          { type: 'fadeIn', duration: 500, delay: 0 },
+        ]}
+      >
+        <WidthCappedContainer direction='column'>
+          <StatsHeading>
+            System Statistics
+          </StatsHeading>
+          <StatsInnerBox direction='row'>
+            <Box basis='1/3' justify='center' align='center'>
+              <StatNumber level={2} size='large' margin={{ top: 'none', bottom: 'medium' }}>
+                {demands}
+              </StatNumber>
+              <Heading level={3} size={responsiveState === 'wide' ? 'large' : 'medium'} margin='none'>
+                Demands
+              </Heading>
+            </Box>
+            <Box basis='1/3' justify='center' align='center'>
+              <StatNumber level={2} size='large' margin={{ top: 'none', bottom: 'medium' }}>
+                {routes}
+              </StatNumber>
+              <Heading level={3} size={responsiveState === 'wide' ? 'large' : 'medium'} margin='none'>
+                Routes
+              </Heading>
+            </Box>
+            {gasPriceUSD && responsiveState === 'wide' ? <Box basis='1/3' justify='center' align='center'>
+              <StatNumber level={2} size='large' margin={{ top: 'none', bottom: 'medium' }}>
+                ${numeral(funds * gasPriceUSD).format('0,0')}
+              </StatNumber>
+              <Heading level={3} size={responsiveState === 'wide' ? 'large' : 'medium'} margin='none'>
+                Reserved
+              </Heading>
+            </Box> : null}
+          </StatsInnerBox>
         </WidthCappedContainer>
-      </Box>,
+      </StatsBox>,
       <Box key='content-2'>
-        <Box
+        <WhiteSection
           background='white'
           direction='row'
           align='center'
@@ -154,11 +190,11 @@ class Home extends Component {
                 Become a Courier
               </Heading>
               <BlurbParagraph>
-                Have extra carry space and want to earn courier fees?
+                Couriers transport items to fulfill demands and earn courier fees.
               </BlurbParagraph>
               <BlurbParagraph>
                 Register your travel dates with Chain Line and it will try to match you up with
-                someone looking to transport an item from the city you are visiting.
+                someone looking to ship an item from the city you are in.
                 You buy the item and deliver it in your own time.
               </BlurbParagraph>
               <Box margin={{ top: 'small' }}>
@@ -166,7 +202,7 @@ class Home extends Component {
               </Box>
             </Box>
           </WidthCappedContainer>
-        </Box>
+        </WhiteSection>
       </Box>,
     ]);
   }

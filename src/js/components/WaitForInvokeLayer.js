@@ -1,56 +1,9 @@
 import React, { Component } from 'react';
 
-import styled, { keyframes } from 'styled-components';
 import { Layer, Box, Heading, Text } from 'grommet';
 
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
-
-const WavesKeyframes = keyframes`
-  0% {
-    left: 0;
-    top: -5px;
-  }
-  25% {
-    top: 0px;
-  }
-  60% {
-    top: -5px;
-  }
-  75% {
-    top: 0px;
-  }
-  100% {
-    left: -180px;
-    top: -5px;
-  }
-`;
-
-const ShipAnim = styled.div`
-  overflow: hidden;
-  margin: auto;
-  margin-bottom: -20px;
-  position: relative;
-  &, & * {
-    width: 180px;
-    height: 180px;
-  }
-  & > * {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-`;
-
-const Ship = styled.div`
-  background: url(/img/loader-ship.svg) no-repeat;
-  top: 3px;
-`;
-
-const Waves = styled.div`
-  animation: ${WavesKeyframes} 6s linear infinite;
-  background: url(/img/loader-waves.svg) repeat-x;
-  width: 360px;
-`;
+import { LoadingShipAnimation } from './';
 
 class WaitForInvokeLayer extends Component {
   state = {
@@ -78,10 +31,7 @@ class WaitForInvokeLayer extends Component {
     const { onClose, size = 'medium' } = this.props;
     return (<Layer align='top' onEsc={onClose} size={size}>
       <Box pad={{ horizontal: 'medium', top: 'medium' }}>
-        <ShipAnim>
-          <Ship />
-          <Waves />
-        </ShipAnim>
+        <LoadingShipAnimation />
         <Heading level={3} margin='medium'>
           Your request is processing, please be patient.
         </Heading>

@@ -8,7 +8,6 @@ import { FormPrevious } from 'grommet-icons';
 import { WidthCappedContainer, VideoPlayer } from './components';
 
 const LOGO_SRC = '/img/chainline-logo.svg';
-const TRACK_SRC = '/img/nav-track-shipment.svg';
 const SLOGAN_SRC = '/img/chainline-slogan.svg';
 const VIDEO_SRC = 'https://f001.backblazeb2.com/file/chainline-assets/explainer.mp4';
 
@@ -28,23 +27,19 @@ const LogoImage = styled.img`
 `;
 
 const LogoRoutedAnchor = styled(RoutedAnchor)`
-  line-height: 0;
+  align-items: center;
+  color: #333;
   display: flex;
   flex: 0 0 auto;
-  width: fit-content;
+  font-size: 19.5px;
+  font-weight: 500;
   height: 74px; /* there's a 1px border! */
+  line-height: 0;
+  text-transform: uppercase;
+  width: fit-content;
 `;
 
-const TrackingAnchor = LogoRoutedAnchor.withComponent(Anchor);
-
-const TrackImage = styled.img`
-  display: ${({ responsiveState }) =>
-    responsiveState === 'wide' ? 'block' : 'none'};
-  margin: auto;
-  max-width: 150px;
-  position: relative;
-  top: 1px;
-`;
+const UserGuideAnchor = LogoRoutedAnchor.withComponent(Anchor);
 
 const SloganImage = styled(LogoImage)`
   margin: 0;
@@ -55,11 +50,12 @@ const SloganImage = styled(LogoImage)`
 const HeroHeading = styled(Heading)`
   font-family: Nunito;
   font-weight: 700;
+  margin-top: 50px;
 `;
 
 const SubSloganHeading = styled(Heading)`
   letter-spacing: 0.2px;
-  margin-bottom: 38px;
+  margin-bottom: 28px;
 `;
 
 const Footer = styled(Box)` white-space: nowrap; `;
@@ -74,7 +70,7 @@ class Layout extends Component {
   }
 
   render() {
-    const { responsiveState, headerWidgets, onOpenTrackingClick, children } = this.props;
+    const { responsiveState, headerWidgets, children } = this.props;
     const { router } = this.context;
     const { pathname } = router.route.location;
 
@@ -104,9 +100,9 @@ class Layout extends Component {
             <LogoRoutedAnchor path='/'>
               <LogoImage src={LOGO_SRC} responsiveState={responsiveState} />
             </LogoRoutedAnchor>
-            <TrackingAnchor onClick={onOpenTrackingClick}>
-              <TrackImage src={TRACK_SRC} alt='Open Tracking' responsiveState={responsiveState} />
-            </TrackingAnchor>
+            {responsiveState === 'wide' ? <UserGuideAnchor href='https://git.io/vF1SL' target='_blank'>
+              User Guide
+            </UserGuideAnchor> : null}
           </WidthCappedContainer>
         </LogoBox>
 
@@ -123,16 +119,16 @@ class Layout extends Component {
               >
                 <SloganImage src={SLOGAN_SRC} responsiveState={responsiveState} />
               </HeroHeading>
-            </Box>,
-            <Box key='hero-1'>
               <SubSloganHeading level={3} textAlign='center' size={responsiveState === 'wide' ? 'medium' : 'small'}>
                 {/* Introducing a global shipping network with no staff, trains or planes. */}
-                Introducing a <Boldish>smarter</Boldish> shipping network for the age of e-commerce
+                a <Boldish>smarter</Boldish> shipping network for the e-commerce era
               </SubSloganHeading>
+            </Box>,
+            <Box key='hero-1'>
               <VideoPlayer
                 src={VIDEO_SRC}
-                width='850px'
-                margin={{ top: 'medium', bottom: 'large' }}
+                width='820px'
+                margin='medlarge'
                 responsiveState={responsiveState}
               />
             </Box>,

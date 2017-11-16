@@ -82,7 +82,7 @@ const MSG_WALLET_CREATED = (caller, encryptedWif, copiedToClipboard) => [
 const MSG_RECEIVE = accountAddress => [
   <ReceiveParagraph key='MSG_RECEIVE-0' size='full' margin={{ bottom: 'small' }}>
     You may use this address to add funds to your wallet.<br />
-    Only GAS transactions are supported at this time; please do not send any other asset.
+    Only GAS transactions are supported; please do not send any other asset.
   </ReceiveParagraph>,
   <WarningMsg key='MSG_RECEIVE-1' size='full'>
     Important: You are currently using the TestNet.<br />

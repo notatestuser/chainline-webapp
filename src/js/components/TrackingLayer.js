@@ -58,6 +58,10 @@ class TrackingLayer extends Component {
                 Track a Shipment
               </Heading>
               <Box margin={{ vertical: 'medium', horizontal: 'none', bottom: 'large' }}>
+                <Paragraph margin={{ bottom: 'medium' }}>
+                  You will need your tracking ID.{' '}
+                  This is the one provided when registering a demand or travel.
+                </Paragraph>
                 {isInvalid ? <ErrorMsg>
                   Please fill out all fields!
                 </ErrorMsg> : null}

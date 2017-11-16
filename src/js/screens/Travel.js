@@ -219,7 +219,7 @@ class TravelPage extends Component {
             <AutoForm onChange={this._onChange} onSubmit={this._onSubmit} trimOnSubmit={true}>
               <Box>
                 <Heading level={2} margin={{ top: 'none', bottom: 'medlarge' }}>
-                  Register your travel
+                  Register Travel
                 </Heading>
                 <IntroParagraph size='full'>
                   The system will reserve a refundable deposit of {requiredGAS} GAS.&nbsp;
@@ -299,7 +299,7 @@ class TravelPage extends Component {
                 <Field label='User reputation requirement'>
                   <TextInput name='reputation' type='number' placeholder='0-1000 successful prior transactions. For now 0 is recommended.' plain={true} />
                 </Field>
-                <Box margin={{ top: 'large' }}>
+                <Box margin={{ top: 'medlarge2' }}>
                   <Button
                     primary={true}
                     type={loading ? 'disabled' : 'submit'}

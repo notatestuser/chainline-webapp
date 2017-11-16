@@ -181,8 +181,8 @@ class DemandPage extends Component {
       return (<Box key='content' direction='column'>
         <Box background='white' direction='column' pad='large'>
           <WidthCappedContainer>
-            <Heading level={2} margin={{ top: 'none' }}>
-              You must log in to proceed.
+            <Heading level={2} margin={{ top: 'none', bottom: 'xlarge' }}>
+              You must log in to do this!
             </Heading>
           </WidthCappedContainer>
         </Box>
@@ -194,7 +194,7 @@ class DemandPage extends Component {
       return (<Box key='content' direction='column'>
         <Box background='white' direction='column' pad='large'>
           <WidthCappedContainer>
-            <Heading level={2} margin={{ top: 'none' }}>
+            <Heading level={2} margin={{ top: 'none', bottom: 'xlarge' }}>
               Please complete your existing transaction first.
             </Heading>
           </WidthCappedContainer>
@@ -265,7 +265,7 @@ class DemandPage extends Component {
             <AutoForm onChange={this._onChange} onSubmit={this._onSubmit} trimOnSubmit={true}>
               <Box>
                 <Heading level={2} margin={{ top: 'none', bottom: 'medlarge' }}>
-                  Demand a shipment
+                  Demand a Shipment
                 </Heading>
                 <Field
                   label={[
@@ -355,7 +355,7 @@ class DemandPage extends Component {
                 <Field label='User reputation requirement'>
                   <TextInput name='reputation' type='number' placeholder='0-1000 successful prior transactions. For now 0 is recommended.' plain={true} />
                 </Field>
-                <Box margin={{ top: 'large' }}>
+                <Box margin={{ top: 'medlarge2' }}>
                   <Button
                     primary={true}
                     type={loading || !meetsMinimumValue ? 'disabled' : 'submit'}
