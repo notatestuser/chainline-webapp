@@ -29,6 +29,7 @@ export const contextTypes = {
 
 const defaultState = {
   balance: null,
+  originalBalance: 0,
   reserved: null,
   wif: null,
 };
@@ -53,9 +54,9 @@ class BlockchainProvider extends Component {
 
 
   getChildContext() {
-    const { address, wif, balance, reserved, reputation, stateLookupKey, gasPriceUSD } = this.state;
+    const { address, programHash, wif, balance, reserved, reputation, stateLookupKey, gasPriceUSD } = this.state;
     const { net } = this.props;
-    const effectiveBalance = balance - reserved;
+    const effectiveBalance = balance;
     return {
       gasPriceUSD,
       wallet: {
@@ -66,6 +67,7 @@ class BlockchainProvider extends Component {
         effectiveBalanceString: is.number(effectiveBalance) ? numeral(effectiveBalance).format(NUMBER_FORMAT) : '?',
         isLoaded: !!wif,
         net,
+        programHash,
         reputation,
         reputationString: is.number(reputation) ? numeral(reputation).format('0,0') : '?',
         reserved,
@@ -96,7 +98,7 @@ class BlockchainProvider extends Component {
     if (!wif) return;
     if (this.state.wif === wif) return;
     const { address, programHash } = getAccountFromWIFKey(wif);
-    this.setState({ wif, address });
+    this.setState({ wif, address, programHash });
     const refresh = async () => {
       console.debug('Refreshing wallet state…');
       // in parallel, fail-safe
@@ -104,6 +106,7 @@ class BlockchainProvider extends Component {
         const { reserved } = this.state;
         const newBalance = response.GAS.balance;
         this.setState({
+          originalBalance: newBalance,
           balance: reserved ? newBalance - reserved : newBalance,
         });
       }).catch((err) => {
@@ -112,11 +115,11 @@ class BlockchainProvider extends Component {
         console.error('getBalance error', err);
       });
       getWalletState(net, wif, programHash).then((response) => {
-        const { balance } = this.state;
+        const { originalBalance } = this.state;
         const { reservedBalance, reputation, stateLookupKey } = response;
         this.setState({
           reserved: reservedBalance,
-          balance: balance - reservedBalance,
+          balance: originalBalance - reservedBalance,
           reputation,
           stateLookupKey,
         });
