@@ -32,7 +32,7 @@ class WaitForInvokeLayer extends Component {
     return (<Layer align='top' onEsc={onClose} size={size}>
       <Box pad={{ horizontal: 'medium', top: 'medium' }}>
         <LoadingShipAnimation />
-        <Heading level={3} margin='medium'>
+        <Heading level={3} margin={{ vertical: 'medium', top: 'none' }}>
           Your request is processing, please be patient.
         </Heading>
         <Box margin={{ horizontal: 'none', bottom: 'large' }}>

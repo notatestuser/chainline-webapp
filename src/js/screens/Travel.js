@@ -141,8 +141,8 @@ class TravelPage extends Component {
       return (<Box key='content' direction='column'>
         <Box background='white' direction='column' pad='large'>
           <WidthCappedContainer>
-            <Heading level={2} margin={{ top: 'none' }}>
-              You must log in to proceed.
+            <Heading level={2} margin={{ top: 'none', bottom: 'xlarge' }}>
+              You must log in to do this!
             </Heading>
           </WidthCappedContainer>
         </Box>
@@ -154,7 +154,7 @@ class TravelPage extends Component {
       return (<Box key='content' direction='column'>
         <Box background='white' direction='column' pad='large'>
           <WidthCappedContainer>
-            <Heading level={2} margin={{ top: 'none' }}>
+            <Heading level={2} margin={{ top: 'none', bottom: 'xlarge' }}>
               Please complete your existing transaction first.
             </Heading>
           </WidthCappedContainer>
@@ -189,7 +189,7 @@ class TravelPage extends Component {
         key='travel-invokelayer'
         onInvokeComplete={() => {
           const { history } = this.props;
-          history.push(`/track/${stateLookupKey}/${pickUpCity}/${dropOffCity}`);
+          history.replace(`/track/${stateLookupKey}/${pickUpCity}/${dropOffCity}`);
         }}
       /> : null,
 

@@ -235,7 +235,7 @@ class DemandPage extends Component {
         key='demand-invokelayer'
         onInvokeComplete={() => {
           const { history } = this.props;
-          history.push(`/track/${stateLookupKey}/${pickUpCity}/${dropOffCity}`);
+          history.replace(`/track/${stateLookupKey}/${pickUpCity}/${dropOffCity}`);
         }}
       /> : null,
 

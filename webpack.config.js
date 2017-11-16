@@ -101,6 +101,10 @@ module.exports = Object.assign({
           /node_modules\/p-(event|timeout|finally)/,
         ],
       },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
     ],
   },
 }, devConfig);
