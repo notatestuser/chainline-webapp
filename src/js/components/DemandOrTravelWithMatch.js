@@ -16,7 +16,7 @@ import {
   hexstring2ab,
 } from 'chainline-js';
 
-import { Box, Heading, Text, Button } from 'grommet';
+import { Box, Heading, Text, Paragraph, Button } from 'grommet';
 
 import { DemandView, TravelView, SendLayer, WaitForInvokeLayer } from './';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
@@ -62,13 +62,19 @@ class DemandOrTravelWithMatch extends Component {
       GAS: parseFloat(amount),
     });
     if (result) {
+      this.setState({ sendingTx: true });
+      console.info('Waiting 30 seconds for the transaction to clear');
+      await new Promise(resolve => setTimeout(resolve, 30000)); // wait 30 secs
+      console.info('Invoking setFundsPaidToRecipientTxHash now');
       const recipientHash = getScriptHashFromAddress(address);
-      await setFundsPaidToRecipientTxHash(net, accountWif, {
+      const res = await setFundsPaidToRecipientTxHash(net, accountWif, {
         recipientHash: reverseHex(recipientHash),
         amount: Number.parseInt(amount * 100000000, 10),
         txHash: reverseHex(txHash),
-      });
-      this.setState({ sendingTx: true });
+      }, 2);
+      console.log('setFundsPaidToRecipientTxHash result', res);
+    } else {
+      console.warn('Non-success result upon trying to send the tx!');
     }
   }
 
@@ -98,24 +104,34 @@ class DemandOrTravelWithMatch extends Component {
           Matched at {match.matchDate.toLocaleString()} {timezoneAbbr}
         </Text>
         <DemandOrTravelWithMatch noRecurse={true} object={match[matchType.toLowerCase()]} />
-        {matchType === 'Travel' ?
+        {matchType === 'Travel' && this.props.wallet.wif ?
           <Box margin={{ top: 'large' }}>
             <Button primary={true} label='Send the Refund' onClick={this._onRefundBuyerClicked} />
           </Box> :
           null}
       </Box> : null,
       isRefundBuyerOpen ? <SendLayer
-        preFilledAddress={toAddress(hexstring2ab(this.state.matchParsed.owner))}
-        preFilledAmount={this.state.parsedObject.itemValue + Constants.FEE_DEMAND_REWARD_GAS}
-        balance={balance + this.state.parsedObject.itemValue + Constants.FEE_DEMAND_REWARD_GAS}
+        preFilledAddress={
+          toAddress(hexstring2ab(this.state.matchParsed.owner))}
+        preFilledAmount={
+          this.state.parsedObject.itemValue + Constants.FEE_DEMAND_REWARD_GAS + 0.001}
+        balance={
+          balance + this.state.parsedObject.itemValue + Constants.FEE_DEMAND_REWARD_GAS}
         accountWif={wif}
         onClose={() => { this.setState({ isRefundBuyerOpen: false }); }}
         onSendFunds={this._onSendFunds}
+        extraInfo={
+          <Paragraph>
+            <strong>IMPORTANT</strong>{' '}
+            Please ensure you have +2 extra GAS to cover system fees. Sorry about that!
+          </Paragraph>
+        }
       /> : null,
       sendingTx ? <WaitForInvokeLayer
         key='demand-invokelayer'
         onInvokeComplete={() => {
           alert('All done! Thank you for using Chain Line!');
+          this.setState({ sendingTx: false });
         }}
       /> : null,
     ];

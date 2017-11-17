@@ -30,9 +30,10 @@ export const contextTypes = {
 };
 
 const defaultState = {
-  balance: null,
+  balance: 0,
   originalBalance: 0,
-  reserved: null,
+  reserved: 0,
+  reputation: 0,
   wif: null,
 };
 

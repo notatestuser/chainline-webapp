@@ -145,7 +145,7 @@ class DemandPage extends Component {
       // case: user has confirmed the fee payment
       } else if (this.state.gasConsumed) {
         console.debug('Effective balance:', balance);
-        if (requiredGAS + this.state.gasConsumed > balance) {
+        if (requiredGAS + this.state.gasConsumed + 0.001 > balance) {
           throw new Error(`Insufficient funds. ${requiredGAS.toFixed(3)} GAS required`);
         }
 
@@ -193,7 +193,7 @@ class DemandPage extends Component {
         <Box background='white' direction='column' pad='large'>
           <WidthCappedContainer>
             <Heading level={2} margin={{ top: 'none', bottom: 'xlarge' }}>
-              Please complete your existing transaction first.
+              Please track and complete your existing transaction.
             </Heading>
           </WidthCappedContainer>
         </Box>
