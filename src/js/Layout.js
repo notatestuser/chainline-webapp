@@ -113,9 +113,9 @@ class Layout extends Component {
               <NavAnchor onClick={() => { this.props.onOpenTrackingClick(); }}>
                 Tracking
               </NavAnchor>
-              <NavRoutedAnchor path='/guide'>
+              <NavAnchor href='https://github.com/notatestuser/chainline-webapp/wiki/Web-App-User-Guide' target='_blank'>
                 User Guide
-              </NavRoutedAnchor>
+              </NavAnchor>
             </NavBox> : null}
           </WidthCappedContainer>
         </LogoBox>

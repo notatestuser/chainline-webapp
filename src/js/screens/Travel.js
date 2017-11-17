@@ -179,9 +179,9 @@ class TravelPage extends Component {
       /* "Waiting for invoke" popup */
       sendingTx ? <WaitForInvokeLayer
         key='travel-invokelayer'
-        onInvokeComplete={({ stateLookupKey: key }) => {
+        onInvokeComplete={({ wallet: { stateLookupKey: key } }) => {
           const { history } = this.props;
-          history.replace(`/track/${key}/${pickUpCity}/${dropOffCity}`);
+          history.push(`/track/${key}/${pickUpCity}/${dropOffCity}`);
         }}
       /> : null,
 

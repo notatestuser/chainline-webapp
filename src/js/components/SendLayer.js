@@ -25,7 +25,7 @@ class SendLayer extends Component {
   }
 
   render() {
-    const { balance, onClose } = this.props;
+    const { balance, onClose, preFilledAddress, preFilledAmount } = this.props;
     const { sending } = this.state;
 
     return (<Layer align='top' onEsc={onClose} size='medium'>
@@ -45,10 +45,27 @@ class SendLayer extends Component {
                   <WarningSpan>Funds will arrive on the TestNet.</WarningSpan>
                 </Paragraph>
                 <Field label='Address'>
-                  <TextInput name='address' placeholder='e.g. AZjJrtgADzhYBen5QzXSarqb2LEkpmVjbW' plain={true} autoFocus={true} />
+                  <TextInput
+                    name='address'
+                    placeholder='e.g. AZjJrtgADzhYBen5QzXSarqb2LEkpmVjbW'
+                    plain={true}
+                    autoFocus={true}
+                    defaultValue={preFilledAddress}
+                    disabled={!!preFilledAddress}
+                  />
                 </Field>
                 <Field label='Amount'>
-                  <TextInput name='amount' type='number' max={`${balance}`} min='0' step='0.00000001' placeholder='0.00000000' plain={true} />
+                  <TextInput
+                    name='amount'
+                    type='number'
+                    max={`${balance}`}
+                    min='0'
+                    step='0.00000001'
+                    placeholder='0.00000000'
+                    plain={true}
+                    defaultValue={preFilledAmount}
+                    disabled={!!preFilledAmount}
+                  />
                 </Field>
                 <Box margin={{ top: 'medium' }}>
                   <Button

@@ -7,20 +7,21 @@ import { LoadingShipAnimation } from './';
 
 class WaitForInvokeLayer extends Component {
   state = {
-    startBalance: null,
     startReserved: null,
+    startStateLookupKey: null,
   }
 
   componentWillMount() {
-    const { wallet: { balance: startBalance, reserved: startReserved } } = this.props;
-    this.setState({ startBalance, startReserved });
+    const { wallet: { stateLookupKey: startStateLookupKey, reserved: startReserved } } = this.props;
+    this.setState({ startStateLookupKey, startReserved });
   }
 
   componentDidUpdate() {
-    const { wallet: { balance, reserved } } = this.props;
-    const { startBalance, startReserved } = this.state;
-    console.debug('WaitForInvokeLayer is waiting…', balance, reserved);
-    if (balance !== startBalance || reserved !== startReserved) {
+    const { wallet: { stateLookupKey, reserved } } = this.props;
+    const { startStateLookupKey, startReserved } = this.state;
+    console.debug('WaitForInvokeLayer is waiting…', stateLookupKey, reserved);
+    if (stateLookupKey !== startStateLookupKey ||
+        reserved !== startReserved) {
       // something changed. take the user to the next page.
       this.props.onInvokeComplete(this.props);
     }

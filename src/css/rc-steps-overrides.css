@@ -1,0 +1,24 @@
+.rc-steps {
+  zoom: 1.2;
+}
+
+.rc-steps-item-icon:not(.rc-steps-item-wait) {
+  background-color: #69B8D6 !important;
+  border-color: #69B8D6;
+}
+
+.rc-steps-item-wait .rc-steps-item-icon > .rc-steps-icon {
+  color: #eee;
+}
+
+.rc-steps-item-wait .rc-steps-item-icon {
+  opacity: 0.65;
+}
+
+.rc-steps-item-finish .rc-steps-item-icon > .rc-steps-icon {
+  color: white;
+}
+
+.rc-steps-item-title {
+  font-weight: 500;
+}

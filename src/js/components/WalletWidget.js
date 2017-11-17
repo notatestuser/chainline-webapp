@@ -4,7 +4,7 @@ import is from 'is_js';
 
 import styled from 'styled-components';
 import { Box, Menu, Button } from 'grommet';
-import { Alert, Money, LinkUp, LinkDown } from 'grommet-icons';
+import { StatusInfo, Money, LinkUp, LinkDown } from 'grommet-icons';
 
 import { doSendAsset } from 'chainline-js';
 
@@ -111,9 +111,9 @@ class WalletWidget extends PureComponent {
       background='neutral-5'
       full='grow'
       label={<DropDownLabel>
-        Load your wallet to begin
+        You are not logged in
       </DropDownLabel>}
-      icon={<Alert />}
+      icon={<StatusInfo />}
       dropAlign={{ right: 'right', top: 'top' }}
       items={[
         { label: 'Create a new wallet', onClick: () => onCreateWalletClick() },

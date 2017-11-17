@@ -105,6 +105,8 @@ class BlockchainProvider extends Component {
       getBalance(net, address, true).then((response) => {
         const { reserved } = this.state;
         const newBalance = response.GAS.balance;
+        // avoid unnecessary state updates
+        if (newBalance === this.state.originalBalance) return;
         this.setState({
           originalBalance: newBalance,
           balance: reserved ? newBalance - reserved : newBalance,
@@ -117,6 +119,10 @@ class BlockchainProvider extends Component {
       getWalletState(net, wif, programHash).then((response) => {
         const { originalBalance } = this.state;
         const { reservedBalance, reputation, stateLookupKey } = response;
+        // avoid unnecessary state updates
+        if (reservedBalance === this.state.reserved &&
+            stateLookupKey === this.state.stateLookupKey &&
+            reputation === this.state.reputation) return;
         this.setState({
           reserved: reservedBalance,
           balance: originalBalance - reservedBalance,
