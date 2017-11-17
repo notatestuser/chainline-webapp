@@ -13,21 +13,18 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint src/**.js",
-    "dev": "cross-env NODE_ENV=development grommet pack",
-    "build": "cross-env NODE_ENV=production grommet pack",
+    "dev": "NODE_ENV=development grommet pack",
+    "build": "NODE_ENV=production grommet pack",
     "start": "node server.js",
     "deploy": "now && now alias"
   },
   "now": {
     "alias": "chainline.co",
-    "env": {
-      "NODE_ENV": "production"
-    },
     "public": true
   },
   "dependencies": {
     "all-the-cities": "^2.0.0",
-    "chainline-js": "^1.1.0",
+    "chainline-js": "1.1.2",
     "copy-to-clipboard": "^3.0.8",
     "express": "^4.16.2",
     "grommet": "2.0.0-alpha.3",
@@ -73,6 +70,7 @@
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.1.0",
     "grommet-cli": "^5.1.0",
+    "node-emoji": "^1.8.1",
     "pre-commit": "^1.2.2",
     "react-dev-utils": "^0.4.2",
     "react-test-renderer": "^16.0.0",
