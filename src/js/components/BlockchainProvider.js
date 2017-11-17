@@ -84,7 +84,7 @@ class BlockchainProvider extends Component {
       const gasPriceUSD = await getPrice('GAS', 'USD');
       this.setState({ gasPriceUSD });
     } catch (e) {
-      alert('Unable to retrieve the current GAS price in USD. This is bad, things will be broken!');
+      console.error('Unable to retrieve the current GAS price in USD. This is bad, things will be broken!');
     }
   }
 
@@ -113,7 +113,7 @@ class BlockchainProvider extends Component {
         });
       }).catch((err) => {
         const { message } = err;
-        alert(`Could not get wallet balance! ${message}`);
+        console.error(`Could not get wallet balance! ${message}`);
         console.error('getBalance error', err);
       });
       getWalletState(net, wif, programHash).then((response) => {

@@ -1,5 +1,7 @@
 const path = require('path');
+const cors = require('cors');
 const express = require('express');
+const proxy = require('express-http-proxy');
 const cities = require('all-the-cities');
 const uniqby = require('lodash.uniqby');
 const sortby = require('lodash.sortby');
@@ -14,6 +16,7 @@ const APP_ROUTES = [
   /^\/track/,
 ];
 
+const NEO_NODE = 'seed3.neo.org:20331';
 const CITY_SUGGESTIONS_COUNT = 4;
 
 process.on('uncaughtException', (err) => {
@@ -23,6 +26,12 @@ process.on('uncaughtException', (err) => {
 const app = express();
 
 // API routes
+
+app.options('/neo-rpc', cors());
+app.use('/neo-rpc', cors(), proxy(NEO_NODE, {
+  https: true,
+  proxyReqPathResolver: () => '/',
+}));
 
 app.get('/api/cities-suggest.json', (req, res) => {
   let matches;

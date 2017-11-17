@@ -11,7 +11,7 @@ class CityTextInput extends Component {
   static placeholderIdx = 0;
 
   state = {
-    value: null,
+    value: '',
     suggestions: [],
   }
 
@@ -27,7 +27,8 @@ class CityTextInput extends Component {
   _onInput = async (event) => {
     const input = event.target.value;
     const shouldSuggest = input.length >= MIN_SUGGEST_INPUT;
-    const newState = { value: input };
+    this.setState({ value: input });
+    const newState = {};
     if (shouldSuggest) {
       const res = await unfetch(`${SUGGEST_API}${input}`);
       if (!res.ok) {
