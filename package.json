@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "all-the-cities": "^2.0.0",
-    "chainline-js": "1.1.2",
+    "chainline-js": "1.1.3",
     "copy-to-clipboard": "^3.0.8",
     "cors": "^2.8.4",
     "express": "^4.16.2",

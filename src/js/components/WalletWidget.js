@@ -111,7 +111,7 @@ class WalletWidget extends PureComponent {
       background='neutral-5'
       full='grow'
       label={<DropDownLabel>
-        You are not logged in
+        Log in to start using Chain Line
       </DropDownLabel>}
       icon={<StatusInfo />}
       dropAlign={{ right: 'right', top: 'top' }}
