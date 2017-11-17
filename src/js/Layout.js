@@ -46,6 +46,7 @@ const NavBox = styled(Box)`
 `;
 
 const NavAnchor = LogoRoutedAnchor.withComponent(Anchor);
+const NavRoutedAnchor = LogoRoutedAnchor;
 
 const SloganImage = styled(LogoImage)`
   margin: 0;
@@ -58,7 +59,7 @@ const HeroHeading = styled(Heading)`
   font-family: Nunito;
   font-weight: 700;
   margin-top: ${({ responsiveState }) =>
-    responsiveState === 'wide' ? '60px' : '30px'};
+    responsiveState === 'wide' ? '55px' : '30px'};
 `;
 
 const SubSloganHeading = styled(Heading)`
@@ -112,9 +113,9 @@ class Layout extends Component {
               <NavAnchor onClick={() => { this.props.onOpenTrackingClick(); }}>
                 Tracking
               </NavAnchor>
-              <NavAnchor href='/guide' target='_blank'>
+              <NavRoutedAnchor path='/guide'>
                 User Guide
-              </NavAnchor>
+              </NavRoutedAnchor>
             </NavBox> : null}
           </WidthCappedContainer>
         </LogoBox>

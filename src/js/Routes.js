@@ -30,4 +30,9 @@ export default props => (
       component={routeProps => (
         <TrackingPage {...routeProps} {...props} />)}
     />
+    <Route
+      exact={true}
+      path='/guide'
+      component={TravelPage}
+    />
   </Switch>);
