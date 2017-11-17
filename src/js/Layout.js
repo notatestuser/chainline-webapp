@@ -9,6 +9,7 @@ import { WidthCappedContainer, VideoPlayer } from './components';
 
 const LOGO_SRC = '/img/chainline-logo.svg';
 const SLOGAN_SRC = '/img/chainline-slogan.svg';
+const WAVES_SRC = '/img/home-waves.svg';
 const VIDEO_SRC = 'https://f001.backblazeb2.com/file/chainline-assets/explainer.mp4';
 
 const HeaderWidgets = styled(WidthCappedContainer)`
@@ -40,13 +41,19 @@ const LogoRoutedAnchor = styled(RoutedAnchor)`
   width: fit-content;
 `;
 
+const HeroBox = styled(Box)`
+  background-image: url(${WAVES_SRC});
+  background-repeat: repeat-x;
+  background-position: ${props => `bottom 20px left ${props.scrollTop > 0 ? props.scrollTop / 8 : 0}px`};
+  background-size: 140px;
+`;
+
 const NavBox = styled(Box)`
   flex-basis: 25%;
   min-width: 250px;
 `;
 
 const NavAnchor = LogoRoutedAnchor.withComponent(Anchor);
-const NavRoutedAnchor = LogoRoutedAnchor;
 
 const SloganImage = styled(LogoImage)`
   margin: 0;
@@ -76,6 +83,18 @@ const Boldish = styled.span` font-weight: 500; `;
 class Layout extends Component {
   static contextTypes = {
     router: PropTypes.object,
+  }
+
+  state = { scrollTop: 0 }
+
+  componentDidMount() {
+    this._scrollHandler = window.addEventListener('scroll', () => {
+      this.setState({ scrollTop: window.scrollY });
+    });
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this._scrollHandler);
   }
 
   render() {
@@ -120,8 +139,9 @@ class Layout extends Component {
           </WidthCappedContainer>
         </LogoBox>
 
-        {pathname === '/' ? <Box
-          pad={{ vertical: 'medium', horizontal: 'large' }}
+        {pathname === '/' ? <HeroBox
+          pad={{ vertical: 'medium', horizontal: 'large', bottom: 'xlarge' }}
+          scrollTop={this.state.scrollTop}
         >
           {[
             <Box key='hero-0'>
@@ -148,7 +168,7 @@ class Layout extends Component {
               />
             </Box>,
           ]}
-        </Box> : null}
+        </HeroBox> : null}
 
         {pathname !== '/' ? <Box
           pad={{ vertical: 'medium', horizontal: 'large' }}
