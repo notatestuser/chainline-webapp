@@ -6,12 +6,17 @@ import 'rc-steps/assets/iconfont.css';
 import styled from 'styled-components';
 import { Box, Heading, Text, Paragraph } from 'grommet';
 
-import { getObjectByKey, makeCityPairHash, isDemandHex, isTravelHex } from 'chainline-js';
+import { getObjectByKey, makeCityPairHash, isDemandHex, isTravelHex, parseDemandHex, parseTravelHex } from 'chainline-js';
 
-import { WidthCappedContainer, DemandOrTravelWithMatch, LoadingShipAnimation } from '../components';
+import { WidthCappedContainer, DemandOrTravelWithMatch, TrackingNextSteps, LoadingShipAnimation } from '../components';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
+import '../../css/rc-steps-overrides.css';
 
-require('rc-steps/assets/index.css');
+const PROGRESS_STATUSES = {
+  1: 'Waiting for a match',
+  2: 'Matched, waiting for delivery',
+  3: 'Transaction complete',
+};
 
 const Bolder = styled.span` font-weight: 500; `;
 
@@ -24,7 +29,7 @@ class TrackingPage extends Component {
     trackingId: null,
     city1: null,
     city2: null,
-    progress: 0,
+    progress: 0, // 1-3 (1: created, 2: matched, 3: exchanged)
   }
 
   componentDidMount() {
@@ -32,6 +37,11 @@ class TrackingPage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    if (this.state.trackingId === nextProps.params.trackingId &&
+        this.state.city1 === nextProps.params.city1 &&
+        this.state.city2 === nextProps.params.city2) {
+      return;
+    }
     this._refresh(nextProps);
   }
 
@@ -39,19 +49,30 @@ class TrackingPage extends Component {
     const { wallet: { net }, match: { params } } = props;
     const cityPairHash = makeCityPairHash(params.city1, params.city2);
     const combinedId = `${params.trackingId}${cityPairHash}`;
-    if (this.state.trackingId === params.trackingId &&
-        this.state.city1 === params.city1 &&
-        this.state.city2 === params.city2) {
-      return;
-    }
     this.setState({ loading: true, demand: null, travel: null, found: false, ...params });
     try {
       const object = await getObjectByKey(net, combinedId);
-      if (isDemandHex(object, true)) {
-        this.setState({ found: true, demand: object, progress: 1 });
+      let newState = {};
+      let parsed;
+      if (isDemandHex(object)) {
+        newState = { found: true, demand: object, progress: 1 };
+        parsed = parseDemandHex(object);
+      } else if (isTravelHex(object)) {
+        newState = { found: true, travel: object, progress: 1 };
+        parsed = parseTravelHex(object);
       }
-      if (isTravelHex(object, true)) {
-        this.setState({ found: true, travel: object, progress: 1 });
+      if (newState.found) {
+        // putting this here is a bit of a cheat but it will work...
+        // if the user's "state lock" does not match the object then the exchange step is done
+        // (transaction complete)
+        const owner = parsed.owner;
+        const stateLock = await getObjectByKey(net, owner);
+        if (stateLock.startsWith(owner)) {
+          // exchange complete!
+          newState.progress = 3;
+        }
+
+        this.setState(newState);
       }
     } catch (e) {
       this.setState({ found: false });
@@ -87,8 +108,10 @@ class TrackingPage extends Component {
 
     const objectName = demand ? 'Demand' : 'Travel';
     const extraAttributes = {
+      'Current status': <Bolder>{PROGRESS_STATUSES[progress]}</Bolder>,
       'Route': <span>{city1}&nbsp; ✈ &nbsp;{city2}</span>,
     };
+
     return (
       <Box key='travel-form' direction='column'>
         <Box
@@ -102,14 +125,14 @@ class TrackingPage extends Component {
                 {objectName} tracker
               </Heading>
             </Box>
-            <Box pad={{ bottom: responsiveState === 'wide' ? 'large' : 'small' }}>
+            <Box pad={{ bottom: responsiveState === 'wide' ? 'medlarge' : 'small' }}>
               <Paragraph size='full'>
                 <Bolder>Your tracking ID is shown here:</Bolder> {trackingId}<br />
                 <Bolder>Keep a note of this &mdash; you will need it later!</Bolder>
               </Paragraph>
             </Box>
-            {responsiveState === 'wide' && progress > 0 ? <Box margin={{ bottom: 'medium' }}>
-              <Steps current={progress - 1}>
+            {responsiveState === 'wide' && progress > 0 ? <Box margin={{ bottom: 'medlarge' }}>
+              <Steps current={Math.min(3, progress) - 1}>
                 <Step
                   title='Creation'
                   description={`This ${objectName} was created in the Chain Line smart contract.`}
@@ -125,15 +148,23 @@ class TrackingPage extends Component {
                 {/* <CustomStep title='Something' description='What what what!' /> */}
               </Steps>
             </Box> : null}
-            <Heading level={3}>
-              {demand ? 'Demand' : 'Travel'} details
-            </Heading>
-            <Box>
-              <DemandOrTravelWithMatch
-                object={demand || travel}
-                extraAttributes={extraAttributes}
-                onMatchDiscovery={() => { this.setState({ progress: progress + 1 }); }}
-              />
+            <Box direction={responsiveState === 'wide' ? 'row' : 'column'}>
+              <Box basis='2/3'>
+                <Heading level={3}>
+                  {objectName} details
+                </Heading>
+                <DemandOrTravelWithMatch
+                  object={demand || travel}
+                  extraAttributes={extraAttributes}
+                  onMatchDiscovery={() => { this.setState({ progress: progress + 1 }); }}
+                />
+              </Box>
+              <Box basis='1/3'>
+                <Heading level={3}>
+                  What to do next
+                </Heading>
+                <TrackingNextSteps objectName={objectName} progress={progress} />
+              </Box>
             </Box>
           </WidthCappedContainer>
         </Box>

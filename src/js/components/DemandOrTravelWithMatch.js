@@ -1,17 +1,10 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 
 import { isDemandHex, isTravelHex, getDemandTravelMatch, getTravelDemandMatch } from 'chainline-js';
 
 import { Box, Heading, Text } from 'grommet';
 import { DemandView, TravelView } from './';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
-
-const Bolder = styled.span` font-weight: 500; `;
-
-const STATUSES = [
-  'Waiting for a match',
-];
 
 class DemandOrTravelWithMatch extends Component {
   state = {
@@ -40,8 +33,7 @@ class DemandOrTravelWithMatch extends Component {
     const { match, matchType } = this.state;
     const { object, extraAttributes: incomingAttributes } = this.props;
     const extraAttributes = {
-      'Current status': <Bolder>{STATUSES[0]}</Bolder>,
-      ...incomingAttributes,
+      ...(incomingAttributes || {}),
     };
     const timezoneAbbr = new Date().toString().match(/\(([A-Za-z\s].*)\)/)[1];
     return [

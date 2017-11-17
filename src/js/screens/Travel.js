@@ -144,7 +144,7 @@ class TravelPage extends Component {
     }
 
     // existing demand or travel open
-    if (stateLookupKey) {
+    if (stateLookupKey && !this.state.sendingTx) {
       return (<Box key='content' direction='column'>
         <Box background='white' direction='column' pad='large'>
           <WidthCappedContainer>
@@ -179,9 +179,9 @@ class TravelPage extends Component {
       /* "Waiting for invoke" popup */
       sendingTx ? <WaitForInvokeLayer
         key='travel-invokelayer'
-        onInvokeComplete={() => {
+        onInvokeComplete={({ stateLookupKey: key }) => {
           const { history } = this.props;
-          history.replace(`/track/${stateLookupKey}/${pickUpCity}/${dropOffCity}`);
+          history.replace(`/track/${key}/${pickUpCity}/${dropOffCity}`);
         }}
       /> : null,
 

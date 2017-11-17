@@ -4,7 +4,7 @@ import { Table } from './';
 import { formatCarrySpace } from '../utils';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
 
-const DemandView = ({ demand: hex, wallet: { address } }) => {
+const DemandView = ({ demand: hex, wallet: { programHash } }) => {
   const demand = parseDemandHex(hex);
   const timezoneAbbr = new Date().toString().match(/\(([A-Za-z\s].*)\)/)[1];
   const view = {
@@ -13,7 +13,7 @@ const DemandView = ({ demand: hex, wallet: { address } }) => {
     'Item value': `${demand.itemValue} GAS`,
     'Min. reputation': demand.repRequired,
     'Information': demand.infoBlob,
-    'Owner address': address === demand.owner ? 'You!' : `${toAddress(hexstring2ab(demand.owner))}`,
+    'Owner address': demand.owner === programHash ? 'You!' : `${toAddress(hexstring2ab(demand.owner))}`,
   };
   const keys = Object.keys(view);
   return (
