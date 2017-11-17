@@ -6,6 +6,7 @@ const cities = require('all-the-cities');
 const uniqby = require('lodash.uniqby');
 const sortby = require('lodash.sortby');
 const pick = require('pedantic-pick');
+const unfetch = require('isomorphic-unfetch');
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 
@@ -17,6 +18,8 @@ const APP_ROUTES = [
 ];
 
 const NEO_NODE = 'seed3.neo.org:20331';
+const NEOSCAN_URI = 'https://neoscan-testnet.io/api/test_net/v1/get_address/';
+const NEON_URI = 'http://testnet-api.wallet.cityofzion.io/v2/address/balance/';
 const CITY_SUGGESTIONS_COUNT = 4;
 
 process.on('uncaughtException', (err) => {
@@ -32,6 +35,43 @@ app.use('/neo-rpc', cors(), proxy(NEO_NODE, {
   https: true,
   proxyReqPathResolver: () => '/',
 }));
+
+app.get('/api/balance/:address', cors(), async (req, res) => {
+  const { address } = req.params;
+  let results;
+  try {
+    results = await Promise.all([
+      (async () => {
+        const resp = await unfetch(`${NEOSCAN_URI}${address}`);
+        return resp.json();
+      })(),
+      (async () => {
+        const resp = await unfetch(`${NEON_URI}${address}`);
+        return resp.json();
+      })(),
+    ]);
+  } catch (err) {
+    res.status(500).json({ error: err.message || err });
+    return;
+  }
+  let neoscanBalance = 0;
+  let neonBalance = 0;
+  try {
+    const neoscanMatches = results[0].balance.filter(b => b.asset === 'GAS');
+    neoscanBalance = neoscanMatches.length ? neoscanMatches[0].amount : 0;
+  } catch (err) {
+    console.warn('Could not get a balance:', err);
+  }
+  try {
+    neonBalance = results[1].GAS.balance;
+  } catch (err) {
+    console.warn('Could not get a balance:', err);
+  }
+  let winningBalance;
+  if (neoscanBalance > 0) winningBalance = neoscanBalance;
+  if (neonBalance >= neoscanBalance) winningBalance = neonBalance;
+  res.json({ balance: winningBalance });
+});
 
 app.get('/api/cities-suggest.json', (req, res) => {
   let matches;
