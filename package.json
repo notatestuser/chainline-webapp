@@ -15,11 +15,19 @@
     "lint": "eslint src/**.js",
     "dev": "cross-env NODE_ENV=development grommet pack",
     "build": "cross-env NODE_ENV=production grommet pack",
-    "start": "node server.js"
+    "start": "node server.js",
+    "deploy": "now && now alias"
+  },
+  "now": {
+    "alias": "chainline.co",
+    "env": {
+      "NODE_ENV": "production"
+    },
+    "public": true
   },
   "dependencies": {
     "all-the-cities": "^2.0.0",
-    "chainline-js": "git+https://github.com/notatestuser/chainline-js.git#master-built",
+    "chainline-js": "^1.1.0",
     "copy-to-clipboard": "^3.0.8",
     "express": "^4.16.2",
     "grommet": "2.0.0-alpha.3",
