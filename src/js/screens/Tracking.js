@@ -4,7 +4,7 @@ import 'rc-steps/assets/index.css';
 import 'rc-steps/assets/iconfont.css';
 
 import styled from 'styled-components';
-import { Box, Heading, Text, Paragraph } from 'grommet';
+import { Box, Heading, Text, Paragraph, Responsive } from 'grommet';
 
 import { getObjectByKey, makeCityPairHash, isDemandHex, isTravelHex, parseDemandHex, parseTravelHex } from 'chainline-js';
 
@@ -22,6 +22,7 @@ const Bolder = styled.span` font-weight: 500; `;
 
 class TrackingPage extends Component {
   state = {
+    responsiveState: 'wide',
     loading: true,
     found: false,
     demand: false,
@@ -37,9 +38,9 @@ class TrackingPage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.state.trackingId === nextProps.params.trackingId &&
-        this.state.city1 === nextProps.params.city1 &&
-        this.state.city2 === nextProps.params.city2) {
+    if (this.state.trackingId === nextProps.match.params.trackingId &&
+        this.state.city1 === nextProps.match.params.city1 &&
+        this.state.city2 === nextProps.match.params.city2) {
       return;
     }
     this._refresh(nextProps);
@@ -82,8 +83,8 @@ class TrackingPage extends Component {
   }
 
   render() {
-    const { loading, found, demand, travel, progress } = this.state;
-    const { match: { params: { trackingId, city1, city2 } }, responsiveState } = this.props;
+    const { loading, found, demand, travel, progress, responsiveState } = this.state;
+    const { match: { params: { trackingId, city1, city2 } } } = this.props;
 
     if (loading) {
       return (<Box background='white' pad='large'>
@@ -113,7 +114,15 @@ class TrackingPage extends Component {
     };
 
     return (
-      <Box key='travel-form' direction='column'>
+      <Box key='tracking-form' direction='column'>
+        <Responsive
+          onChange={(_responsiveState) => {
+            this.setState({ responsiveState: _responsiveState });
+          }}
+        >
+          {/* This must be here or it crashes :( */}
+          <div />
+        </Responsive>
         <Box
           background='white'
           direction='column'
@@ -127,8 +136,11 @@ class TrackingPage extends Component {
             </Box>
             <Box pad={{ bottom: responsiveState === 'wide' ? 'medlarge' : 'small' }}>
               <Paragraph size='full'>
-                <Bolder>Your tracking ID is shown here:</Bolder> {trackingId}<br />
-                <Bolder>Keep a note of this &mdash; you will need it later!</Bolder>
+                <Bolder>
+                  Your tracking ID is shown here:</Bolder> {trackingId}<br />
+                <Bolder>
+                  Keep a note of this &mdash; you will need it to return to this page.
+                </Bolder>
               </Paragraph>
             </Box>
             {responsiveState === 'wide' && progress > 0 ? <Box margin={{ bottom: 'medlarge' }}>

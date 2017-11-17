@@ -14,18 +14,20 @@ class SendLayer extends Component {
   }
 
   _onSubmit = async (ev, data) => {
-    const { onClose, onSendFunds } = this.props;
-    const { address, amount } = data;
+    const { onClose, onSendFunds, preFilledAddress, preFilledAmount } = this.props;
+    let { address, amount } = data;
     ev.preventDefault();
+    address = preFilledAddress || address;
+    amount = preFilledAmount || amount;
     if (!address || !address.length) return;
-    if (!amount || !amount.length) return;
+    if (!amount) return;
     this.setState({ sending: true });
     await onSendFunds(address, amount);
     onClose();
   }
 
   render() {
-    const { balance, onClose, preFilledAddress, preFilledAmount } = this.props;
+    const { balance, onClose, preFilledAddress, preFilledAmount, extraInfo } = this.props;
     const { sending } = this.state;
 
     return (<Layer align='top' onEsc={onClose} size='medium'>
@@ -44,6 +46,7 @@ class SendLayer extends Component {
                   Enter the destination address and the amount to send.{' '}
                   <WarningSpan>Funds will arrive on the TestNet.</WarningSpan>
                 </Paragraph>
+                {extraInfo}
                 <Field label='Address'>
                   <TextInput
                     name='address'

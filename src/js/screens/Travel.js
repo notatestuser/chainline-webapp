@@ -101,7 +101,7 @@ class TravelPage extends Component {
       } else if (this.state.gasConsumed) {
         // balance check (again)
         console.debug('Effective balance:', balance);
-        if (requiredGAS + this.state.gasConsumed > balance) {
+        if (requiredGAS + this.state.gasConsumed + 0.001 > balance) {
           throw new Error(`Insufficient funds. ${requiredGAS.toFixed(3)} GAS required (deposit + fees)`);
         }
 
@@ -149,7 +149,7 @@ class TravelPage extends Component {
         <Box background='white' direction='column' pad='large'>
           <WidthCappedContainer>
             <Heading level={2} margin={{ top: 'none', bottom: 'xlarge' }}>
-              Please complete your existing transaction first.
+              Please track and complete your existing transaction.
             </Heading>
           </WidthCappedContainer>
         </Box>
@@ -223,7 +223,7 @@ class TravelPage extends Component {
                 <Field label='Destination city' help='Not publicly visible*'>
                   <CityTextInput name='dropOffCity' />
                 </Field>
-                <Field label={`Travelling at (${timezoneAbbr} time)`}>
+                <Field label={`Travelling at (${timezoneAbbr})`}>
                   <TextInput name='expiry' type='datetime-local' min={earliestTravelDate} plain={true} />
                 </Field>
                 <Field label='Available carry space'>

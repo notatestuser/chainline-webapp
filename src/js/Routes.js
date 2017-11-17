@@ -27,8 +27,7 @@ export default props => (
     <Route
       exact={true}
       path='/track/:trackingId/:city1/:city2'
-      component={routeProps => (
-        <TrackingPage {...routeProps} {...props} />)}
+      component={TrackingPage}
     />
     <Route
       exact={true}

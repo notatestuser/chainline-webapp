@@ -44,7 +44,7 @@ const LogoRoutedAnchor = styled(RoutedAnchor)`
 const HeroBox = styled(Box)`
   background-image: url(${WAVES_SRC});
   background-repeat: repeat-x;
-  background-position: ${props => `bottom 20px left ${props.scrollTop > 0 ? props.scrollTop / 8 : 0}px`};
+  background-position: ${props => `bottom 20px left ${props.scrollTop > 0 ? props.scrollTop / 16 : 0}px`};
   background-size: 140px;
 `;
 
@@ -162,7 +162,7 @@ class Layout extends Component {
             <Box key='hero-1'>
               <VideoPlayer
                 src={VIDEO_SRC}
-                width='820px'
+                width='815px'
                 margin='medlarge'
                 responsiveState={responsiveState}
               />

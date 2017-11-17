@@ -46,11 +46,12 @@ class TrackingNextSteps extends Component {
             on that page.
           </Text>] : null}
           {otherPartyName === 'courier' ? [<Text key='k0' margin={{ bottom: 'medium' }}>
-            Be sure to check, check and double check your item before accepting{' '}
-            the delivery.
+            Be sure to double check your item before accepting the delivery.
           </Text>, <Text key='k1' margin={{ bottom: 'medium' }}>
             When you are ready to refund the {otherPartyName}, please click the &ldquo;Send Refund&rdquo;{' '}
             button below the matched travel to the left of this text.{' '}
+            This will <Boldish>unlock</Boldish> the funds reserved for the courier.
+          </Text>, <Text key='k2' margin={{ bottom: 'medium' }}>
             You must be logged in to do this.
           </Text>] : null}
         </Box>);
