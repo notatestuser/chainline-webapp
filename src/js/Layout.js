@@ -206,8 +206,8 @@ class Layout extends Component {
 
             {responsiveState === 'wide' ? <Box direction='row' responsive={true}>
               <Box pad={{ horizontal: 'small' }}>
-                <Anchor href='/_src' target='_blank'>
-                  Source Code
+                <Anchor href='//github.com/notatestuser/chainline-contracts-kt/wiki' target='_blank'>
+                  Wiki on GitHub
                 </Anchor>
               </Box>
               <Box pad={{ horizontal: 'small' }}>
