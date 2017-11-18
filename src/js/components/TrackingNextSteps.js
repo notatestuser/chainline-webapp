@@ -57,12 +57,13 @@ class TrackingNextSteps extends Component {
         </Box>);
     }
 
-    if (progress === 3) {
+    if (progress >= 3) {
       return (
         <Box direction='row'>
           <Checkmark size='large' />
           <Text margin={{ left: 'small' }}>
-            This transaction has been completed. No further action is required.
+            This transaction is complete.<br />
+            No further action is required.
           </Text>
         </Box>);
     }

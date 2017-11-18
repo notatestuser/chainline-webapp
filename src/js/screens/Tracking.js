@@ -67,9 +67,14 @@ class TrackingPage extends Component {
         // if the user's "state lock" does not match the object then the exchange step is done
         // (transaction complete)
         const owner = parsed.owner;
-        const stateLock = await getObjectByKey(net, owner);
-        if (stateLock.startsWith(owner)) {
-          // exchange complete!
+        try {
+          const stateLock = await getObjectByKey(net, owner);
+          if (stateLock.startsWith(owner)) {
+            // exchange complete!
+            newState.progress = 3;
+          }
+        } catch (err) {
+          // weirdly, this also means the exchange is complete!
           newState.progress = 3;
         }
 

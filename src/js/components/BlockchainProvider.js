@@ -12,7 +12,7 @@ import {
 
 const CHAINLINE_BALANCE_API = 'https://chainline.co/api/balance/';
 const REFRESH_INTERVAL_MS = 15000;
-const NUMBER_FORMAT = '0,0.000';
+const BALANCE_FORMAT = '0,0.0000';
 
 export const contextTypes = {
   gasPriceUSD: PropTypes.number,
@@ -23,6 +23,7 @@ export const contextTypes = {
     effectiveBalance: PropTypes.number,
     effectiveBalanceString: PropTypes.string,
     isLoaded: PropTypes.bool,
+    programHash: PropTypes.string,
     reserved: PropTypes.number,
     reservedString: PropTypes.string,
     wif: PropTypes.string,
@@ -65,16 +66,16 @@ class BlockchainProvider extends Component {
       wallet: {
         address,
         balance,
-        balanceString: is.number(balance) ? numeral(balance).format(NUMBER_FORMAT) : '?',
+        balanceString: is.number(balance) ? numeral(balance).format(BALANCE_FORMAT) : '?',
         effectiveBalance,
-        effectiveBalanceString: is.number(effectiveBalance) ? numeral(effectiveBalance).format(NUMBER_FORMAT) : '?',
+        effectiveBalanceString: is.number(effectiveBalance) ? numeral(effectiveBalance).format(BALANCE_FORMAT) : '?',
         isLoaded: !!wif,
         net,
         programHash,
         reputation,
         reputationString: is.number(reputation) ? numeral(reputation).format('0,0') : '?',
         reserved,
-        reservedString: is.number(reserved) ? numeral(reserved).format(NUMBER_FORMAT) : '?',
+        reservedString: is.number(reserved) ? numeral(reserved).format(BALANCE_FORMAT) : '?',
         stateLookupKey,
         wif,
       },

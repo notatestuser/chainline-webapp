@@ -17,6 +17,7 @@ const APP_ROUTES = [
   /^\/track/,
 ];
 
+const NEO_NODE_HTTPS = true;
 const NEO_NODE = 'seed3.neo.org:20331';
 const NEON_BASE = 'http://testnet-api.wallet.cityofzion.io';
 const NEON_URI = 'http://testnet-api.wallet.cityofzion.io/v2/address/balance/';
@@ -31,13 +32,19 @@ const app = express();
 
 // API routes
 
+const userResHeaderDecorator = (headers) => {
+  headers['cache-control'] = 'no-cache, no-store, must-revalidate';
+  return headers;
+};
+
 app.options('/neo-rpc', cors());
 app.use('/neo-rpc', cors(), proxy(NEO_NODE, {
-  https: true,
+  https: NEO_NODE_HTTPS,
+  userResHeaderDecorator,
   proxyReqPathResolver: () => '/',
 }));
 
-app.use('/neon-testnet-api', proxy(NEON_BASE));
+app.use('/neon-testnet-api', proxy(NEON_BASE, { userResHeaderDecorator }));
 
 app.get('/api/balance/:address', cors(), async (req, res) => {
   const { address } = req.params;
@@ -75,7 +82,9 @@ app.get('/api/balance/:address', cors(), async (req, res) => {
   let winningBalance;
   if (neoscanBalance > 0) winningBalance = neoscanBalance;
   if (neonBalance >= neoscanBalance) winningBalance = neonBalance;
-  res.json({ balance: winningBalance });
+  res
+    .set('cache-control', 'no-cache, no-store, must-revalidate')
+    .json({ balance: winningBalance });
 });
 
 app.get('/api/cities-suggest.json', (req, res) => {

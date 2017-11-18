@@ -2,24 +2,28 @@ import React, { Component } from 'react';
 
 import {
   Constants,
+  doSendAsset,
+  getDemandTravelMatch,
+  getObjectByKey,
+  getScriptHashFromAddress,
+  getTravelDemandMatch,
+  hexstring2ab,
   isDemandHex,
   isTravelHex,
-  getDemandTravelMatch,
-  getTravelDemandMatch,
-  parseTravelHex,
   parseDemandHex,
-  doSendAsset,
-  getScriptHashFromAddress,
-  setFundsPaidToRecipientTxHash,
+  parseTravelHex,
   reverseHex,
+  setFundsPaidToRecipientTxHash,
   toAddress,
-  hexstring2ab,
 } from 'chainline-js';
 
 import { Box, Heading, Text, Paragraph, Button } from 'grommet';
 
 import { DemandView, TravelView, SendLayer, WaitForInvokeLayer } from './';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
+
+// meh, no local invoke this time.
+const COMPLETION_INVOKE_GAS_COST = 2;
 
 class DemandOrTravelWithMatch extends Component {
   state = {
@@ -57,22 +61,29 @@ class DemandOrTravelWithMatch extends Component {
   }
 
   _onSendFunds = async (address, amount) => {
-    const { wallet: { wif: accountWif, net } } = this.props;
-    const { result, hash: txHash } = await doSendAsset(net, address, accountWif, {
-      GAS: parseFloat(amount),
-    });
+    const { wallet: { wif: accountWif, programHash: senderHash, net } } = this.props;
+    const { result, hash: txHash } = await doSendAsset(net, address, accountWif, { GAS: amount });
     if (result) {
-      this.setState({ sendingTx: true });
-      console.info('Waiting 30 seconds for the transaction to clear');
-      await new Promise(resolve => setTimeout(resolve, 30000)); // wait 30 secs
-      console.info('Invoking setFundsPaidToRecipientTxHash now');
+      this.setState({ sendingTx: true, isRefundBuyerOpen: false });
+      console.info('Waiting 60 seconds for the transaction to clear');
+      await new Promise(resolve => setTimeout(resolve, 60000)); // wait 60 secs
+      // get the demand owner's reservation so that we make sure we're sending its exact value
+      const reservation = await getObjectByKey(net, `${senderHash}00`);
+      const reservationValue = reservation.substr(8, 10); // 5 bytes in hex after the timestamp
       const recipientHash = getScriptHashFromAddress(address);
-      const res = await setFundsPaidToRecipientTxHash(net, accountWif, {
+      const args = {
         recipientHash: reverseHex(recipientHash),
-        amount: Number.parseInt(amount * 100000000, 10),
+        value: reservationValue,
         txHash: reverseHex(txHash),
-      }, 2);
-      console.log('setFundsPaidToRecipientTxHash result', res);
+      };
+      console.info('Invoking setFundsPaidToRecipientTxHash now with args:', args);
+      const { result: invokeResult } =
+        await setFundsPaidToRecipientTxHash(net, accountWif, args, COMPLETION_INVOKE_GAS_COST);
+      if (!invokeResult) {
+        alert('Node RPC returned false. Please try again later.');
+        this.setState({ sendingTx: false });
+      }
+      console.log('setFundsPaidToRecipientTxHash result', invokeResult);
     } else {
       console.warn('Non-success result upon trying to send the tx!');
     }
@@ -93,6 +104,16 @@ class DemandOrTravelWithMatch extends Component {
       wif = this.props.wallet.wif;
     }
 
+    let preFilledAddress;
+    let preFilledAmount;
+    if (isRefundBuyerOpen) {
+      preFilledAddress = toAddress(hexstring2ab(this.state.matchParsed.owner));
+      preFilledAmount =
+        parseFloat(
+          (this.state.parsedObject.itemValue + Constants.FEE_DEMAND_REWARD_GAS + 0.001)
+            .toFixed(8));
+    }
+
     return [
       isDemandHex(object) ? <DemandView key='d' demand={object} extraAttributes={extraAttributes} /> : null,
       isTravelHex(object) ? <TravelView key='t' travel={object} extraAttributes={extraAttributes} /> : null,
@@ -111,10 +132,8 @@ class DemandOrTravelWithMatch extends Component {
           null}
       </Box> : null,
       isRefundBuyerOpen ? <SendLayer
-        preFilledAddress={
-          toAddress(hexstring2ab(this.state.matchParsed.owner))}
-        preFilledAmount={
-          this.state.parsedObject.itemValue + Constants.FEE_DEMAND_REWARD_GAS + 0.001}
+        preFilledAddress={preFilledAddress}
+        preFilledAmount={preFilledAmount}
         balance={
           balance + this.state.parsedObject.itemValue + Constants.FEE_DEMAND_REWARD_GAS}
         accountWif={wif}
@@ -123,7 +142,8 @@ class DemandOrTravelWithMatch extends Component {
         extraInfo={
           <Paragraph>
             <strong>IMPORTANT</strong>{' '}
-            Please ensure you have +2 extra GAS to cover system fees. Sorry about that!
+            Please ensure you have +{COMPLETION_INVOKE_GAS_COST} extra GAS to cover system fees.{' '}
+            This is will be improved in the future!
           </Paragraph>
         }
       /> : null,
@@ -132,6 +152,7 @@ class DemandOrTravelWithMatch extends Component {
         onInvokeComplete={() => {
           alert('All done! Thank you for using Chain Line!');
           this.setState({ sendingTx: false });
+          window.location.reload();
         }}
       /> : null,
     ];
