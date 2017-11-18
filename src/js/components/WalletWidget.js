@@ -11,9 +11,7 @@ import { doSendAsset } from 'chainline-js';
 import { SendLayer } from './';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
 
-const DropDownLabel = styled(Box)`
-  font-weight: 500;
-`;
+const DropDownLabel = styled(Box)` font-weight: 500; `;
 
 class WalletWidget extends PureComponent {
   state = {
@@ -22,7 +20,9 @@ class WalletWidget extends PureComponent {
 
   _onSendFunds = async (address, amount) => {
     const { onFundsSent, wallet: { wif: accountWif, net } } = this.props;
-    const { result, hash } = await doSendAsset(net, address, accountWif, { GAS: parseFloat(amount) });
+    const safeAmount = parseFloat(parseFloat(amount).toFixed(8));
+    console.info('Sending GAS', address, safeAmount);
+    const { result, hash } = await doSendAsset(net, address, accountWif, { GAS: safeAmount });
     onFundsSent(result, hash);
   }
 
