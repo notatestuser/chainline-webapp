@@ -101,8 +101,9 @@ class TravelPage extends Component {
       } else if (this.state.gasConsumed) {
         // balance check (again)
         console.debug('Effective balance:', balance);
-        if (requiredGAS + this.state.gasConsumed + 0.001 > balance) {
-          throw new Error(`Insufficient funds. ${requiredGAS.toFixed(3)} GAS required (deposit + fees)`);
+        const totalRequiredGAS = requiredGAS + this.state.gasConsumed + 0.001;
+        if (totalRequiredGAS > balance) {
+          throw new Error(`Insufficient funds. ${totalRequiredGAS.toFixed(3)} GAS required (deposit + fees)`);
         }
 
         // do the real invoke
@@ -170,7 +171,7 @@ class TravelPage extends Component {
     const nowDatePlusOneDay = Date.now() + 86400000; // 1 day in ms
     const earliestTravelDate = new Date(nowDatePlusOneDay).toISOString().substring(0, 16);
     const timezoneAbbr = new Date().toString().match(/\(([A-Za-z\s].*)\)/)[1];
-    const totalPaymentGAS = formatGasConsumption(requiredGAS + gasConsumed);
+    const totalPaymentGAS = formatGasConsumption(requiredGAS + gasConsumed + 0.001);
     const submitLabel = gasConsumed && !showingGasConsumptionNotice ?
       `Confirm Payment: ${totalPaymentGAS} GAS` :
       'Register Travel';

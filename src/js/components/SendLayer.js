@@ -14,13 +14,16 @@ class SendLayer extends Component {
   }
 
   _onSubmit = async (ev, data) => {
-    const { onClose, onSendFunds, preFilledAddress, preFilledAmount } = this.props;
+    const { balance, onClose, onSendFunds, preFilledAddress, preFilledAmount } = this.props;
     let { address, amount } = data;
     ev.preventDefault();
     address = preFilledAddress || address;
     amount = preFilledAmount || amount;
     if (!address || !address.length) return;
-    if (!amount) return;
+    if (!amount || amount > balance) {
+      alert('Oops. Insufficient balance.');
+      return;
+    }
     this.setState({ sending: true });
     await onSendFunds(address, amount);
     onClose();

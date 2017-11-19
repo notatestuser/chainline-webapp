@@ -66,9 +66,9 @@ class BlockchainProvider extends Component {
       wallet: {
         address,
         balance,
-        balanceString: is.number(balance) ? numeral(balance).format(BALANCE_FORMAT) : '?',
+        balanceString: is.number(balance) && balance > 0.0001 ? numeral(balance).format(BALANCE_FORMAT) : '0.0000',
         effectiveBalance,
-        effectiveBalanceString: is.number(effectiveBalance) ? numeral(effectiveBalance).format(BALANCE_FORMAT) : '?',
+        effectiveBalanceString: is.number(effectiveBalance) && balance > 0.0001 ? numeral(effectiveBalance).format(BALANCE_FORMAT) : '0.0000',
         isLoaded: !!wif,
         net,
         programHash,
@@ -111,11 +111,12 @@ class BlockchainProvider extends Component {
         const { reserved } = this.state;
         const { balance: newBalance } = await res.json();
         // avoid unnecessary state updates
-        if (newBalance === this.state.originalBalance) return;
-        this.setState({
-          originalBalance: newBalance,
-          balance: reserved ? newBalance - reserved : newBalance,
-        });
+        if (newBalance !== this.state.originalBalance) {
+          this.setState({
+            originalBalance: newBalance,
+            balance: reserved ? newBalance - reserved : newBalance,
+          });
+        }
       } else {
         const message = res.statusText;
         console.error(`Could not get wallet balance! ${message}`);

@@ -145,8 +145,9 @@ class DemandPage extends Component {
       // case: user has confirmed the fee payment
       } else if (this.state.gasConsumed) {
         console.debug('Effective balance:', balance);
-        if (requiredGAS + this.state.gasConsumed + 0.001 > balance) {
-          throw new Error(`Insufficient funds. ${requiredGAS.toFixed(3)} GAS required`);
+        const totalRequiredGAS = requiredGAS + this.state.gasConsumed + 0.001;
+        if (totalRequiredGAS > balance) {
+          throw new Error(`Insufficient funds. ${totalRequiredGAS.toFixed(3)} GAS required`);
         }
 
         // do the real invoke
@@ -216,7 +217,7 @@ class DemandPage extends Component {
     const nowDatePlusTwoDays = Date.now() + 172800000; // 2 days in ms
     const defaultExpiryDate = new Date(nowDatePlusTwoDays).toISOString().split('T')[0];
     const timezoneAbbr = new Date().toString().match(/\(([A-Za-z\s].*)\)/)[1];
-    const totalPaymentGAS = formatGasConsumption(requiredGAS + gasConsumed);
+    const totalPaymentGAS = formatGasConsumption(requiredGAS + gasConsumed + 0.001);
     const submitLabel = gasConsumed && !showingGasConsumptionNotice ?
       `Confirm Payment: ${totalPaymentGAS} GAS` :
       'Open Demand';

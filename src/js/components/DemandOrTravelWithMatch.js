@@ -91,7 +91,7 @@ class DemandOrTravelWithMatch extends Component {
 
   render() {
     const { match, matchType, isRefundBuyerOpen, sendingTx } = this.state;
-    const { object, extraAttributes: incomingAttributes } = this.props;
+    const { object, extraAttributes: incomingAttributes, progress } = this.props;
     const extraAttributes = {
       ...(incomingAttributes || {}),
     };
@@ -114,6 +114,9 @@ class DemandOrTravelWithMatch extends Component {
             .toFixed(8));
     }
 
+    const shouldShowRefundButton =
+        matchType === 'Travel' && this.props.wallet.wif && (!progress || progress < 3);
+
     return [
       isDemandHex(object) ? <DemandView key='d' demand={object} extraAttributes={extraAttributes} /> : null,
       isTravelHex(object) ? <TravelView key='t' travel={object} extraAttributes={extraAttributes} /> : null,
@@ -125,7 +128,7 @@ class DemandOrTravelWithMatch extends Component {
           Matched at {match.matchDate.toLocaleString()} {timezoneAbbr}
         </Text>
         <DemandOrTravelWithMatch noRecurse={true} object={match[matchType.toLowerCase()]} />
-        {matchType === 'Travel' && this.props.wallet.wif ?
+        {shouldShowRefundButton ?
           <Box margin={{ top: 'large' }}>
             <Button primary={true} label='Send the Refund' onClick={this._onRefundBuyerClicked} />
           </Box> :

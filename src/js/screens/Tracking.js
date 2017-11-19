@@ -62,6 +62,10 @@ class TrackingPage extends Component {
         newState = { found: true, travel: object, progress: 1 };
         parsed = parseTravelHex(object);
       }
+      if (parsed.expiry && parsed.expiry.getTime() < Date.now()) {
+        alert('This has expired!');
+        throw new Error('Object expired!');
+      }
       if (newState.found) {
         // putting this here is a bit of a cheat but it will work...
         // if the user's "state lock" does not match the object then the exchange step is done
@@ -69,7 +73,7 @@ class TrackingPage extends Component {
         const owner = parsed.owner;
         try {
           const stateLock = await getObjectByKey(net, owner);
-          if (stateLock.startsWith(owner)) {
+          if (!stateLock.startsWith(newState.demand || newState.travel)) {
             // exchange complete!
             newState.progress = 3;
           }
@@ -80,7 +84,8 @@ class TrackingPage extends Component {
 
         this.setState(newState);
       }
-    } catch (e) {
+    } catch (err) {
+      console.error('Tracking error:', err);
       this.setState({ found: false });
     } finally {
       this.setState({ loading: false });
@@ -174,6 +179,7 @@ class TrackingPage extends Component {
                   object={demand || travel}
                   extraAttributes={extraAttributes}
                   onMatchDiscovery={() => { this.setState({ progress: progress + 1 }); }}
+                  progress={progress}
                 />
               </Box>
               <Box basis='1/3'>

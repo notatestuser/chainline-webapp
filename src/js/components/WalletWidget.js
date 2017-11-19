@@ -71,8 +71,8 @@ class WalletWidget extends PureComponent {
         full='grow'
         label={<DropDownLabel>
           Balance: {effectiveBalanceString} GAS
-          {is.number(gasPriceUSD) && typeof balance === 'number' ?
-            ` ($${numeral(gasPriceUSD * balance).format('0,0.00')})` : ''}
+          {is.number(gasPriceUSD) && typeof balance === 'number' && balance > 0.0001 ?
+            ` ($${numeral(gasPriceUSD * balance).format('0,0.00')})` : ' ($0.00)'}
         </DropDownLabel>}
         icon={<Money />}
         dropAlign={{ right: 'right', top: 'top' }}
