@@ -22,7 +22,6 @@ const DemandView = ({ demand: hex, wallet: { programHash } }) => {
     'Instructions': demand.infoBlob,
     'Item class': formatCarrySpace(demand.itemSize),
     'Item value': `${numeral(demand.itemValue).format('0,0.0000')} GAS`,
-    'Min. reputation': demand.repRequired,
     'Owner address': demand.owner === programHash ? 'You!' : `${toAddress(hexstring2ab(demand.owner))}`,
   };
   const keys = Object.keys(view);

@@ -17,6 +17,10 @@ import withBlockchainProvider from '../helpers/withBlockchainProvider';
 const MAX_INFO_LEN = 128;
 const MIN_ITEM_VALUE_GAS = 0.5;
 
+const IntroParagraph = styled(Paragraph)`
+  margin-top: 0;
+  margin-bottom: 30px;
+`;
 const NoticeParagraph = styled(Paragraph)` margin-top: 0; `;
 const CostReadout = styled(Paragraph)` font-weight: 500; `;
 const Disclaimer = styled(Paragraph)` font-weight: 500; `;
@@ -180,9 +184,28 @@ class DemandPage extends Component {
       return (<Box key='content' direction='column'>
         <Box background='white' direction='column' pad='large'>
           <WidthCappedContainer>
-            <Heading level={2} margin={{ top: 'none', bottom: 'xlarge' }}>
-              You must log in to do this!
-            </Heading>
+            <Box
+              animation={[
+                { type: 'zoomIn', duration: 700, delay: 80 },
+                { type: 'fadeIn', duration: 700, delay: 80 },
+                { type: 'slideRight', duration: 700, delay: 80 },
+              ]}
+            >
+              <Heading level={2} margin={{ top: 'none', bottom: 'medlarge' }}>
+                Load or create a wallet to start
+              </Heading>
+            </Box>
+            <Box
+              animation={[
+                { type: 'zoomIn', duration: 600, delay: 500 },
+                { type: 'fadeIn', duration: 600, delay: 500 },
+                { type: 'slideRight', duration: 600, delay: 500 },
+              ]}
+            >
+              <IntroParagraph size='full'>
+                It takes just a few seconds. Use the dropdown in the header.
+              </IntroParagraph>
+            </Box>
           </WidthCappedContainer>
         </Box>
       </Box>);
@@ -273,10 +296,22 @@ class DemandPage extends Component {
                   ]}
                   help={`${MAX_INFO_LEN - infoCharsUsed} letters left`}
                 >
-                  <TextInput name='infoText' placeholder='You must include temporary contact details. Do NOT mention any pickup or dropoff locations in this box.' maxLength={`${MAX_INFO_LEN}`} plain={true} />
+                  <TextInput
+                    name='infoText'
+                    placeholder='You must include temporary contact details. Do NOT mention any pickup or dropoff locations in this box.'
+                    maxLength={`${MAX_INFO_LEN}`}
+                    plain={true}
+                  />
                 </Field>
                 <Field label='Item value (in US Dollars)' help={itemValueHelpText}>
-                  <TextInput name='itemValue' type='number' min={(gasPriceUSD * MIN_ITEM_VALUE_GAS).toFixed(2)} step='0.01' placeholder='Research the market value of the item to make this as accurate as possible. If in doubt, specify more.' plain={true} />
+                  <TextInput
+                    name='itemValue'
+                    type='number'
+                    min={(gasPriceUSD * MIN_ITEM_VALUE_GAS).toFixed(2)}
+                    step='0.01'
+                    placeholder='Research the market value of the item to make this as accurate as possible. If in doubt, specify more.'
+                    plain={true}
+                  />
                 </Field>
                 <Field label='Item size'>
                   <Box margin='small' direction='row'>
@@ -314,7 +349,7 @@ class DemandPage extends Component {
                   <TextInput name='expiry' type='date' placeholder='date' defaultValue={defaultExpiryDate} plain={true} />
                 </Field>
                 <Field label='User reputation requirement'>
-                  <TextInput name='reputation' type='number' placeholder='0-1000 successful prior transactions. For now 0 is recommended.' plain={true} />
+                  <TextInput name='reputation' type='number' min='0' placeholder='0-1000 successful prior transactions. For now 0 is recommended.' plain={true} />
                 </Field>
                 <Box margin={{ top: 'medlarge2' }}>
                   <Button

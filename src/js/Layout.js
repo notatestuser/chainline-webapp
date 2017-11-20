@@ -156,13 +156,13 @@ class Layout extends Component {
               </HeroHeading>
               <SubSloganHeading level={3} textAlign='center' size={responsiveState === 'wide' ? 'medium' : 'small'}>
                 {/* Introducing a global shipping network with no staff, trains or planes. */}
-                a <Boldish>smarter</Boldish> shipping network for the e-commerce era
+                a <Boldish>trustless</Boldish> shipping network for the e-commerce era
               </SubSloganHeading>
             </Box>,
             <Box key='hero-1'>
               <VideoPlayer
                 src={VIDEO_SRC}
-                width='815px'
+                width='820px'
                 margin='medlarge'
                 responsiveState={responsiveState}
               />

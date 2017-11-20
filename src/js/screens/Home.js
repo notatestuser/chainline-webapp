@@ -11,8 +11,8 @@ import { WidthCappedContainer } from '../components';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
 
 const DROPDOWN_OPTIONS = {
-  'I would like an item to be delivered to me from elsewhere.': '/demand/create',
-  'I am a courier and have extra space to carry items.': '/travel/create',
+  'I have extra space to carry items during my travel to another city.': '/travel/create',
+  'I would like an item to be collected and delivered to me.': '/demand/create',
   'There is a Chain Line shipment I would like to track.': 'TRACK',
 };
 
@@ -46,6 +46,11 @@ const StatsBox = styled(Box)`
 `;
 
 const StatNumber = styled(Heading)` transform: scale(1.3); `;
+
+const BlurbsContainer = styled(WidthCappedContainer)`
+  transform-origin: left top;
+  transform: scale(1.03);
+`;
 
 class Home extends Component {
   state = {
@@ -83,12 +88,12 @@ class Home extends Component {
         >
           <WidthCappedContainer>
             <Heading level={3} margin={{ top: 'none' }}>
-              How can Chain Line help you?
+              Begin your journey
             </Heading>
             <Select
               size='large'
               options={Object.keys(DROPDOWN_OPTIONS)}
-              value='Select a journey'
+              value='Choose what best describes you'
               onChange={({ option }) => {
                 if (DROPDOWN_OPTIONS[option] === 'TRACK') {
                   this.props.onTrackClicked();
@@ -148,7 +153,7 @@ class Home extends Component {
           align='center'
           pad='large'
         >
-          <WidthCappedContainer direction='row' wrap='wrap'>
+          <BlurbsContainer direction='row' wrap='wrap'>
             <Box basis={responsiveState === 'wide' ? '1/3' : 'full'}>
               <Heading level={3} margin={{ top: responsiveState === 'wide' ? 'none' : undefined }}>
                 How does it work?
@@ -201,7 +206,7 @@ class Home extends Component {
                 <RoutedAnchor primary={true} path='/travel/create' label='Register your travel' />
               </Box>
             </Box>
-          </WidthCappedContainer>
+          </BlurbsContainer>
         </WhiteSection>
       </Box>,
     ]);

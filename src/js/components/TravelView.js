@@ -10,7 +10,6 @@ const TravelView = ({ travel: hex, extraAttributes, wallet: { programHash } }) =
   const view = Object.assign({}, extraAttributes || {}, {
     'Expires at': `${travel.expiry.toLocaleString()} ${timezoneAbbr}`,
     'Carry space': formatCarrySpace(travel.carrySpace),
-    'Min. reputation': travel.repRequired,
     'Owner address': travel.owner === programHash ? 'You!' : `${toAddress(hexstring2ab(travel.owner))}`,
   });
   const keys = Object.keys(view);

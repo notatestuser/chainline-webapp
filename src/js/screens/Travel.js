@@ -136,9 +136,28 @@ class TravelPage extends Component {
       return (<Box key='content' direction='column'>
         <Box background='white' direction='column' pad='large'>
           <WidthCappedContainer>
-            <Heading level={2} margin={{ top: 'none', bottom: 'xlarge' }}>
-              You must log in to do this!
-            </Heading>
+            <Box
+              animation={[
+                { type: 'zoomIn', duration: 700, delay: 80 },
+                { type: 'fadeIn', duration: 700, delay: 80 },
+                { type: 'slideRight', duration: 700, delay: 80 },
+              ]}
+            >
+              <Heading level={2} margin={{ top: 'none', bottom: 'medlarge' }}>
+                Load or create a wallet to start
+              </Heading>
+            </Box>
+            <Box
+              animation={[
+                { type: 'zoomIn', duration: 600, delay: 500 },
+                { type: 'fadeIn', duration: 600, delay: 500 },
+                { type: 'slideRight', duration: 600, delay: 500 },
+              ]}
+            >
+              <IntroParagraph size='full'>
+                It takes just a few seconds. Use the dropdown in the header.
+              </IntroParagraph>
+            </Box>
           </WidthCappedContainer>
         </Box>
       </Box>);
@@ -168,8 +187,8 @@ class TravelPage extends Component {
       gasConsumed,
     } = this.state;
 
-    const nowDatePlusOneDay = Date.now() + 86400000; // 1 day in ms
-    const earliestTravelDate = new Date(nowDatePlusOneDay).toISOString().substring(0, 16);
+    const nowDatePlusOneDay = new Date(Date.now() + 86400000); // 1 day in ms
+    const earliestTravelDate = nowDatePlusOneDay.toISOString().substring(0, 16);
     const timezoneAbbr = new Date().toString().match(/\(([A-Za-z\s].*)\)/)[1];
     const totalPaymentGAS = formatGasConsumption(requiredGAS + gasConsumed + 0.001);
     const submitLabel = gasConsumed && !showingGasConsumptionNotice ?
@@ -225,7 +244,13 @@ class TravelPage extends Component {
                   <CityTextInput name='dropOffCity' />
                 </Field>
                 <Field label={`Travelling at (${timezoneAbbr})`}>
-                  <TextInput name='expiry' type='datetime-local' min={earliestTravelDate} plain={true} />
+                  <TextInput
+                    name='expiry'
+                    type='datetime-local'
+                    min={earliestTravelDate}
+                    placeholder={nowDatePlusOneDay.toLocaleString()}
+                    plain={true}
+                  />
                 </Field>
                 <Field label='Available carry space'>
                   <Box margin='small' direction='row'>
@@ -254,7 +279,13 @@ class TravelPage extends Component {
                   </Box>
                 </Field>
                 <Field label='User reputation requirement'>
-                  <TextInput name='reputation' type='number' placeholder='0-1000 successful prior transactions. For now 0 is recommended.' plain={true} />
+                  <TextInput
+                    name='reputation'
+                    type='number'
+                    min='0'
+                    placeholder='0-1000 successful prior transactions. For now 0 is recommended.'
+                    plain={true}
+                  />
                 </Field>
                 <Box margin={{ top: 'medlarge2' }}>
                   <Button

@@ -13,7 +13,7 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint src/**.js",
-    "dev": "NODE_ENV=development grommet pack",
+    "dev": "cross-env NODE_ENV=development grommet pack",
     "build": "NODE_ENV=production grommet pack",
     "start": "node server.js",
     "deploy": "now && now alias"
