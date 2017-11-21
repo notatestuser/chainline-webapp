@@ -43,9 +43,10 @@ const LogoRoutedAnchor = styled(RoutedAnchor)`
 
 const HeroBox = styled(Box)`
   background-image: url(${WAVES_SRC});
-  background-repeat: repeat-x;
   background-position: ${props => `bottom 20px left ${props.scrollTop > 0 ? props.scrollTop / 16 : 0}px`};
-  background-size: 140px;
+  background-repeat: repeat-x;
+  background-size: 125px;
+  padding-bottom: 90px;
 `;
 
 const NavBox = styled(Box)`
@@ -54,6 +55,7 @@ const NavBox = styled(Box)`
 `;
 
 const NavAnchor = LogoRoutedAnchor.withComponent(Anchor);
+const NavRoutedAnchor = LogoRoutedAnchor.withComponent(RoutedAnchor);
 
 const SloganImage = styled(LogoImage)`
   margin: 0;
@@ -132,9 +134,9 @@ class Layout extends Component {
               <NavAnchor onClick={() => { this.props.onOpenTrackingClick(); }}>
                 Tracking
               </NavAnchor>
-              <NavAnchor href='https://github.com/notatestuser/chainline-webapp/wiki/Web-App-User-Guide' target='_blank'>
+              <NavRoutedAnchor path='/guide'>
                 User Guide
-              </NavAnchor>
+              </NavRoutedAnchor>
             </NavBox> : null}
           </WidthCappedContainer>
         </LogoBox>

@@ -5,6 +5,7 @@ import HomePage from './screens/Home';
 import DemandPage from './screens/Demand';
 import TravelPage from './screens/Travel';
 import TrackingPage from './screens/Tracking';
+import GuidePage from './screens/Guide';
 
 export default props => (
   <Switch>
@@ -32,6 +33,6 @@ export default props => (
     <Route
       exact={true}
       path='/guide'
-      component={TravelPage}
+      component={GuidePage}
     />
   </Switch>);
