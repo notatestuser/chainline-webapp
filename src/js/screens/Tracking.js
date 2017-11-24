@@ -3,13 +3,13 @@ import Steps, { Step } from 'rc-steps';
 import 'rc-steps/assets/index.css';
 import 'rc-steps/assets/iconfont.css';
 
-import styled from 'styled-components';
 import { Box, Heading, Text, Paragraph, Responsive } from 'grommet';
 
 import { getObjectByKey, makeCityPairHash, isDemandHex, isTravelHex, parseDemandHex, parseTravelHex } from 'chainline-js';
 
 import { WidthCappedContainer, DemandOrTravelWithMatch, TrackingNextSteps, LoadingShipAnimation } from '../components';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
+import { Boldish } from '../styles';
 import '../../css/rc-steps-overrides.css';
 
 const PROGRESS_STATUSES = {
@@ -17,8 +17,6 @@ const PROGRESS_STATUSES = {
   2: 'Matched, waiting for delivery',
   3: 'Transaction complete',
 };
-
-const Bolder = styled.span` font-weight: 500; `;
 
 class TrackingPage extends Component {
   state = {
@@ -119,7 +117,7 @@ class TrackingPage extends Component {
 
     const objectName = demand ? 'Demand' : 'Travel';
     const extraAttributes = {
-      'Current status': <Bolder>{PROGRESS_STATUSES[progress]}</Bolder>,
+      'Current status': <Boldish>{PROGRESS_STATUSES[progress]}</Boldish>,
       'Route': <span>{city1}&nbsp; ✈ &nbsp;{city2}</span>,
     };
 
@@ -146,11 +144,11 @@ class TrackingPage extends Component {
             </Box>
             <Box pad={{ bottom: responsiveState === 'wide' ? 'medlarge' : 'small' }}>
               <Paragraph size='full'>
-                <Bolder>
-                  Your tracking ID is shown here:</Bolder> {trackingId}<br />
-                <Bolder>
+                <Boldish>
+                  Your tracking ID is shown here:</Boldish> {trackingId}<br />
+                <Boldish>
                   Keep a note of this &mdash; you will need it to return to this page.
-                </Bolder>
+                </Boldish>
               </Paragraph>
             </Box>
             {responsiveState === 'wide' && progress > 0 ? <Box margin={{ bottom: 'medlarge' }}>

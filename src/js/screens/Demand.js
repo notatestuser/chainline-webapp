@@ -5,25 +5,22 @@ import PropTypes from 'prop-types';
 import pick from 'pedantic-pick';
 import numeral from 'numeral';
 
-import styled from 'styled-components';
-import { Box, Heading, Paragraph, Anchor, Button, TextInput, RadioButton } from 'grommet';
+import { Box, Heading, Anchor, Button, TextInput, RadioButton } from 'grommet';
 import { CircleInformation } from 'grommet-icons';
 
 import { Constants, openDemand } from 'chainline-js';
 import { string2hex, calculateRealGasConsumption, formatGasConsumption } from '../utils';
 import { WidthCappedContainer, Field, NotifyLayer, WaitForInvokeLayer, CityTextInput } from '../components';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
+import {
+  IntroParagraph,
+  NoticeParagraph,
+  CostReadout,
+  Disclaimer,
+} from '../styles';
 
 const MAX_INFO_LEN = 128;
 const MIN_ITEM_VALUE_GAS = 0.5;
-
-const IntroParagraph = styled(Paragraph)`
-  margin-top: 0;
-  margin-bottom: 30px;
-`;
-const NoticeParagraph = styled(Paragraph)` margin-top: 0; `;
-const CostReadout = styled(Paragraph)` font-weight: 500; `;
-const Disclaimer = styled(Paragraph)` font-weight: 500; `;
 
 export const MSG_GAS_CONSUMED = (gasConsumed, rewardGas) => [
   <NoticeParagraph key='MSG_GAS_CONSUMED-0' size='full' margin={{ bottom: 'small' }}>

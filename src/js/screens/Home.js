@@ -2,55 +2,28 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router';
 import numeral from 'numeral';
 
-import styled from 'styled-components';
-import { Box, Heading, Paragraph, Select, RoutedAnchor } from 'grommet';
+import { Box, Heading, Select, RoutedAnchor } from 'grommet';
 
 import { getStats } from 'chainline-js';
 
 import { WidthCappedContainer } from '../components';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
+import {
+  WhiteSection,
+  StatsHeading,
+  StatsInnerBox,
+  BlurbParagraph,
+  BlurbPoints,
+  StatsBox,
+  StatNumber,
+  BlurbsContainer,
+} from '../styles';
 
 const DROPDOWN_OPTIONS = {
   'I have extra space to carry items during my travel to another city.': '/travel/create',
   'I would like an item to be collected and delivered to me.': '/demand/create',
   'There is a Chain Line shipment I would like to track.': 'TRACK',
 };
-
-const WhiteSection = styled(Box)`
-  padding-bottom: 65px;
-  padding-top: 65px;
-`;
-
-const StatsHeading = styled.h3`
-  font-size: 24px;
-  font-weight: 500;
-  margin: 50px 0;
-  text-align: center;
-  text-transform: uppercase;
-`;
-
-const StatsInnerBox = styled(Box)` justify-content: space-around; `;
-
-const BlurbParagraph = styled(Paragraph)`
-  margin-top: 0;
-  padding-right: 12px;
-`;
-
-const BlurbPoints = styled.ol`
-  margin: 0 0 8px;
-`;
-
-const StatsBox = styled(Box)`
-  border-bottom: 1px solid #e0e0e0;
-  padding: 12px 0 70px;
-`;
-
-const StatNumber = styled(Heading)` transform: scale(1.3); `;
-
-const BlurbsContainer = styled(WidthCappedContainer)`
-  transform-origin: left top;
-  transform: scale(1.03);
-`;
 
 class Home extends Component {
   state = {

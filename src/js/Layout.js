@@ -1,86 +1,30 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import styled from 'styled-components';
-import { Box, Heading, Text, Anchor, RoutedAnchor } from 'grommet';
+import { Box, Text, Anchor } from 'grommet';
 import { FormPrevious } from 'grommet-icons';
 
 import { WidthCappedContainer, VideoPlayer } from './components';
+import {
+  HeaderWidgets,
+  LogoBox,
+  LogoImage,
+  LogoRoutedAnchor,
+  HeroBox,
+  NavBox,
+  NavAnchor,
+  NavRoutedAnchor,
+  SloganImage,
+  HeroHeading,
+  SubSloganHeading,
+  Footer,
+  GoBackRoutedAnchor,
+  Boldish,
+} from './styles';
 
 const LOGO_SRC = '/img/chainline-logo.svg';
 const SLOGAN_SRC = '/img/chainline-slogan.svg';
-const WAVES_SRC = '/img/home-waves.svg';
 const VIDEO_SRC = 'https://f001.backblazeb2.com/file/chainline-assets/explainer.mp4';
-
-const HeaderWidgets = styled(WidthCappedContainer)`
-  position: relative;
-  left: 13px;
-`;
-
-const LogoBox = styled(Box)` border-bottom: 1px solid #e0e0e0; `;
-
-const LogoImage = styled.img`
-  line-height: 0;
-  min-width: 250px;
-  max-width: ${({ responsiveState }) =>
-    responsiveState === 'wide' ? '255px' : '60%'};
-  margin: auto;
-  width: 100%;
-`;
-
-const LogoRoutedAnchor = styled(RoutedAnchor)`
-  align-items: center;
-  color: #333;
-  display: flex;
-  flex: 0 0 auto;
-  font-size: 19px;
-  font-weight: 500;
-  height: 74px; /* there's a 1px border! */
-  line-height: 0;
-  text-transform: uppercase;
-  width: fit-content;
-`;
-
-const HeroBox = styled(Box)`
-  background-image: url(${WAVES_SRC});
-  background-position: ${props => `bottom 20px left ${props.scrollTop > 0 ? props.scrollTop / 16 : 0}px`};
-  background-repeat: repeat-x;
-  background-size: 125px;
-  padding-bottom: 90px;
-`;
-
-const NavBox = styled(Box)`
-  flex-basis: 25%;
-  min-width: 250px;
-`;
-
-const NavAnchor = LogoRoutedAnchor.withComponent(Anchor);
-const NavRoutedAnchor = LogoRoutedAnchor.withComponent(RoutedAnchor);
-
-const SloganImage = styled(LogoImage)`
-  margin: 0;
-  max-width: 700px;
-  transform: ${({ responsiveState }) =>
-    responsiveState === 'wide' ? '' : 'scale(1.1)'};
-`;
-
-const HeroHeading = styled(Heading)`
-  font-family: Nunito;
-  font-weight: 700;
-  margin-top: ${({ responsiveState }) =>
-    responsiveState === 'wide' ? '55px' : '30px'};
-`;
-
-const SubSloganHeading = styled(Heading)`
-  letter-spacing: 0.2px;
-  margin-bottom: 28px;
-`;
-
-const Footer = styled(Box)` white-space: nowrap; `;
-
-const GoBackRoutedAnchor = styled(RoutedAnchor)` margin-left: -5px; `;
-
-const Boldish = styled.span` font-weight: 500; `;
 
 class Layout extends Component {
   static contextTypes = {

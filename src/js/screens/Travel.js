@@ -4,21 +4,15 @@ import AutoForm from 'react-auto-form';
 import PropTypes from 'prop-types';
 import pick from 'pedantic-pick';
 
-import styled from 'styled-components';
-import { Box, Heading, Paragraph, Button, TextInput, RadioButton } from 'grommet';
+import { Box, Heading, Button, TextInput, RadioButton } from 'grommet';
 import { CircleInformation } from 'grommet-icons';
 
 import { Constants, openTravel } from 'chainline-js';
 import { calculateRealGasConsumption, formatGasConsumption } from '../utils';
 import { WidthCappedContainer, Field, NotifyLayer, WaitForInvokeLayer, CityTextInput } from '../components';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
+import { IntroParagraph, Disclaimer } from '../styles';
 import { MSG_GAS_CONSUMED } from './Demand';
-
-const IntroParagraph = styled(Paragraph)`
-  margin-top: 0;
-  margin-bottom: 30px;
-`;
-const Disclaimer = styled(Paragraph)` font-weight: 500; `;
 
 class TravelPage extends Component {
   static contextTypes = {

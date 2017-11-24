@@ -5,12 +5,12 @@ import copy from 'copy-to-clipboard';
 import secureRandom from 'secure-random';
 import pEvent from 'p-event';
 
-import styled from 'styled-components';
 import { Grommet, Responsive, Box, Paragraph, Text, Anchor } from 'grommet';
 
 import { getAccountFromWIFKey } from 'chainline-js';
 
 import chainline from './themes/chainline';
+import { Boldish, KeyReadout, ReceiveParagraph, WarningMsg } from './styles';
 
 import BlockchainProvider from './components/BlockchainProvider';
 import WalletWorker from './workers/wallet.worker';
@@ -25,19 +25,6 @@ import {
   CreateWalletLayer,
   TrackingLayer,
 } from './components';
-
-const Boldish = styled.span`
-  font-weight: 500;
-  margin-bottom: 0;
-`;
-const KeyReadout = styled(Paragraph)`
-  font-size: 115%;
-  font-weight: 500;
-  line-height: 0px;
-  margin-bottom: 15px;
-`;
-const ReceiveParagraph = styled(Paragraph)` margin-top: 0; `;
-const WarningMsg = styled(Paragraph)` color: red; `;
 
 const history = createBrowserHistory();
 

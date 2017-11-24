@@ -11,7 +11,7 @@ import { doSendAsset } from 'chainline-js';
 import { SendLayer } from './';
 import withBlockchainProvider from '../helpers/withBlockchainProvider';
 
-const DropDownLabel = styled(Box)` font-weight: 500; `;
+const DropDownLabel = styled(Box)` font-weight: 500 `;
 
 class WalletWidget extends PureComponent {
   state = {
