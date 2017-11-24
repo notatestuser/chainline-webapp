@@ -10,6 +10,7 @@ import {
   getWalletState,
 } from 'chainline-js';
 
+const CHAINLINE_NODE_RPC = 'https://chainline.co/neo-rpc';
 const CHAINLINE_BALANCE_API = 'https://chainline.co/api/balance/';
 const REFRESH_INTERVAL_MS = 15000;
 const BALANCE_FORMAT = '0,0.0000';
@@ -59,7 +60,6 @@ class BlockchainProvider extends Component {
 
   getChildContext() {
     const { address, programHash, wif, balance, reserved, reputation, stateLookupKey, gasPriceUSD } = this.state;
-    const { net } = this.props;
     const effectiveBalance = balance;
     return {
       gasPriceUSD,
@@ -70,7 +70,7 @@ class BlockchainProvider extends Component {
         effectiveBalance,
         effectiveBalanceString: is.number(effectiveBalance) && balance > 0.0001 ? numeral(effectiveBalance).format(BALANCE_FORMAT) : '0.0000',
         isLoaded: !!wif,
-        net,
+        net: CHAINLINE_NODE_RPC,
         programHash,
         reputation,
         reputationString: is.number(reputation) ? numeral(reputation).format('0,0') : '?',
@@ -93,7 +93,7 @@ class BlockchainProvider extends Component {
   }
 
   _refreshState() {
-    const { net, wif } = this.props;
+    const { wif } = this.props;
     if (!wif && this.state.wif) {
       // not logged in / user logged out
       this.setState(defaultState);
@@ -121,7 +121,7 @@ class BlockchainProvider extends Component {
         const message = res.statusText;
         console.error(`Could not get wallet balance! ${message}`);
       }
-      getWalletState(net, wif, programHash).then((response) => {
+      getWalletState(CHAINLINE_NODE_RPC, wif, programHash).then((response) => {
         const { originalBalance } = this.state;
         const { reservedBalance, reputation, stateLookupKey } = response;
         // avoid unnecessary state updates

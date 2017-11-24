@@ -194,7 +194,7 @@ export default class App extends Component {
             <div />
           </Responsive>
 
-          <BlockchainProvider wif={accountWif} net='/neo-rpc'>
+          <BlockchainProvider wif={accountWif}>
             {/* Simple notifications */}
             {notifyMessage ? <NotifyLayer
               size='small'
