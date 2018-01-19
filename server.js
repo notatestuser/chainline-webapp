@@ -2,6 +2,7 @@ const path = require('path');
 const cors = require('cors');
 const express = require('express');
 const proxy = require('express-http-proxy');
+const spamBlocker = require('express-spam-referral-blocker');
 const cities = require('all-the-cities');
 const uniqby = require('lodash.uniqby');
 const sortby = require('lodash.sortby');
@@ -29,6 +30,9 @@ process.on('uncaughtException', (err) => {
 });
 
 const app = express();
+
+spamBlocker.setReferrers(['mulechain.com']);
+app.use(spamBlocker.send404);
 
 // API routes
 
