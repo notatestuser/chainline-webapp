@@ -19,7 +19,7 @@ const APP_ROUTES = [
 ];
 
 const NEO_NODE_HTTPS = true;
-const NEO_NODE = 'seed1.neo.org:20331';
+const NEO_NODE = 'seed4.switcheo.network:10331';
 const NEON_BASE = 'http://testnet-api.wallet.cityofzion.io';
 const NEON_URI = 'http://testnet-api.wallet.cityofzion.io/v2/address/balance/';
 const NEOSCAN_URI = 'https://neoscan-testnet.io/api/test_net/v1/get_address/';
