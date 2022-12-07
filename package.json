@@ -27,7 +27,7 @@
     "chainline-js": "1.1.6",
     "copy-to-clipboard": "^3.0.8",
     "cors": "^2.8.4",
-    "express": "^4.16.2",
+    "express": "^4.17.3",
     "express-http-proxy": "^1.1.0",
     "express-spam-referral-blocker": "^1.2.1",
     "grommet": "2.0.0-alpha.3",
